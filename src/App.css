@@ -1,0 +1,147 @@
+
+*{
+  box-sizing: border-box;
+  
+}
+body{
+    min-height: 100vh;
+    color: var(--color-text);
+    background-color: var(--color-background);
+    
+}
+header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1B2A4A;
+  padding-left: .5rem; 
+  padding-right: .5rem;
+  color: var(--color-primary);
+}
+nav  a{
+  padding: 15px;
+  font-size: 20px;  
+  font-weight: 520;
+  border:0px ;
+  border-radius: .5rem;
+  transition: 0.2s ease;
+}
+nav a:hover{
+  background-color: var(--color-primary);
+  color: white; 
+}
+main{
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: auto auto auto auto auto auto;
+  gap: 1rem;
+  padding: 28px;
+}
+section{
+  padding: 10px;
+}
+.cardSec{
+  background-color: var(--color-surface);
+  border: 1px solid rgb(206, 206, 206);
+  border-radius: 10px ;
+  
+}
+.cardedsec{
+
+}
+.alert{
+  grid-row: 1;
+  grid-column: span 6;
+  min-height: 4rem;
+  background-color: #1B2A4A;
+  color: var(--color-text-inverse);
+}
+.warnings{
+  grid-row: 2;
+  grid-column: span 6;
+  min-height: 4rem;
+
+}
+.incidents{
+  grid-row: 3;
+  grid-column: span 2;
+  min-height: 4rem;
+}
+.crisis{
+  grid-row: 3;
+  grid-column: span 2;
+  min-height: 4rem;
+}
+.map{
+  grid-row: 3 / span 3;
+  grid-column: span 2;
+  min-height: 8rem;
+}
+.teams{
+  grid-row: 4;
+  grid-column: span 3;
+  min-height: 4rem;
+}
+.action{
+  grid-row: 6 ;
+  grid-column: span 6;
+  min-height: 2rem;
+}
+
+
+/* Table layout */
+.incidents table,
+.crisis table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+
+/* Column headers */
+.incidents thead,
+.crisis thead {
+  background-color: #e2e3e9;
+}
+
+.incidents th,
+.crisis th {
+  padding: 14px 10px;
+  color: #61718e;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Table rows */
+.incidents td,
+.crisis td {
+  padding: 16px 10px;
+  color: #26334d;
+  border-bottom: 1px solid #d5d9e3;
+}
+
+/* Emphasize event names */
+.incidents td:first-child,
+.crisis td:first-child {
+  font-weight: 600;
+}
+
+/* Subtle row hover */
+.incidents tbody tr:hover,
+.crisis tbody tr:hover {
+  background-color: #f1f2f6;
+}
+
+/* Rounded top corners on the header */
+.incidents thead th:first-child,
+.crisis thead th:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.incidents thead th:last-child,
+.crisis thead th:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
