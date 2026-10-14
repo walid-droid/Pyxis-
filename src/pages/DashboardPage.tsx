@@ -143,9 +143,48 @@ function DashboardPage() {
       <CrisisMap/>
     </section>
 
-    <section className="action cardedSec">
+    
+<section className="action cardSec">
+  <div className="action-heading">
+    <div>
       <h2>Take action</h2>
-    </section>
+      <p>Choose what you need to do next.</p>
+    </div>
+  </div>
+
+  <div className="action-grid">
+    <article className="action-card action-card-primary">
+      <span className="action-icon">!</span>
+      <h3>Report an emergency</h3>
+      <p>
+        Report an incident so the appropriate response
+        team can assess it.
+      </p>
+      <a href="/alerts" className="action-link">
+        Submit an alert →
+      </a>
+    </article>
+
+    <article className="action-card">
+      <span className="action-icon">⌖</span>
+      <h3>View active alerts</h3>
+      <p>Review reported incidents and their verification status.</p>
+      <a href="/alerts" className="action-link">
+        View alerts →
+      </a>
+    </article>
+
+    <article className="action-card">
+      <span className="action-icon">＋</span>
+      <h3>Find response resources</h3>
+      <p>Check available response teams and their deployment status.</p>
+      <a href="/resources" className="action-link">
+        View resources →
+      </a>
+    </article>
+  </div>
+</section>
+
   </main>);
 }
 
