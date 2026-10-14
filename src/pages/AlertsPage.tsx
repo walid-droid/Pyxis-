@@ -1,5 +1,10 @@
+
+import { useNavigate } from "react-router";
 import "./AlertsPage.css";
+
 function AlertsPage() {
+  const navigate = useNavigate();
+
   return (
     <main className="alerts-page">
       <header className="page-header">
@@ -8,7 +13,10 @@ function AlertsPage() {
           <p>Monitor and manage reported emergencies.</p>
         </div>
 
-        <button type="button">
+        <button
+          type="button"
+          onClick={() => navigate("/submit-alert")}
+        >
           + Create alert
         </button>
       </header>

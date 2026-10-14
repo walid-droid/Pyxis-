@@ -1,11 +1,16 @@
-
 import "./App.css";
-import { Routes, Route, Navigate, NavLink } from "react-router";
+import { Routes, Route, NavLink, Outlet } from "react-router";
+// Landing is currently implemented in JavaScript/JSX without type declarations.
+// @ts-expect-error No declaration file is available for this JSX module.
+import Landing from "./landing/Landing";
+import ContactsPage from "./pages/ContactsPage";
+import AssistantPage from "./pages/AssistantPage";
 import DashboardPage from "./pages/DashboardPage";
 import AlertsPage from "./pages/AlertsPage";
 import ResourcesPage from "./pages/ResourcesPage";
+import SubmitAlertPage from "./pages/SubmitAlertPage";
 
-function App() {
+function DashboardLayout() {
   return (
     <>
       <header className="app-header">
@@ -29,17 +34,26 @@ function App() {
         </div> */}
       </header>
 
-      <Routes>
-        <Route
-          path="/"
-          element={<Navigate to="/dashboard" replace />}
-        />
+      <Outlet />
+    </>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Landing />} />
+
+      <Route element={<DashboardLayout />}>
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/alerts" element={<AlertsPage />} />
         <Route path="/resources" element={<ResourcesPage />} />
+        <Route path="/contacts" element={<ContactsPage />} />
+        <Route path="/assistant" element={<AssistantPage />} />
+        <Route path="/submit-alert" element={<SubmitAlertPage />} />
         <Route path="*" element={<h1>Page not found</h1>} />
-      </Routes>
-    </>
+      </Route>
+    </Routes>
   );
 }
 

@@ -1,4 +1,5 @@
 import "./DashboardPage.css"
+import { useNavigate } from "react-router";
 import WarningCard from "../components/WarningCard";
 import { mockWarnings } from "../mockdata/warning";
 import CrisisMap from "../components/CrisisMap";
@@ -7,6 +8,7 @@ import { mockTeams } from "../mockdata/teams";
 import { mockIncidents } from "../mockdata/incident";
 
 function DashboardPage() {
+  const navigate = useNavigate();
   return (
   <main className="page-container dashboard-page">
 
@@ -23,8 +25,18 @@ function DashboardPage() {
         </p>
 
         <div className="hero-actions">
-          <button className="btn-primary">Submit an alert</button>
-          <button className="btn-ghost">View active alerts</button>
+          <button
+            className="btn-primary"
+            onClick={() => navigate("/alerts")}
+          >
+            Submit an alert
+          </button>
+          <button
+            className="btn-ghost"
+            onClick={() => navigate("/alerts")}
+          >
+            View active alerts
+          </button>
         </div>
       </div>
     </section>
