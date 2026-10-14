@@ -1,57 +1,94 @@
 
-:root {
-  /* Brand colors */
-  --color-primary: #0d9187;
-  --color-primary-hover: #087c74;
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
 
-  /* Backgrounds */
-  --color-background: #e8e9ef;
+:root {
+  color-scheme: light;
+
+  /* SafeDZ brand */
+  --color-primary: #d92d20;
+  --color-primary-hover: #b42318;
+  --color-navy: #172a25;
+  --color-green: #16704a;
+
+  /* Surfaces */
+  --color-background: #f3f5f2;
   --color-surface: #ffffff;
-  --color-surface-muted: #f1f2f6;
+  --color-surface-muted: #e9ede8;
 
   /* Text */
-  --color-text: #111b2e;
-  --color-text-muted: #62718d;
+  --color-text: #111916;
+  --color-text-muted: #68746e;
   --color-text-inverse: #ffffff;
 
-  /* Borders */
-  --color-border: #d5d9e3;
+  /* Borders and shadows */
+  --color-border: #dce2dc;
+  --shadow-card: 0 2px 8px rgb(17 25 22 / 4%);
 
-  /* Status colors */
-  --color-warning: #c77700;
-  --color-danger: #dc4248;
-  --color-success: #168044;
+  /* Status */
+  --color-danger: #b42318;
+  --color-danger-bg: #feeceb;
+  --color-warning: #a96508;
+  --color-warning-bg: #fff0d8;
+  --color-success: #16704a;
+  --color-success-bg: #e5f5ed;
 
-  /* Spacing */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-6: 24px;
-  --space-8: 32px;
+  /* Typography */
+  --font-body: 'DM Sans', Arial, sans-serif;
+  --font-display: 'DM Serif Display', Georgia, serif;
 
-  /* Shape */
-  --radius-card: 14px;
-  --radius-button: 9px;
+  /* Shape and spacing */
+  --radius-card: 3px;
+  --radius-button: 3px;
+  --radius-input: 3px;
 
-  font-family: Inter, system-ui, sans-serif;
+  font-family: var(--font-body);
   color: var(--color-text);
   background: var(--color-background);
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  min-height: 100%;
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  line-height: 1.6;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin-top: 0;
+}
+
+h1,
+.display-heading {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
 }
 
 button,
@@ -68,4 +105,18 @@ button {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-green);
+  outline-offset: 3px;
+}
+
+::selection {
+  color: #fff;
+  background: var(--color-green);
 }

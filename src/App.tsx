@@ -1,97 +1,46 @@
-import "./App.css"
-import { mockIncidents, mockCrises } from "./mockdata"
+
+import "./App.css";
+import { Routes, Route, Navigate, NavLink } from "react-router";
+import DashboardPage from "./pages/DashboardPage";
+import AlertsPage from "./pages/AlertsPage";
+import ResourcesPage from "./pages/ResourcesPage";
 
 function App() {
-return (
-<>
-<header>
-<h1 className="Logo">Logo</h1>
+  return (
+    <>
+      <header className="app-header">
+        <NavLink to="/dashboard" className="app-brand">
+          <span className="brand-mark">✳</span>
+          <span>SafeDZ</span>
+        </NavLink>
 
-    <nav>
-      <a href="">Dashboard</a>
-      <a href="">AI Assistant</a>
-      <a href="">Alertes</a>
-      <a href="">Events</a>
-      <a href="">Resources</a>
-      <a href="">Contacts</a>
-    </nav>
-  </header>
+        <nav className="app-nav">
+          <NavLink to="/dashboard">Tableau de bord</NavLink>
+          <NavLink to="/alerts">Alertes en cours</NavLink>
+          <NavLink to="/resources">Consignes</NavLink>
+          <NavLink to="/assistant">Assistant IA</NavLink>
+          <NavLink to="/events">Événements</NavLink>
+          <NavLink to="/contacts">Contacts</NavLink>
+        </nav>
 
-  <main>
-    
-    <section className="alert cardSec">
-      <h2>welcome citizen</h2>
-      <p>submit alert</p>
-    </section>
+        {/* <div className="header-actions">
+          <button className="login-button">Se connecter</button>
+          <button className="report-button">Signaler un incident</button>
+        </div> */}
+      </header>
 
-    <section className="warnings cardedSec">
-      <h2>official warnings</h2>
-
-    </section>    
-
-    <section className="incidents cardSec">
-      <h2>Active incidents</h2>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Event</th>
-            <th>Severity</th>
-            <th>Location</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-  {mockIncidents.map((incident) => (
-    <tr key={incident.id}>
-      <td>{incident.event}</td>
-      <td>{incident.severity}</td>
-      <td>{incident.location}</td>
-      <td>{incident.status}</td>
-    </tr>
-  ))}
-</tbody>
-      </table>
-    </section>
-
-    <section className="crisis cardSec">
-      <h2>Current crisis</h2>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Event</th>
-            <th>Location</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-  {mockCrises.map((crisis) => (
-    <tr key={crisis.id}>
-      <td>{crisis.event}</td>
-      <td>{crisis.location}</td>
-      <td>{crisis.status}</td>
-    </tr>
-  ))}
-</tbody>
-      </table>
-    </section>
-
-    <section className="teams cardSec">
-      <h2>Deployed teams</h2>
-    </section>
-
-    <section className="map cardSec">
-      <h2>Map</h2>
-    </section>
-
-    <section className="action cardedSec">
-      <h2>Take action</h2>
-    </section>
-  </main>
-</>
-
-)
+      <Routes>
+        <Route
+          path="/"
+          element={<Navigate to="/dashboard" replace />}
+        />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/alerts" element={<AlertsPage />} />
+        <Route path="/resources" element={<ResourcesPage />} />
+        <Route path="*" element={<h1>Page not found</h1>} />
+      </Routes>
+    </>
+  );
 }
 
-export default App
+export default App;
