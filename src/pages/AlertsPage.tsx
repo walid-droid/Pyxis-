@@ -1,80 +1,135 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import WarningCard from "../components/WarningCard";
-import Modal from "../components/Modal";
-import StatCard from "../components/StatCard";
-import { mockWarnings } from "../mockdata/warning";
+import { mockWarnings, type Severity } from "../mockdata/warning";
 import "./AlertsPage.css";
 
-type ModalKey = "total" | "verified" | "unverified" | "high";
+const SEVERITY_FR: Record<Severity, string> = {
+  Low: "Faible",
+  Medium: "Moyenne",
+  High: "Élevée",
+  Critical: "Critique",
+};
 
-const MODAL_TITLES: Record<ModalKey, string> = {
-  total: "Toutes les alertes",
-  verified: "Alertes vérifiées",
-  unverified: "Signalements non vérifiés",
-  high: "Alertes à gravité élevée",
+const SEVERITY_ORDER: Severity[] = ["Low", "Medium", "High", "Critical"];
+
+const VERIFICATION_ORDER = ["verified", "unverified"] as const;
+
+const VERIFICATION_FR: Record<(typeof VERIFICATION_ORDER)[number], string> = {
+  verified: "Vérifiées",
+  unverified: "Non vérifiées",
 };
 
 function AlertsPage() {
   const navigate = useNavigate();
-  const [activeModal, setActiveModal] = useState<ModalKey | null>(null);
+  const [verification, setVerification] = useState<"all" | "verified" | "unverified">("all");
+  const [severity, setSeverity] = useState<"all" | Severity>("all");
 
-  const verified = mockWarnings.filter((w) => w.verification === "verified");
-  const unverified = mockWarnings.filter((w) => w.verification === "unverified");
-  const highSeverity = mockWarnings.filter(
-    (w) => w.severity === "High" || w.severity === "Critical",
+  const filteredWarnings = mockWarnings.filter(
+    (warning) =>
+      (verification === "all" || warning.verification === verification) &&
+      (severity === "all" || warning.severity === severity),
   );
-
-  const counters = [
-    { key: "total", label: "Total des alertes", value: mockWarnings.length, tone: "total" },
-    { key: "verified", label: "Vérifiées", value: verified.length, tone: "verified" },
-    { key: "unverified", label: "Non vérifiées", value: unverified.length, tone: "unverified" },
-    { key: "high", label: "Gravité élevée", value: highSeverity.length, tone: "high" },
-  ] as const;
-
-  const currentList =
-    activeModal === "verified"
-      ? verified
-      : activeModal === "unverified"
-        ? unverified
-        : activeModal === "high"
-          ? highSeverity
-          : mockWarnings;
 
   return (
     <main className="alerts-page">
-      <header className="page-header">
-        <div>
+      <header className="alerts-hero">
+        <div className="alerts-hero-text">
+          <p className="alerts-hero-eyebrow">Veille &amp; sécurité</p>
           <h1>Alertes</h1>
-          <p>Surveillez et gérez les urgences signalées.</p>
+          <p className="alerts-hero-lead">Surveillez et gérez les urgences signalées.</p>
         </div>
 
-        <button type="button" onClick={() => navigate("/submit-alert")}>
-          + Créer une alerte
-        </button>
+        <div className="alerts-hero-aside">
+          <button
+            type="button"
+            className="alerts-hero-cta"
+            onClick={() => navigate("/submit-alert")}
+          >
+            + Créer une alerte
+          </button>
+        </div>
       </header>
 
-      <section className="stat-grid">
-        {counters.map((counter) => (
-          <StatCard
-            key={counter.key}
-            value={counter.value}
-            label={counter.label}
-            tone={counter.tone}
-            onClick={() => setActiveModal(counter.key)}
-          />
-        ))}
-      </section>
-
-      {activeModal && (
-        <Modal title={MODAL_TITLES[activeModal]} onClose={() => setActiveModal(null)}>
-          <div className="modal-warning-grid">
-            {currentList.map((warning) => (
-              <WarningCard key={warning.id} warning={warning} />
-            ))}
+      <div className="alerts-layout">
+        <aside className="alerts-filter" aria-label="Filtrer les alertes">
+          <div className="alerts-filter-group">
+            <p className="alerts-filter-title">État</p>
+            <ul className="alerts-filter-list">
+              <li>
+                <button
+                  type="button"
+                  className={`alerts-filter-btn${verification === "all" ? " is-active" : ""}`}
+                  onClick={() => setVerification("all")}
+                >
+                  Toutes les alertes
+                  <span className="alerts-filter-count">{mockWarnings.length}</span>
+                </button>
+              </li>
+              {VERIFICATION_ORDER.map((value) => (
+                <li key={value}>
+                  <button
+                    type="button"
+                    className={`alerts-filter-btn${verification === value ? " is-active" : ""}`}
+                    onClick={() => setVerification(value)}
+                  >
+                    {VERIFICATION_FR[value]}
+                    <span className="alerts-filter-count">
+                      {mockWarnings.filter((warning) => warning.verification === value).length}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
           </div>
-        </Modal>
-      )}
+
+          <div className="alerts-filter-group">
+            <p className="alerts-filter-title">Gravité</p>
+            <ul className="alerts-filter-list">
+              <li>
+                <button
+                  type="button"
+                  className={`alerts-filter-btn${severity === "all" ? " is-active" : ""}`}
+                  onClick={() => setSeverity("all")}
+                >
+                  Toutes les gravités
+                  <span className="alerts-filter-count">{mockWarnings.length}</span>
+                </button>
+              </li>
+              {SEVERITY_ORDER.map((value) => (
+                <li key={value}>
+                  <button
+                    type="button"
+                    className={`alerts-filter-btn${severity === value ? " is-active" : ""}`}
+                    onClick={() => setSeverity(value)}
+                  >
+                    {SEVERITY_FR[value]}
+                    <span className="alerts-filter-count">
+                      {mockWarnings.filter((warning) => warning.severity === value).length}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+
+        <section className="alerts-content">
+          <p className="alerts-summary">
+            {filteredWarnings.length} alerte{filteredWarnings.length > 1 ? "s" : ""}
+          </p>
+
+          {filteredWarnings.length > 0 ? (
+            <div className="alerts-grid">
+              {filteredWarnings.map((warning) => (
+                <WarningCard key={warning.id} warning={warning} />
+              ))}
+            </div>
+          ) : (
+            <p className="alerts-empty">Aucune alerte ne correspond à ce filtre.</p>
+          )}
+        </section>
+      </div>
     </main>
   );
 }

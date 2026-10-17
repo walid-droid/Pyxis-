@@ -1,8 +1,18 @@
+export type ConsigneVariant =
+  | "seismic"
+  | "fire"
+  | "flood"
+  | "gas"
+  | "storm"
+  | "heat"
+  | "road";
+
 export type Consigne = {
   id: number;
   risk: string;
   intro: string;
   steps: string[];
+  variant: ConsigneVariant;
 };
 
 export const mockConsignes: Consigne[] = [
@@ -10,6 +20,7 @@ export const mockConsignes: Consigne[] = [
     id: 1,
     risk: "Séisme",
     intro: "Un tremblement de terre survient sans prévenir. Voici les bons réflexes.",
+    variant: "seismic",
     steps: [
       "Pendant la secousse, abritez-vous sous une table solide et protégez votre tête.",
       "Éloignez-vous des fenêtres et des objets suspendus.",
@@ -22,6 +33,7 @@ export const mockConsignes: Consigne[] = [
     id: 2,
     risk: "Incendie",
     intro: "Un incendie peut se propager en quelques minutes. Agissez vite et calmement.",
+    variant: "fire",
     steps: [
       "Déclenchez l'alarme et appelez le 14 dès que possible.",
       "Fermez les portes derrière vous pour ralentir la propagation du feu.",
@@ -34,6 +46,7 @@ export const mockConsignes: Consigne[] = [
     id: 3,
     risk: "Inondation",
     intro: "L'eau monte rapidement : ne sous-estimez jamais la force du courant.",
+    variant: "flood",
     steps: [
       "Ne vous engagez jamais sur une route inondée, à pied ou en voiture.",
       "Montez vers les étages supérieurs ou un point haut.",
@@ -46,6 +59,7 @@ export const mockConsignes: Consigne[] = [
     id: 4,
     risk: "Fuite de gaz",
     intro: "Toute étincelle peut provoquer une explosion. Ne prenez aucun risque.",
+    variant: "gas",
     steps: [
       "N'allumez ni ne coupez aucun interrupteur, et ne fumez pas.",
       "Ouvrez les fenêtres et évacuez calmement le bâtiment.",
@@ -58,6 +72,7 @@ export const mockConsignes: Consigne[] = [
     id: 5,
     risk: "Tempête et vents violents",
     intro: "Les vents violents peuvent arracher des objets et faire tomber des lignes.",
+    variant: "storm",
     steps: [
       "Restez à l'intérieur et éloignez-vous des fenêtres.",
       "Rangez ou fixez les objets pouvant s'envoler.",
@@ -69,6 +84,7 @@ export const mockConsignes: Consigne[] = [
     id: 6,
     risk: "Canicule",
     intro: "La chaleur extrême est dangereuse, surtout pour les personnes fragiles.",
+    variant: "heat",
     steps: [
       "Buvez de l'eau régulièrement, sans attendre la soif.",
       "Restez au frais aux heures les plus chaudes (11 h – 17 h).",
@@ -80,6 +96,7 @@ export const mockConsignes: Consigne[] = [
     id: 7,
     risk: "Accident de la route",
     intro: "Protégez la zone avant tout, puis alertez les secours.",
+    variant: "road",
     steps: [
       "Sécurisez la zone et allumez vos feux de détresse.",
       "Appelez le 14 ou le 17 en indiquant le lieu précis.",

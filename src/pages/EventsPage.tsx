@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { mockEvents, type EventItem } from "../mockdata/event";
-import Modal from "../components/Modal";
-import StatCard from "../components/StatCard";
+import { mockEvents, type EventItem, type EventStatus } from "../mockdata/event";
 import "./EventsPage.css";
 
 const STATUS_FR: Record<string, string> = {
@@ -10,14 +8,7 @@ const STATUS_FR: Record<string, string> = {
   Ended: "Terminé",
 };
 
-type ModalKey = "total" | "upcoming" | "ongoing" | "ended";
-
-const MODAL_TITLES: Record<ModalKey, string> = {
-  total: "Tous les événements",
-  upcoming: "Événements à venir",
-  ongoing: "Événements en cours",
-  ended: "Événements terminés",
-};
+const STATUS_ORDER: EventStatus[] = ["Upcoming", "Ongoing", "Ended"];
 
 function EventCard({ event }: { event: EventItem }) {
   return (
@@ -46,58 +37,108 @@ function EventCard({ event }: { event: EventItem }) {
 }
 
 function EventsPage() {
-  const [activeModal, setActiveModal] = useState<ModalKey | null>(null);
+  const [status, setStatus] = useState<EventStatus | "all">("all");
+  const [category, setCategory] = useState<string>("all");
 
-  const upcoming = mockEvents.filter((event) => event.status === "Upcoming");
-  const ongoing = mockEvents.filter((event) => event.status === "Ongoing");
-  const ended = mockEvents.filter((event) => event.status === "Ended");
+  const categories = Array.from(new Set(mockEvents.map((event) => event.category)));
 
-  const counters = [
-    { key: "total", label: "Total des événements", value: mockEvents.length, tone: "total" },
-    { key: "upcoming", label: "À venir", value: upcoming.length, tone: "upcoming" },
-    { key: "ongoing", label: "En cours", value: ongoing.length, tone: "ongoing" },
-    { key: "ended", label: "Terminés", value: ended.length, tone: "ended" },
-  ] as const;
-
-  const currentList =
-    activeModal === "upcoming"
-      ? upcoming
-      : activeModal === "ongoing"
-        ? ongoing
-        : activeModal === "ended"
-          ? ended
-          : mockEvents;
+  const filteredEvents = mockEvents.filter(
+    (event) =>
+      (status === "all" || event.status === status) &&
+      (category === "all" || event.category === category),
+  );
 
   return (
     <main className="events-page">
-      <header className="page-header">
-        <div>
+      <header className="events-hero">
+        <div className="events-hero-text">
+          <p className="events-hero-eyebrow">Sensibilisation &amp; terrain</p>
           <h1>Événements</h1>
-          <p>Découvrez les activités de sensibilisation, formations et actions citoyennes.</p>
+          <p className="events-hero-lead">
+            Découvrez les activités de sensibilisation, formations et actions citoyennes.
+          </p>
         </div>
       </header>
 
-      <section className="stat-grid">
-        {counters.map((counter) => (
-          <StatCard
-            key={counter.key}
-            value={counter.value}
-            label={counter.label}
-            tone={counter.tone}
-            onClick={() => setActiveModal(counter.key)}
-          />
-        ))}
-      </section>
+      <div className="events-layout">
+        <aside className="events-filter" aria-label="Filtrer les événements">
+          <div className="events-filter-group">
+            <p className="events-filter-title">Statut</p>
+            <ul className="events-filter-list">
+              <li>
+                <button
+                  type="button"
+                  className={`events-filter-btn${status === "all" ? " is-active" : ""}`}
+                  onClick={() => setStatus("all")}
+                >
+                  Tous les événements
+                  <span className="events-filter-count">{mockEvents.length}</span>
+                </button>
+              </li>
+              {STATUS_ORDER.map((value) => (
+                <li key={value}>
+                  <button
+                    type="button"
+                    className={`events-filter-btn${status === value ? " is-active" : ""}`}
+                    onClick={() => setStatus(value)}
+                  >
+                    {STATUS_FR[value]}
+                    <span className="events-filter-count">
+                      {mockEvents.filter((event) => event.status === value).length}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-      {activeModal && (
-        <Modal title={MODAL_TITLES[activeModal]} onClose={() => setActiveModal(null)}>
-          <ul className="events-grid">
-            {currentList.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </ul>
-        </Modal>
-      )}
+          <div className="events-filter-group">
+            <p className="events-filter-title">Catégorie</p>
+            <ul className="events-filter-list">
+              <li>
+                <button
+                  type="button"
+                  className={`events-filter-btn${category === "all" ? " is-active" : ""}`}
+                  onClick={() => setCategory("all")}
+                >
+                  Toutes les catégories
+                  <span className="events-filter-count">{mockEvents.length}</span>
+                </button>
+              </li>
+              {categories.map((value) => (
+                <li key={value}>
+                  <button
+                    type="button"
+                    className={`events-filter-btn${category === value ? " is-active" : ""}`}
+                    onClick={() => setCategory(value)}
+                  >
+                    {value}
+                    <span className="events-filter-count">
+                      {mockEvents.filter((event) => event.category === value).length}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+
+        <section className="events-content">
+          <p className="events-summary">
+            {filteredEvents.length} événement{filteredEvents.length > 1 ? "s" : ""}
+          </p>
+
+          {filteredEvents.length > 0 ? (
+            <ul className="events-grid">
+              {filteredEvents.map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
+            </ul>
+          ) : (
+            <p className="events-empty">Aucun événement ne correspond à ce filtre.</p>
+          )}
+        </section>
+      </div>
     </main>
   );
 }

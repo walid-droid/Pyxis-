@@ -10,6 +10,118 @@
   padding: clamp(16px, 3vw, 40px);
 }
 
+/* ================= Hero banner ================= */
+
+.consignes-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  padding: clamp(28px, 5vw, 52px);
+
+  color: #fff;
+  background-color: #172b22;
+  background-image:
+    linear-gradient(120deg, rgba(18, 32, 25, 0.95) 0%, rgba(29, 68, 54, 0.86) 55%, rgba(28, 85, 64, 0.78) 100%),
+    url("../../public/topographic.svg");
+  background-size: cover;
+  background-position: right center;
+  background-repeat: no-repeat;
+
+  border: 1px solid #294638;
+  border-radius: var(--radius-card);
+  border-left: 5px solid var(--color-green);
+}
+
+.consignes-hero-text {
+  max-width: 620px;
+}
+
+.consignes-hero-eyebrow {
+  margin: 0 0 12px;
+  color: #8fd3b6;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.consignes-hero h1 {
+  margin: 0 0 14px;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.consignes-hero-lead {
+  max-width: 540px;
+  margin: 0;
+  color: #d7e4dc;
+  font-size: 1.02rem;
+  line-height: 1.7;
+}
+
+.consignes-hero-aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  flex-shrink: 0;
+  max-width: 340px;
+}
+
+.consignes-hero-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: #eaf3ee;
+  font-size: 0.92rem;
+}
+
+.consignes-hero-alert-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff5a4f;
+  box-shadow: 0 0 0 4px rgba(255, 90, 79, 0.18);
+}
+
+.consignes-hero-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  padding: 14px 24px;
+  border: 1px solid #ff5a4f;
+  border-radius: 999px;
+  background: #ff5a4f;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 10px 26px rgba(255, 90, 79, 0.32);
+  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.consignes-hero-link span {
+  transition: transform 160ms ease;
+}
+
+.consignes-hero-link:hover {
+  background: #e5483d;
+  border-color: #e5483d;
+  transform: translateY(-2px);
+}
+
+.consignes-hero-link:hover span {
+  transform: translateX(4px);
+}
+
 .page-header h1,
 .page-header p {
   margin: 0;
@@ -25,46 +137,6 @@
   color: var(--color-text-muted);
 }
 
-/* ================= Callout ================= */
-
-.consignes-callout {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding: 20px 24px;
-  border-left: 4px solid var(--color-primary);
-}
-
-.consignes-callout strong {
-  display: block;
-  color: var(--color-text);
-  font-size: 1rem;
-}
-
-.consignes-callout p {
-  margin: 4px 0 0;
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
-}
-
-.consignes-callout-link {
-  flex-shrink: 0;
-  padding: 10px 16px;
-  border: 1px solid var(--color-primary);
-  border-radius: var(--radius-button);
-  color: var(--color-primary);
-  font-weight: 600;
-  font-size: 0.88rem;
-  transition: background-color 160ms ease, color 160ms ease;
-}
-
-.consignes-callout-link:hover {
-  background: var(--color-primary);
-  color: #ffffff;
-}
-
 /* ================= Grid ================= */
 
 .consignes-grid {
@@ -74,6 +146,7 @@
 }
 
 .consigne-card {
+  --ct-accent: var(--color-green);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -86,10 +159,131 @@
   transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
 }
 
+.consignes-grid .consigne-card {
+  background-color: var(--color-surface);
+  background-image: var(--ct-image, none), var(--ct-surface, none);
+  background-repeat: no-repeat, no-repeat;
+  background-position: right 12px bottom 0, center;
+  background-size: min(230px, 60%) auto, cover;
+  border-left: 4px solid var(--ct-accent);
+}
+
 .consigne-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-raised);
-  border-color: var(--color-green);
+  border-color: var(--ct-accent);
+}
+
+/* ---- Per-risk colour themes ---- */
+
+.consigne-card.consigne-card--seismic {
+  --ct-accent: #b5541b;
+  --ct-surface: linear-gradient(158deg, #fdf3e8 0%, #ffffff 72%);
+  --ct-image: url("../assets/svg/seisme.svg");
+}
+
+.consigne-card.consigne-card--fire {
+  --ct-accent: #d92d20;
+  --ct-surface: linear-gradient(158deg, #fdecea 0%, #ffffff 72%);
+  --ct-image: url("../assets/svg/incendie.svg");
+}
+
+.consigne-card.consigne-card--flood {
+  --ct-accent: #1d6fd1;
+  --ct-surface: linear-gradient(158deg, #e9f2fd 0%, #ffffff 72%);
+  --ct-image: url("../assets/svg/inondation.svg");
+}
+
+.consigne-card.consigne-card--gas {
+  --ct-accent: #b5850a;
+  --ct-surface: linear-gradient(158deg, #fdf6e0 0%, #ffffff 72%);
+  --ct-image: url("../assets/svg/fuite-de-gaz.svg");
+}
+
+.consigne-card.consigne-card--storm {
+  --ct-accent: #4c5c86;
+  --ct-surface: linear-gradient(158deg, #eef1f8 0%, #ffffff 72%);
+  --ct-image: url("../assets/svg/tempete.svg");
+}
+
+.consigne-card.consigne-card--heat {
+  --ct-accent: #e0791f;
+  --ct-surface: linear-gradient(158deg, #fdeede 0%, #ffffff 72%);
+  --ct-image: url("../assets/svg/canicule.svg");
+}
+
+.consigne-card.consigne-card--road {
+  --ct-accent: #0f6b45;
+  --ct-surface: linear-gradient(158deg, #e7f4ee 0%, #ffffff 72%);
+  --ct-image: url("../assets/svg/accident-route.svg");
+}
+
+/* ---- Matching modal themes: light tinted, one colour per risk ---- */
+
+.modal.consigne-modal {
+  background-color: var(--color-surface);
+  background-image: var(--ct-image, none), var(--ct-surface, none);
+  background-repeat: no-repeat, no-repeat;
+  background-position: right 16px bottom 0, center;
+  background-size: min(320px, 60%) auto, cover;
+  border-top: 4px solid var(--ct-accent, var(--color-green));
+}
+
+.consigne-modal .modal-head {
+  background: transparent;
+}
+
+.consigne-modal .modal-head h2 {
+  color: var(--ct-accent, inherit);
+}
+
+.consigne-modal--seismic {
+  --ct-accent: #b5541b;
+  --ct-head: #fdf3e8;
+  --ct-surface: linear-gradient(158deg, #fdf3e8 0%, #ffffff 60%);
+  --ct-image: url("../assets/svg/seisme.svg");
+}
+
+.consigne-modal--fire {
+  --ct-accent: #d92d20;
+  --ct-head: #fdecea;
+  --ct-surface: linear-gradient(158deg, #fdecea 0%, #ffffff 60%);
+  --ct-image: url("../assets/svg/incendie.svg");
+}
+
+.consigne-modal--flood {
+  --ct-accent: #1d6fd1;
+  --ct-head: #e9f2fd;
+  --ct-surface: linear-gradient(158deg, #e9f2fd 0%, #ffffff 60%);
+  --ct-image: url("../assets/svg/inondation.svg");
+}
+
+.consigne-modal--gas {
+  --ct-accent: #b5850a;
+  --ct-head: #fdf6e0;
+  --ct-surface: linear-gradient(158deg, #fdf6e0 0%, #ffffff 60%);
+  --ct-image: url("../assets/svg/fuite-de-gaz.svg");
+}
+
+.consigne-modal--storm {
+  --ct-accent: #4c5c86;
+  --ct-head: #eef1f8;
+  --ct-surface: linear-gradient(158deg, #eef1f8 0%, #ffffff 60%);
+  --ct-image: url("../assets/svg/tempete.svg");
+}
+
+.consigne-modal--heat {
+  --ct-accent: #e0791f;
+  --ct-head: #fdeede;
+  --ct-surface: linear-gradient(158deg, #fdeede 0%, #ffffff 60%);
+  --ct-image: url("../assets/svg/canicule.svg");
+}
+
+.consigne-modal--road {
+  --ct-accent: #0f6b45;
+  --ct-head: #e7f4ee;
+  --ct-surface: linear-gradient(158deg, #e7f4ee 0%, #ffffff 60%);
+  --ct-image: url("../assets/svg/accident-route.svg");
 }
 
 .consigne-card__title {
@@ -112,7 +306,7 @@
   margin-top: auto;
   padding-top: 14px;
   border-top: 1px solid var(--color-border);
-  color: var(--color-green);
+  color: var(--ct-accent);
   font-size: 0.8rem;
   font-weight: 600;
 }
@@ -163,30 +357,48 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: var(--color-success-bg);
-  color: var(--color-success);
+  background: var(--ct-head, var(--color-success-bg));
+  color: var(--ct-accent, var(--color-success));
   font-size: 0.78rem;
   font-weight: 700;
 }
 
 /* ================= Responsive ================= */
 
-@media (max-width: 480px) {
-  .consignes-callout,
-  .consigne-card {
-    padding: 16px;
+@media (max-width: 700px) {
+  .consignes-hero {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .consignes-callout-link {
+  .consignes-hero-aside {
     width: 100%;
-    text-align: center;
+    max-width: none;
+  }
+
+  .consignes-hero-link {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .consigne-card {
+    padding: 16px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .consigne-card,
-  .consigne-card__meta span {
+  .consigne-card__meta span,
+  .consignes-hero-link,
+  .consignes-hero-link span {
     transition: none;
+  }
+
+  .consignes-hero-link:hover,
+  .consignes-hero-link:hover span {
+    transform: none;
   }
 
   .consigne-card:hover {

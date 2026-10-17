@@ -5,9 +5,10 @@ type ModalProps = {
   title: string;
   onClose: () => void;
   children: ReactNode;
+  className?: string;
 };
 
-function Modal({ title, onClose, children }: ModalProps) {
+function Modal({ title, onClose, children, className }: ModalProps) {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
@@ -20,7 +21,7 @@ function Modal({ title, onClose, children }: ModalProps) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div
-        className="modal"
+        className={className ? `modal ${className}` : "modal"}
         role="dialog"
         aria-modal="true"
         aria-label={title}
