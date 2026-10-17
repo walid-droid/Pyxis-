@@ -1,0 +1,199 @@
+
+.consignes-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 1500px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: clamp(16px, 3vw, 40px);
+}
+
+.page-header h1,
+.page-header p {
+  margin: 0;
+}
+
+.page-header h1 {
+  font-size: clamp(2rem, 3vw, 2.8rem);
+}
+
+.page-header p {
+  margin-top: 8px;
+  max-width: 640px;
+  color: var(--color-text-muted);
+}
+
+/* ================= Callout ================= */
+
+.consignes-callout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 20px 24px;
+  border-left: 4px solid var(--color-primary);
+}
+
+.consignes-callout strong {
+  display: block;
+  color: var(--color-text);
+  font-size: 1rem;
+}
+
+.consignes-callout p {
+  margin: 4px 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.consignes-callout-link {
+  flex-shrink: 0;
+  padding: 10px 16px;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-button);
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.consignes-callout-link:hover {
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+/* ================= Grid ================= */
+
+.consignes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.consigne-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  padding: 24px;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.consigne-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-raised);
+  border-color: var(--color-green);
+}
+
+.consigne-card__title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 400;
+}
+
+.consigne-intro {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.consigne-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-green);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.consigne-card__meta span {
+  transition: transform 160ms ease;
+}
+
+.consigne-card:hover .consigne-card__meta span {
+  transform: translateX(4px);
+}
+
+/* ================= Modal content ================= */
+
+.consigne-modal-intro {
+  margin: 0 0 20px;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.consigne-steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.consigne-steps li {
+  position: relative;
+  padding-left: 38px;
+  color: var(--color-text);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  counter-increment: step;
+}
+
+.consigne-steps li::before {
+  content: counter(step);
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+/* ================= Responsive ================= */
+
+@media (max-width: 480px) {
+  .consignes-callout,
+  .consigne-card {
+    padding: 16px;
+  }
+
+  .consignes-callout-link {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .consigne-card,
+  .consigne-card__meta span {
+    transition: none;
+  }
+
+  .consigne-card:hover {
+    transform: none;
+  }
+
+  .consigne-card:hover .consigne-card__meta span {
+    transform: none;
+  }
+}

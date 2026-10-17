@@ -14,13 +14,13 @@ function CrisisMap() {
     >
       
     <TileLayer
-      attribution='Tiles &copy; Esri'
+      attribution='Fonds de carte &copy; Esri'
       url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
     />
 
 
       <Marker position={setifPosition}>
-        <Popup>Sétif — test marker</Popup>
+        <Popup>Sétif — marqueur de test</Popup>
       </Marker>
     </MapContainer>
   );

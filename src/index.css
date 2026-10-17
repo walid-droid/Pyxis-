@@ -23,6 +23,7 @@
   /* Borders and shadows */
   --color-border: #dce2dc;
   --shadow-card: 0 2px 8px rgb(17 25 22 / 4%);
+  --shadow-raised: 0 6px 20px rgb(17 25 22 / 12%);
 
   /* Status */
   --color-danger: #b42318;

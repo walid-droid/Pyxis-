@@ -1,0 +1,72 @@
+/* =========================================================
+   Clickable counters (shared)
+   ========================================================= */
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  display: grid;
+  gap: 6px;
+  padding: 24px;
+  text-align: left;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-top: 3px solid var(--color-green);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+button.stat-card {
+  cursor: pointer;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgb(17 25 22 / 12%);
+}
+
+.stat-card__value {
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  line-height: 1;
+  color: var(--color-text);
+}
+
+.stat-card__label {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.stat-card__hint {
+  color: var(--color-green);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Tone accents */
+.stat-card.verified   { border-top-color: var(--color-success); }
+.stat-card.unverified { border-top-color: var(--color-warning); }
+.stat-card.incident   { border-top-color: var(--color-primary); }
+.stat-card.high       { border-top-color: var(--color-danger); }
+.stat-card.crisis     { border-top-color: var(--color-navy); }
+.stat-card.upcoming   { border-top-color: #1d4ed8; }
+.stat-card.ongoing    { border-top-color: var(--color-success); }
+.stat-card.ended      { border-top-color: var(--color-border); }
+
+@media (max-width: 900px) {
+  .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  .stat-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -3,6 +3,7 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 // pour que ses règles globales (body, header, h1…) ne touchent pas le dashboard.
 import css from "./landing.css?inline";
 import { useReducedMotion, useReveal, useRafScroll } from "./hooks";
+import logo from "../assets/Logo SafeDZ.png";
 import Header from "./sections/Header";
 import Hero from "./sections/Hero";
 import Situation from "./sections/Situation";
@@ -50,11 +51,7 @@ export default function Landing() {
     <div ref={rootRef}>
       <a className="skip" href="#top">Aller au contenu</a>
       <div id="ld" aria-hidden="true">
-        <svg viewBox="0 0 28 28">
-          <path d="M14 2 26 14 14 26 2 14Z" />
-          <path d="M5.5 5.5h17v17h-17Z" />
-          <circle cx="14" cy="14" r="2.6" />
-        </svg>
+        <img src={logo} alt="" />
       </div>
       <ScrollProgress />
       <Header />

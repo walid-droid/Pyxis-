@@ -5,18 +5,25 @@ type WarningCardProps = {
   warning: Warning;
 };
 
+const SEVERITY_FR: Record<string, string> = {
+  Low: "Faible",
+  Medium: "Moyenne",
+  High: "Élevée",
+  Critical: "Critique",
+};
+
 function WarningCard({ warning }: WarningCardProps) {
   return (
             <article className={`warning-card ${warning.verification}`}>
         <div className="warning-card__top">
             <span className="warning-card__severity">
-            {warning.severity}
+            {SEVERITY_FR[warning.severity]}
             </span>
 
             <span className="warning-card__verification">
             {warning.verification === "verified"
-                ? "Verified"
-                : "Unverified"}
+                ? "Vérifiée"
+                : "Non vérifiée"}
             </span>
         </div>
 
@@ -29,7 +36,7 @@ function WarningCard({ warning }: WarningCardProps) {
             <span>{warning.issuedAt}</span>
         </div>
 
-        <small>Source: {warning.source}</small>
+        <small>Source : {warning.source}</small>
         </article>
   );
 }

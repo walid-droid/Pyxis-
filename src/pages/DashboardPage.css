@@ -3,11 +3,10 @@
 .dashboard-page {
   --row-h: 54px;     /* table row height */
   --head-h: 40px;    /* table header height */
-  --team-h: 72px;    /* team card height */
 
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 20px;
+  gap: 28px;
   align-items: start;
 }
 
@@ -111,128 +110,27 @@
   .dashboard-page > .alert .live-dot { animation: none; }
 }
 
-/* ================= Alert groups ================= */
+/* ================= Counters row ================= */
 
-.dashboard-page > .warnings {
+.dashboard-page > .stats {
   grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: stretch;              /* both groups get the same height */
-  gap: 28px;
-  padding: 24px;
-  box-shadow: none;
 }
 
-.warnings-group {
-  min-width: 0;
+/* ================= Map panel ================= */
+
+.dashboard-page > .map {
+  grid-column: 1 / -1;
+  align-self: stretch;
   display: flex;
   flex-direction: column;
-}
-
-.warnings-group h3 {
-  margin: 0 0 16px;
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 400;
-}
-
-.warning-list {
-  flex: 1;                           /* fills the group, so both scrollbars sit on the same line */
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 240px;
-  grid-template-rows: 1fr;           /* every card gets the same height */
-  gap: 16px;
-
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 4px 4px 14px;
-  scroll-snap-type: x proximity;
-  overscroll-behavior-x: contain;
-}
-
-.warning-list > * {
-  scroll-snap-align: start;
-  margin: 0;
-}
-
-/* ================= Shared green scrollbar ================= */
-
-.warning-list::-webkit-scrollbar,
-.table-scroll::-webkit-scrollbar,
-.team-list::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-.warning-list::-webkit-scrollbar-button,
-.table-scroll::-webkit-scrollbar-button,
-.team-list::-webkit-scrollbar-button {
-  display: none;
-  width: 0;
-  height: 0;
-}
-
-.warning-list::-webkit-scrollbar-track,
-.table-scroll::-webkit-scrollbar-track,
-.team-list::-webkit-scrollbar-track {
-  background: rgba(22, 112, 74, 0.08);
-  border-radius: 999px;
-}
-
-.warning-list::-webkit-scrollbar-thumb,
-.table-scroll::-webkit-scrollbar-thumb,
-.team-list::-webkit-scrollbar-thumb {
-  background: rgba(22, 112, 74, 0.55);
-  border-radius: 999px;
-}
-
-.warning-list::-webkit-scrollbar-thumb:hover,
-.table-scroll::-webkit-scrollbar-thumb:hover,
-.team-list::-webkit-scrollbar-thumb:hover {
-  background: #16704a;
-}
-
-/* Firefox only (kept separate so Chrome/Brave keep the custom bar without arrows) */
-@supports (-moz-appearance: none) {
-  .warning-list,
-  .table-scroll,
-  .team-list {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(22, 112, 74, 0.55) transparent;
-  }
-}
-
-/* ================= Panels ================= */
-
-.dashboard-page > section.cardSec,
-.dashboard-page > section.cardedSec {
   padding: 24px;
 }
 
-.dashboard-page > section h2 {
+.dashboard-page > .map h2 {
   margin-bottom: 18px;
   font-family: var(--font-display);
   font-size: 1.65rem;
   font-weight: 400;
-}
-
-.dashboard-page > .incidents { grid-column: span 6; }
-.dashboard-page > .crisis    { grid-column: span 6; }
-
-/* teams smaller, map bigger */
-.dashboard-page > .teams {
-  grid-column: span 4;
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
-}
-
-.dashboard-page > .map {
-  grid-column: span 8;
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
 }
 
 .dashboard-page > .map .crisis-map {
@@ -242,17 +140,7 @@
   min-height: 440px;
 }
 
-.dashboard-page > .action {
-  grid-column: 1 / -1;
-  min-height: 120px;
-}
-
-/* ================= Tables: 5 rows visible, then scroll ================= */
-
-.table-scroll {
-  max-height: calc(var(--head-h) + var(--row-h) * 5);
-  overflow: auto;
-}
+/* ================= Detail tables ================= */
 
 .dashboard-page table {
   width: 100%;
@@ -286,35 +174,6 @@
   border-bottom: 1px solid var(--color-border);
 }
 
-/* ================= Teams: 5 visible, then scroll ================= */
-
-.team-list {
-  list-style: none;
-  margin: 0;
-  padding: 0 4px 0 0;
-  display: grid;
-  gap: 10px;
-  max-height: calc(var(--team-h) * 5 + 10px * 4);
-  overflow-y: auto;
-}
-
-.team-item {
-  box-sizing: border-box;
-  height: var(--team-h);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding: 0 14px;
-  line-height: 1.25;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-}
-
-.team-item div { display: grid; gap: 1px; min-width: 0; }
-.team-item strong { font-size: 0.95rem; }
-.team-item span:not(.pill) { font-size: 0.82rem; color: #5f6f67; }
-
 /* ================= Pills ================= */
 
 .pill {
@@ -339,41 +198,21 @@
 .st-escalating                               { background: #fbdcd9; color: #b3261e; }
 .st-contained, .st-stabilising, .st-en-route { background: #fdf0d9; color: #a15c07; }
 
-/* ================= Tablet ================= */
-
-@media (max-width: 900px) {
-  .dashboard-page > .teams { grid-column: span 5; }
-  .dashboard-page > .map   { grid-column: span 7; }
-}
-
-/* ================= Mobile ================= */
+/* ================= Responsive ================= */
 
 @media (max-width: 650px) {
   .dashboard-page {
     grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
+    gap: 16px;
     padding: 20px 14px;
   }
 
   .dashboard-page > .alert,
-  .dashboard-page > .warnings,
-  .dashboard-page > .incidents,
-  .dashboard-page > .crisis,
-  .dashboard-page > .teams,
-  .dashboard-page > .map,
-  .dashboard-page > .action {
+  .dashboard-page > .stats,
+  .dashboard-page > .map {
     grid-column: 1 / -1;
   }
 
-  .dashboard-page > .warnings {
-    grid-template-columns: minmax(0, 1fr);
-    padding: 16px;
-  }
-
-  .dashboard-page > section.cardSec,
-  .dashboard-page > section.cardedSec {
-    padding: 18px;
-  }
-
+  .dashboard-page > .map { padding: 18px; }
   .dashboard-page > .map .crisis-map { min-height: 320px; }
 }

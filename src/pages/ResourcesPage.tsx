@@ -6,16 +6,16 @@ function ResourcesPage() {
     <main className="page-container">
       <header className="page-header">
         <div>
-          <h1>Resources</h1>
-          <p>Find the information and resources you need during an emergency.</p>
+          <h1>Ressources</h1>
+          <p>Trouvez les informations et ressources utiles en cas d'urgence.</p>
         </div>
       </header>
 
       <section className="cardSec" style={{ padding: 24 }}>
-        <h2>Emergency resources</h2>
+        <h2>Ressources d'urgence</h2>
         <p style={{ color: "var(--color-text-muted)" }}>
-          Emergency contacts, safety guides, shelters, and useful resources
-          will appear here.
+          Les contacts d'urgence, guides de sécurité, abris et ressources
+          utiles apparaîtront ici.
         </p>
       </section>
     </main>

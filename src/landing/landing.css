@@ -26,7 +26,9 @@ header{position:fixed;inset:0 0 auto 0;z-index:50;background:rgba(255,255,255,.9
 header.s{height:56px}
 header .wrap{display:flex;align-items:center;height:100%;gap:40px}
 .logo{display:flex;align-items:center;gap:10px;font:500 24px var(--serif);letter-spacing:-.01em}
-.logo svg{width:26px;height:26px}
+.logo img{display:block;height:46px;width:auto;border-radius:6px;transition:height .4s var(--ease)}
+header.s .logo img{height:38px}
+footer .logo img{height:80px}
 nav{display:flex;gap:28px;font-size:15px;font-weight:500;flex:1}
 nav a{position:relative;padding:4px 0}
 nav a:after{content:"";position:absolute;left:0;bottom:0;height:1px;width:100%;background:var(--ink);transform:scaleX(0);transform-origin:left;transition:transform .4s var(--ease)}
@@ -181,8 +183,8 @@ footer .n{font:500 26px var(--sans);display:block;margin-bottom:14px}footer .n s
 .call{display:none}
 
 #ld{position:fixed;inset:0;z-index:200;background:var(--ink);display:grid;place-items:center;pointer-events:none;animation:ld .9s var(--ease) forwards}
-#ld svg{width:72px;height:72px}#ld path{fill:none;stroke:#fff;stroke-width:1.4;stroke-dasharray:90;stroke-dashoffset:90;animation:dr .5s ease forwards}#ld circle{fill:var(--red);transform-origin:center;animation:pp .3s .35s both}
-@keyframes dr{to{stroke-dashoffset:0}}@keyframes pp{from{transform:scale(0)}to{transform:scale(1)}}
+#ld img{width:160px;height:auto;border-radius:14px;opacity:0;animation:ldin .5s .35s var(--ease) forwards}
+@keyframes ldin{to{opacity:1}}
 @keyframes ld{0%,45%{clip-path:inset(0 0 0 0)}100%{clip-path:inset(0 0 100% 0);visibility:hidden}}
 #pb{position:fixed;top:0;left:0;height:3px;width:0;background:var(--red);z-index:70}
 #cur{position:fixed;left:0;top:0;width:34px;height:34px;margin:-17px 0 0 -17px;border:1px solid #fff;border-radius:50%;pointer-events:none;z-index:150;mix-blend-mode:difference;display:none;transition:width .3s var(--ease),height .3s var(--ease),margin .3s var(--ease),background .3s}

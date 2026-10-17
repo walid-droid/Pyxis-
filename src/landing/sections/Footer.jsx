@@ -1,6 +1,7 @@
 import { Link } from "react-router";
-import { DASHBOARD_PATH } from "../../config";
+import { LOGIN_PATH, REGISTER_PATH } from "../../config";
 import { noop } from "../utils";
+import logo from "../../assets/Logo SafeDZ.png";
 
 export default function Footer() {
   return (
@@ -8,7 +9,9 @@ export default function Footer() {
       <div className="wrap">
         <div className="top">
           <div>
-            <div className="logo" style={{ marginBottom: 28, color: "#fff" }}>SafeDZ</div>
+            <div className="logo" style={{ marginBottom: 28 }}>
+              <img src={logo} alt="SafeDZ" />
+            </div>
             <h2>L'information fiable, quand elle compte vraiment.</h2>
           </div>
           <div>
@@ -31,9 +34,9 @@ export default function Footer() {
             </div>
             <div>
               <h4>Compte</h4>
-              <Link to={DASHBOARD_PATH}>Se connecter</Link>
-              <a href="#" onClick={noop}>Créer un compte</a>
-              <Link to={DASHBOARD_PATH}>Espace professionnel</Link>
+              <Link to={LOGIN_PATH}>Se connecter</Link>
+              <Link to={REGISTER_PATH}>Créer un compte</Link>
+              <Link to={LOGIN_PATH}>Espace professionnel</Link>
             </div>
             <div>
               <h4>Informations</h4>

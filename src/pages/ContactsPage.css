@@ -1,20 +1,13 @@
-/* Contacts page. Everything is scoped to .contacts-page so it cannot affect the rest of the app,
-   and the page sets its own colors so it looks the same in light or dark mode. */
-.contacts-page {
-  --ct-ink: #0b1210;
-  --ct-grey: #566159;
-  --ct-line: #d8ded8;
-  --ct-paper: #f4f6f3;
-  --ct-green: #0f6b45;
-  --ct-red: #d92d20;
+/* =========================================================
+   Contacts / Numéros d'urgence
+   ========================================================= */
 
-  min-height: calc(100dvh - 64px);
-  padding: 48px 20px 80px;
-  background: var(--ct-paper);
-  color: var(--ct-ink);
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-  font-size: 17px;
-  line-height: 1.6;
+.contacts-page {
+  min-height: calc(100vh - 72px);
+  padding: clamp(24px, 5vw, 56px) 20px 80px;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-body);
   text-align: left;
 }
 
@@ -29,53 +22,152 @@
   margin: 0 auto;
 }
 
-.ct-eyebrow {
-  margin: 0 0 12px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--ct-green);
+/* ---------- Hero ---------- */
+
+.ct-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  margin-bottom: 48px;
+  padding: clamp(28px, 5vw, 52px);
+
+  color: #fff;
+  background-color: #172b22;
+  background-image:
+    linear-gradient(120deg, rgba(18, 32, 25, 0.95) 0%, rgba(29, 68, 54, 0.86) 55%, rgba(28, 85, 64, 0.78) 100%),
+    url("../../public/topographic.svg");
+  background-size: cover;
+  background-position: right center;
+  background-repeat: no-repeat;
+
+  border: 1px solid #294638;
+  border-radius: var(--radius-card);
 }
 
-.ct-title,
-.ct-group h2,
-.ct-card h3 {
-  font-family: "Newsreader", Georgia, "Times New Roman", serif;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  color: var(--ct-ink);
+.ct-hero-text {
+  max-width: 620px;
+}
+
+.ct-eyebrow {
+  margin: 0 0 12px;
+  color: #8fd3b6;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .ct-title {
   margin: 0 0 16px;
-  font-size: clamp(34px, 5vw, 56px);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
   line-height: 1.05;
 }
 
 .ct-lead {
-  max-width: 640px;
-  margin: 0 0 48px;
-  font-size: 18px;
-  color: var(--ct-grey);
+  max-width: 560px;
+  margin: 0;
+  color: #d7e4dc;
+  font-size: 1.02rem;
+  line-height: 1.7;
 }
+
+.ct-hero-call {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  padding: 14px 24px;
+  border-radius: 999px;
+  background: #ff5a4f;
+  color: #fff;
+  box-shadow: 0 10px 26px rgba(255, 90, 79, 0.32);
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.ct-hero-call:hover {
+  background: #e5483d;
+  transform: translateY(-2px);
+}
+
+.ct-hero-call svg {
+  width: 26px;
+  height: 26px;
+}
+
+.ct-hero-call span {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.ct-hero-call small {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  opacity: 0.9;
+}
+
+/* ---------- Groups ---------- */
 
 .ct-group {
   margin-bottom: 56px;
 }
 
+.ct-group-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
 .ct-group h2 {
-  margin: 0 0 6px;
-  font-size: clamp(26px, 3.4vw, 36px);
-  line-height: 1.1;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.ct-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.ct-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-danger);
 }
 
 .ct-group-intro {
-  margin: 0 0 24px;
-  color: var(--ct-grey);
+  margin: 8px 0 24px;
+  color: var(--color-text-muted);
 }
+
+/* ---------- Cards ---------- */
 
 .ct-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 16px;
   margin: 0;
   padding: 0;
@@ -85,32 +177,62 @@
 .ct-card {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   padding: 22px;
-  background: #fff;
-  border: 1px solid var(--ct-line);
-  border-top: 3px solid var(--ct-green);
-  border-radius: 6px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-top: 3px solid var(--color-green);
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+  transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
 .ct-card--urgent {
-  border-top-color: var(--ct-red);
+  border-top-color: var(--color-primary);
+}
+
+.ct-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-raised);
+}
+
+.ct-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ct-card-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #e3efe8;
+  color: var(--color-green);
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+}
+
+.ct-card--urgent .ct-card-icon {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
 }
 
 .ct-card h3 {
   margin: 0;
-  font-size: 24px;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 400;
   line-height: 1.15;
 }
 
-.ct-card p {
+.ct-card .ct-role {
   margin: 0;
-  font-size: 16px;
-  color: var(--ct-grey);
-}
-
-.ct-card .ct-note {
-  font-size: 14px;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
 }
 
 .ct-numbers {
@@ -118,7 +240,7 @@
   flex-wrap: wrap;
   gap: 10px;
   margin-top: auto;
-  padding-top: 6px;
+  padding-top: 4px;
 }
 
 .ct-call,
@@ -126,45 +248,83 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 96px;
-  min-height: 52px;
-  padding: 0 20px;
-  border-radius: 4px;
-  background: var(--ct-ink);
+  gap: 9px;
+  min-height: 50px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: var(--color-green);
   color: #fff;
-  font-size: 26px;
-  font-weight: 600;
+  font-size: 1.4rem;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
   text-decoration: none;
   transition: transform 0.2s ease, background 0.2s ease;
 }
 
+.ct-call svg {
+  width: 20px;
+  height: 20px;
+}
+
 .ct-card--urgent .ct-call {
-  background: var(--ct-red);
+  background: var(--color-primary);
 }
 
 .ct-call:hover {
   color: #fff;
   transform: translateY(-2px);
+  background: var(--color-green);
+  filter: brightness(1.08);
+}
+
+.ct-card--urgent .ct-call:hover {
+  background: var(--color-primary-hover);
+  filter: none;
 }
 
 .ct-call:focus-visible {
-  outline: 3px solid var(--ct-ink);
+  outline: 3px solid var(--color-green);
   outline-offset: 2px;
 }
+
+.ct-card .ct-note {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+/* ---------- Footer note ---------- */
 
 .ct-foot {
   max-width: 720px;
   margin: 0;
   padding-top: 24px;
-  border-top: 1px solid var(--ct-line);
-  font-size: 14px;
-  color: var(--ct-grey);
+  border-top: 1px solid var(--color-border);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 720px) {
+  .ct-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ct-hero-call {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .ct-group {
+    margin-bottom: 40px;
+  }
 }
 
 @media (max-width: 480px) {
   .contacts-page {
-    padding: 32px 16px 64px;
+    padding: 28px 16px 64px;
   }
 
   .ct-call {
@@ -173,11 +333,15 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ct-call {
+  .ct-card,
+  .ct-call,
+  .ct-hero-call {
     transition: none;
   }
 
-  .ct-call:hover {
+  .ct-card:hover,
+  .ct-call:hover,
+  .ct-hero-call:hover {
     transform: none;
   }
 }

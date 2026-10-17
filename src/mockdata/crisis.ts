@@ -6,13 +6,13 @@ export type Crisis = {
 };
 
 export const mockCrisis: Crisis[] = [
-  { id: 1, event: "Northern forest fire season", location: "Béjaïa, Jijel, Tizi Ouzou", status: "Escalating" },
-  { id: 2, event: "Seasonal flooding", location: "Skikda, Annaba, El Tarf", status: "Active" },
-  { id: 3, event: "Post-earthquake recovery", location: "Mila", status: "Recovery" },
-  { id: 4, event: "Heatwave and drought", location: "Biskra, Ouargla, El Oued", status: "Active" },
-  { id: 5, event: "Dam water level alert", location: "Skikda", status: "Stabilising" },
-  { id: 6, event: "Landslide risk on mountain roads", location: "Tizi Ouzou, Bouira", status: "Active" },
-{ id: 7, event: "Power grid disruption", location: "Oran, Mostaganem", status: "Stabilising" },
-{ id: 8, event: "Coastal storm surge", location: "Jijel, Béjaïa", status: "Escalating" },
-{ id: 9, event: "Crop damage and drought", location: "Adrar, Tamanrasset", status: "Recovery" },
+  { id: 1, event: "Saison des feux de forêt dans le nord", location: "Béjaïa, Jijel, Tizi Ouzou", status: "Escalating" },
+  { id: 2, event: "Inondations saisonnières", location: "Skikda, Annaba, El Tarf", status: "Active" },
+  { id: 3, event: "Reconstruction post-séisme", location: "Mila", status: "Recovery" },
+  { id: 4, event: "Canicule et sécheresse", location: "Biskra, Ouargla, El Oued", status: "Active" },
+  { id: 5, event: "Alerte niveau d'eau des barrages", location: "Skikda", status: "Stabilising" },
+  { id: 6, event: "Risque de glissement de terrain sur les routes de montagne", location: "Tizi Ouzou, Bouira", status: "Active" },
+  { id: 7, event: "Perturbation du réseau électrique", location: "Oran, Mostaganem", status: "Stabilising" },
+  { id: 8, event: "Onde de tempête côtière", location: "Jijel, Béjaïa", status: "Escalating" },
+  { id: 9, event: "Dommages aux cultures et sécheresse", location: "Adrar, Tamanrasset", status: "Recovery" },
 ];

@@ -90,26 +90,65 @@ const GROUPS: Group[] = [
   },
 ];
 
+function PhoneIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" aria-hidden="true">
+      <path
+        d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export default function ContactsPage() {
   return (
     <main className="contacts-page">
       <div className="ct-wrap">
-        <p className="ct-eyebrow">Contacts</p>
-        <h1 className="ct-title">Numéros d'urgence en Algérie</h1>
-        <p className="ct-lead">
-          En cas de danger immédiat, appelez d'abord les secours. Touchez un numéro pour lancer l'appel depuis votre
-          téléphone.
-        </p>
+        <header className="ct-hero">
+          <div className="ct-hero-text">
+            <p className="ct-eyebrow">Contacts</p>
+            <h1 className="ct-title">Numéros d'urgence en Algérie</h1>
+            <p className="ct-lead">
+              En cas de danger immédiat, appelez d'abord les secours. Touchez un numéro pour lancer
+              l'appel depuis votre téléphone.
+            </p>
+          </div>
+
+          <a className="ct-hero-call" href="tel:14">
+            <PhoneIcon />
+            <span>
+              <small>Appel d'urgence</small>
+              14
+            </span>
+          </a>
+        </header>
 
         {GROUPS.map((group) => (
           <section key={group.id} className="ct-group" aria-labelledby={`ct-${group.id}`}>
-            <h2 id={`ct-${group.id}`}>{group.title}</h2>
+            <div className="ct-group-head">
+              <h2 id={`ct-${group.id}`}>{group.title}</h2>
+              {group.urgent && (
+                <span className="ct-badge">
+                  <span className="ct-badge-dot" /> Priorité
+                </span>
+              )}
+            </div>
             <p className="ct-group-intro">{group.intro}</p>
+
             <ul className="ct-grid">
               {group.contacts.map((c) => (
                 <li key={c.name} className={"ct-card" + (group.urgent ? " ct-card--urgent" : "")}>
-                  <h3>{c.name}</h3>
-                  <p>{c.role}</p>
+                  <div className="ct-card-head">
+                    <span className="ct-card-icon" aria-hidden="true">
+                      {c.name.charAt(0)}
+                    </span>
+                    <h3>{c.name}</h3>
+                  </div>
+
+                  <p className="ct-role">{c.role}</p>
+
                   <div className="ct-numbers">
                     {c.numbers.map((n) => (
                       <a
@@ -118,10 +157,12 @@ export default function ContactsPage() {
                         href={`tel:${n.tel}`}
                         aria-label={`Appeler le ${n.display} (${c.name})`}
                       >
+                        <PhoneIcon />
                         {n.display}
                       </a>
                     ))}
                   </div>
+
                   {c.note && <p className="ct-note">{c.note}</p>}
                 </li>
               ))}
@@ -130,8 +171,9 @@ export default function ContactsPage() {
         ))}
 
         <p className="ct-foot">
-          Liste vérifiée en {LAST_CHECKED} à partir de sources de presse algériennes. Les numéros peuvent changer : en
-          cas de doute, appelez le 14 ou le 17. Cette page ne remplace pas l'appel aux secours.
+          Liste vérifiée en {LAST_CHECKED} à partir de sources de presse algériennes. Les numéros
+          peuvent changer : en cas de doute, appelez le 14 ou le 17. Cette page ne remplace pas
+          l'appel aux secours.
         </p>
       </div>
     </main>

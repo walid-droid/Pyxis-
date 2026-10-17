@@ -25,14 +25,11 @@
   line-height: 1;
 }
 
-.brand-mark {
-  display: inline-grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  color: var(--color-green);
-  font-family: var(--font-body);
-  font-size: 1.7rem;
+.app-brand img {
+  display: block;
+  height: 44px;
+  width: auto;
+  border-radius: 6px;
 }
 
 .app-nav {
