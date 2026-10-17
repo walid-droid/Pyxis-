@@ -272,3 +272,7 @@ main:focus{outline:0}
 @media(max-width:900px){.tl:before{bottom:auto;width:1px;height:var(--rail,0px)}}
 @keyframes ln{from{transform:scaleX(0)}}@keyframes lny{from{transform:scaleY(0)}}
 @media(max-width:900px){.st:after{left:-27.5px;top:15px;width:2px;height:calc(100% - 15px);transform-origin:top}.tl.go .st.done:after{animation-name:lny}}
+
+/* Correctif mobile : la colonne hero ne doit pas dépasser le viewport
+   (le min-content intrinsèque du champ de recherche élargissait le bloc) */
+@media(max-width:900px){.hero .wrap{width:100%;min-width:0}}

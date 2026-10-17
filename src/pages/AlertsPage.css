@@ -202,6 +202,12 @@
   text-align: center;
 }
 
+.alerts-note {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+}
+
 /* ================= Warnings grid ================= */
 
 .alerts-grid {
@@ -247,6 +253,7 @@
 
   .alerts-filter-btn {
     width: auto;
+    min-height: 44px;
   }
 }
 

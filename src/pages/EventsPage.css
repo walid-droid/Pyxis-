@@ -321,6 +321,7 @@
 
   .events-filter-btn {
     width: auto;
+    min-height: 44px;
   }
 }
 

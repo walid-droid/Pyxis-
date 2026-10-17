@@ -18,12 +18,11 @@ export default function Header() {
         <nav aria-label="Principal">
           <a href="#risques">Carte des risques</a>
           <a href="#alerte">Alertes en cours</a>
-          <a href="#risques">Consignes</a>
-          <a href="#pro">Aider</a>
+          <Link to="/consignes">Consignes</Link>
         </nav>
         <div className="hr">
           <Link className="tx" to={LOGIN_PATH}>Se connecter</Link>
-          <a className="btn red" href="#signalement">Signaler un incident</a>
+          <Link className="btn red" to="/submit-alert">Signaler un incident</Link>
         </div>
       </div>
     </header>

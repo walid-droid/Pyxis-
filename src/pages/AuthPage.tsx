@@ -15,7 +15,7 @@ const COPY: Record<
     subtitle: "Accédez à votre espace SafeDZ.",
     farTitle: "Bon retour.",
     farText:
-      "Retrouvez votre tableau de bord, les alertes vérifiées et l'état des interventions en temps réel.",
+      "Retrouvez les alertes vérifiées, les consignes et les abris près de vous.",
     submit: "Se connecter",
   },
   register: {
@@ -65,12 +65,12 @@ export default function AuthPage({ mode }: { mode: AuthMode }) {
           <ul className="auth-points">
             <li>Alertes vérifiées en temps réel</li>
             <li>Signalement d'incidents en un instant</li>
-            <li>Coordination avec les services de secours</li>
+            <li>Consignes et abris près de vous</li>
           </ul>
         </div>
 
         <p className="auth-aside-foot">
-          © 2026 SafeDZ · Plateforme intelligente de gestion des catastrophes
+          © 2026 SafeDZ · Pensé pour les citoyens en Algérie
         </p>
       </aside>
 

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router";
 import FieldCanvas from "../FieldCanvas";
 import { noop } from "../utils";
 
@@ -106,7 +107,7 @@ export default function Hero({ reducedMotion }) {
           <p className="note">
             Si vous autorisez la géolocalisation lors d'un signalement, votre position pourra y être jointe pour aider les services à localiser l'incident. Un signalement en ligne ne remplace pas l'appel aux secours.
           </p>
-          <a className="btn red" href="#suivi">Envoyer un signalement</a>
+          <Link className="btn red" to="/submit-alert">Envoyer un signalement</Link>
         </div>
       </div>
     </section>

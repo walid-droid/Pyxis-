@@ -9,7 +9,7 @@
    ========================================================= */
 
 .assistant-page {
-  --app-header-h: 72px; /* hauteur du header de l'app (App.css) : à ajuster si le tien est différent */
+  /* --app-header-h : défini dans App.css, ajusté aux breakpoints. */
   --ai-green: #176b50;
   --ai-green-dark: #10533d;
   --ai-ink: #1c3328;

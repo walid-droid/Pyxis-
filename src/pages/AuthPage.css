@@ -216,6 +216,8 @@
 }
 
 .auth-link {
+  margin-block: -12px;
+  padding-block: 12px;
   color: var(--color-green);
   font-weight: 600;
 }
@@ -253,6 +255,9 @@
 }
 
 .auth-switch a {
+  display: inline-block;
+  margin: -12px -6px;
+  padding: 12px 6px;
   color: var(--color-green);
   font-weight: 600;
 }
@@ -263,6 +268,9 @@
 }
 
 .auth-back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   color: var(--color-text-muted);
   font-size: 0.85rem;
 }

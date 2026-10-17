@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { Link } from "react-router";
 import { useRafScroll } from "../hooks";
 import { clamp, noop } from "../utils";
 
@@ -75,7 +76,7 @@ export default function Tracking() {
           ))}
         </div>
         <div className="btns">
-          <a className="btn" href="#" onClick={noop}>Signaler un incident</a>
+          <Link className="btn" to="/submit-alert">Signaler un incident</Link>
           <a className="btn out" href="#" onClick={noop}>Suivre mon signalement</a>
         </div>
       </div>

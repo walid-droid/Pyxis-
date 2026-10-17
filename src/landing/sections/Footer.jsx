@@ -36,7 +36,6 @@ export default function Footer() {
               <h4>Compte</h4>
               <Link to={LOGIN_PATH}>Se connecter</Link>
               <Link to={REGISTER_PATH}>Créer un compte</Link>
-              <Link to={LOGIN_PATH}>Espace professionnel</Link>
             </div>
             <div>
               <h4>Informations</h4>

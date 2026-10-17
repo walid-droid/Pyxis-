@@ -1,0 +1,540 @@
+/* =========================================================
+   Incident map modal — layout, layer toggles and map styling
+   ========================================================= */
+
+.modal--map {
+  width: min(1080px, 100%);
+  max-height: min(88vh, 880px);
+  max-height: min(88dvh, 880px);
+}
+
+.modal--map .modal-body {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ---- Info bar: badges + layer toggles ---- */
+
+.map-modal__info {
+  display: grid;
+  gap: 12px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.map-modal__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+}
+
+.map-modal__sub {
+  color: var(--color-text-muted);
+  font-size: 0.84rem;
+}
+
+.map-modal__desc {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.map-modal__source {
+  font-size: 0.76rem;
+  opacity: 0.85;
+}
+
+.map-modal__layers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.map-layer {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+}
+
+.map-layer__icon {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.map-layer__icon svg {
+  width: 11px;
+  height: 11px;
+}
+
+.map-layer__count {
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.map-layer:hover {
+  border-color: color-mix(in srgb, var(--layer) 45%, var(--color-border));
+  color: var(--color-text);
+}
+
+.map-layer.is-on {
+  border-color: color-mix(in srgb, var(--layer) 55%, transparent);
+  background: color-mix(in srgb, var(--layer) 8%, #fff);
+  color: var(--color-text);
+}
+
+.map-layer.is-on .map-layer__icon {
+  background: var(--layer);
+  color: #fff;
+}
+
+.map-layer.is-on .map-layer__count {
+  color: var(--layer);
+}
+
+.map-layer.zones    { --layer: var(--color-green); }
+.map-layer.routes   { --layer: var(--color-warning); }
+.map-layer.shelters { --layer: var(--color-navy); }
+.map-layer.posts    { --layer: var(--color-primary); }
+
+/* ---- Citizen help strip: nearest shelter + direct calls ---- */
+
+.map-modal__help {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-muted);
+}
+
+.map-modal__shelter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.map-modal__shelter-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid var(--color-navy);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--color-navy);
+}
+
+.map-modal__shelter-icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+.map-modal__shelter-text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.map-modal__shelter-text small {
+  color: var(--color-text-muted);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.map-modal__shelter-text strong {
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: 0.86rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.map-modal__shelter-dist {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.map-modal__itinerary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: var(--color-navy);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 160ms ease;
+}
+
+.map-modal__itinerary:hover {
+  background: #0e1b17;
+}
+
+.map-modal__itinerary svg {
+  width: 13px;
+  height: 13px;
+}
+
+.map-modal__calls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.map-modal__calls-label {
+  color: var(--color-text-muted);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.map-modal__call {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 13px;
+  border: 1px solid color-mix(in srgb, var(--color-danger) 30%, transparent);
+  border-radius: 999px;
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.map-modal__call:hover {
+  border-color: var(--color-danger);
+  background: color-mix(in srgb, var(--color-danger-bg) 55%, #fff);
+}
+
+/* ---- Map stage ---- */
+
+.map-modal__stage {
+  position: relative;
+  flex: 1 1 auto;
+  height: 52vh;
+  min-height: 260px;
+  max-height: 620px;
+}
+
+.safety-map {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-surface-muted);
+}
+
+/* ---- Incident pin ---- */
+
+.map-pin {
+  display: block;
+  background: transparent;
+  border: 0;
+}
+
+.map-pin.verified   { --pin-color: var(--color-green); }
+.map-pin.unverified { --pin-color: var(--color-warning); }
+.map-pin.incident   { --pin-color: var(--color-primary); }
+.map-pin.crisis     { --pin-color: var(--color-navy); }
+
+.map-pin__dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--pin-color, var(--color-primary));
+  box-shadow: 0 1px 4px rgb(17 25 22 / 40%);
+}
+
+.map-pin__ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  background: var(--pin-color, var(--color-primary));
+  opacity: 0;
+  pointer-events: none;
+}
+
+.map-pin.is-active .map-pin__ring {
+  animation: map-pin-pulse 1.7s ease-out infinite;
+}
+
+@keyframes map-pin-pulse {
+  0%   { opacity: 0.5; transform: scale(1); }
+  100% { opacity: 0;   transform: scale(3.4); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-pin.is-active .map-pin__ring { animation: none; }
+}
+
+/* ---- Facility markers (shelters / rescue posts) ---- */
+
+.map-facility {
+  display: block;
+  background: transparent;
+  border: 0;
+}
+
+.map-facility__glyph {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 5px rgb(17 25 22 / 35%);
+}
+
+.map-facility__glyph svg {
+  width: 14px;
+  height: 14px;
+}
+
+.map-facility--shelter .map-facility__glyph {
+  border: 2px solid var(--color-navy);
+  color: var(--color-navy);
+}
+
+.map-facility--post .map-facility__glyph {
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* ---- Popups and tooltips ---- */
+
+.safety-map .leaflet-popup-content-wrapper {
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-raised);
+}
+
+.safety-map .leaflet-popup-content {
+  margin: 12px 14px;
+  font-family: var(--font-body);
+}
+
+.map-pop {
+  display: grid;
+  gap: 3px;
+  min-width: 140px;
+}
+
+.map-pop strong {
+  color: var(--color-text);
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.map-pop span {
+  color: var(--color-text-muted);
+  font-size: 0.74rem;
+}
+
+.safety-map .leaflet-tooltip {
+  padding: 7px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  font-family: var(--font-body);
+}
+
+.map-tip {
+  display: grid;
+  gap: 2px;
+}
+
+.map-tip strong {
+  color: var(--color-text);
+  font-size: 0.78rem;
+}
+
+.map-tip span {
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+}
+
+/* ---- Legend footer ---- */
+
+.map-modal__legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  padding: 12px 24px;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+  font-size: 0.74rem;
+}
+
+.legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend__item i {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.legend__item.zones i {
+  border: 1.5px solid var(--color-green);
+  background: color-mix(in srgb, var(--color-green) 18%, #fff);
+}
+
+.legend__item.routes i {
+  width: 18px;
+  height: 0;
+  border-radius: 0;
+  border-top: 3px solid var(--color-green);
+}
+
+.legend__item.routes-alt i {
+  width: 18px;
+  height: 0;
+  border-radius: 0;
+  border-top: 3px dashed var(--color-warning);
+}
+
+.legend__item.shelters i {
+  border: 2px solid var(--color-navy);
+  background: #fff;
+}
+
+.legend__item.posts i {
+  border: 2px solid var(--color-primary);
+  background: #fff;
+}
+
+.map-modal__note {
+  margin-left: auto;
+  font-style: italic;
+}
+
+/* ---- Status pills used in the info bar ---- */
+
+.modal--map .pill--ok {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.modal--map .pill--warn {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 700px) {
+  .modal--map {
+    max-height: 92vh;
+    max-height: 92dvh;
+  }
+
+  .map-modal__info {
+    padding: 14px 16px;
+  }
+
+  .map-layer {
+    min-height: 40px;
+  }
+
+  .map-modal__itinerary,
+  .map-modal__call {
+    min-height: 40px;
+  }
+
+  .map-modal__help {
+    padding: 10px;
+  }
+
+  .map-modal__calls {
+    margin-left: 0;
+  }
+
+  .map-modal__stage {
+    height: 46vh;
+    height: 46dvh;
+  }
+
+  .map-modal__legend {
+    padding: 10px 16px;
+    gap: 6px 12px;
+  }
+
+  .map-modal__note {
+    margin-left: 0;
+  }
+
+  /* Contrôles Leaflet : cibles tactiles confortables */
+  .modal--map .leaflet-control-zoom a {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 22px;
+  }
+
+  .modal--map .leaflet-container a.leaflet-popup-close-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--color-text-muted);
+  }
+
+  .safety-map .leaflet-popup-content {
+    margin-right: 40px;
+  }
+}

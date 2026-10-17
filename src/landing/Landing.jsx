@@ -10,7 +10,6 @@ import Situation from "./sections/Situation";
 import Risks from "./sections/Risks";
 import Alerts from "./sections/Alerts";
 import Tracking from "./sections/Tracking";
-import Pro from "./sections/Pro";
 import Sources from "./sections/Sources";
 import Footer from "./sections/Footer";
 
@@ -61,7 +60,6 @@ export default function Landing() {
         <Risks />
         <Alerts reducedMotion={reducedMotion} />
         <Tracking />
-        <Pro />
         <Sources />
       </main>
       <Footer />

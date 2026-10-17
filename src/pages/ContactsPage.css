@@ -3,7 +3,7 @@
    ========================================================= */
 
 .contacts-page {
-  min-height: calc(100vh - 72px);
+  min-height: calc(100vh - var(--app-header-h, 72px));
   padding: clamp(24px, 5vw, 56px) 20px 80px;
   background: var(--color-background);
   color: var(--color-text);

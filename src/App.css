@@ -1,6 +1,10 @@
 
 /* Navigation */
 
+:root {
+  --app-header-h: 72px;
+}
+
 .app-header {
   position: sticky;
   top: 0;
@@ -126,6 +130,10 @@
 /* Responsive navigation */
 
 @media (max-width: 1100px) {
+  :root {
+    --app-header-h: 125px;
+  }
+
   .app-header {
     flex-wrap: wrap;
     gap: 12px 20px;
@@ -135,6 +143,23 @@
     order: 3;
     width: 100%;
     justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .app-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .app-nav a {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    min-height: 44px;
+    white-space: nowrap;
   }
 
   .header-actions {
@@ -142,9 +167,22 @@
   }
 }
 
+/* Tablette : la barre de nav tient sur une seule ligne sans défilement */
+@media (min-width: 601px) and (max-width: 820px) {
+  .app-nav a {
+    padding: 9px 7px;
+    font-size: 0.85rem;
+  }
+}
+
 @media (max-width: 600px) {
+  :root {
+    --app-header-h: 117px;
+  }
+
   .app-header {
-    padding: 14px 16px;
+    padding: 10px 16px;
+    gap: 8px 16px;
   }
 
   .app-brand {
@@ -152,11 +190,11 @@
   }
 
   .app-nav {
-    gap: 2px;
+    gap: 4px;
   }
 
   .app-nav a {
-    padding: 8px;
+    padding: 10px 8px;
     font-size: 0.8rem;
   }
 

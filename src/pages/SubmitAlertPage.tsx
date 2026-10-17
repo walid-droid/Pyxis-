@@ -104,13 +104,13 @@ export default function SubmitAlertPage() {
       <header className="submit-alert-hero">
         <div className="submit-alert-hero-text">
           <span className="submit-alert-badge">
-            <i className="submit-alert-badge-dot" /> Alerte communautaire
+            <i className="submit-alert-badge-dot" /> Signalement citoyen
           </span>
-          <p className="submit-alert-eyebrow">SAFEDZ · GESTION DES ALERTES</p>
+          <p className="submit-alert-eyebrow">SAFEDZ · SIGNALEMENT CITOYEN</p>
           <h1>Créer une alerte</h1>
           <p className="submit-alert-lead">
-            Fournissez des informations précises sur l'urgence pour informer la
-            communauté et accélérer l'intervention des secours.
+            Décrivez la situation. Votre signalement sera vérifié par nos
+            équipes avant toute diffusion.
           </p>
         </div>
 

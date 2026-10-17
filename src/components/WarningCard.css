@@ -20,6 +20,15 @@
   transform: translateY(-2px);
 }
 
+.warning-card.is-clickable {
+  cursor: pointer;
+}
+
+.warning-card.is-active {
+  border-color: var(--color-green);
+  box-shadow: 0 0 0 2px var(--color-green), var(--shadow-raised);
+}
+
 .warning-card.verified {
   border-top-color: var(--color-success);
 }
@@ -93,4 +102,32 @@
 .warning-card small {
   color: var(--color-text-muted);
   font-size: 0.72rem;
+}
+
+.warning-card__meta {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.warning-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  color: var(--color-green);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.warning-card__cta svg {
+  width: 12px;
+  height: 12px;
+}
+
+.warning-card.is-clickable:hover .warning-card__cta {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }

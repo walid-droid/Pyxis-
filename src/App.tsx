@@ -1,5 +1,6 @@
 import "./App.css";
-import { Routes, Route, NavLink, Outlet } from "react-router";
+import { useEffect, useRef } from "react";
+import { Routes, Route, NavLink, Outlet, useLocation } from "react-router";
 import logo from "./assets/Logo SafeDZ.png";
 // Landing is currently implemented in JavaScript/JSX without type declarations.
 // @ts-expect-error No declaration file is available for this JSX module.
@@ -15,6 +16,14 @@ import ConsignesPage from "./pages/ConsignesPage";
 import AuthPage from "./pages/AuthPage";
 
 function DashboardLayout() {
+  const navRef = useRef<HTMLElement>(null);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    const active = navRef.current?.querySelector<HTMLElement>("a.active");
+    active?.scrollIntoView({ block: "nearest", inline: "center" });
+  }, [pathname]);
+
   return (
     <>
       <header className="app-header">
@@ -23,10 +32,11 @@ function DashboardLayout() {
           <span>SafeDZ</span>
         </NavLink>
 
-        <nav className="app-nav">
+        <nav className="app-nav" ref={navRef}>
           <NavLink to="/dashboard">Tableau de bord</NavLink>
-          <NavLink to="/alerts">Alertes en cours</NavLink>
+          <NavLink to="/alerts">Alertes</NavLink>
           <NavLink to="/consignes">Consignes</NavLink>
+          <NavLink to="/resources">Abris &amp; secours</NavLink>
           <NavLink to="/assistant">Assistant IA</NavLink>
           <NavLink to="/events">Événements</NavLink>
           <NavLink to="/contacts">Contacts</NavLink>

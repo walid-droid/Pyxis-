@@ -1,5 +1,5 @@
-// Path of the dashboard in the React app.
-// Every "Accéder à l'espace professionnel" / "Se connecter" button on the landing points here.
+// Path of the citizen dashboard in the React app.
+// Used after login ("Se connecter") and registration.
 export const DASHBOARD_PATH = "/dashboard";
 
 // Authentication pages.
