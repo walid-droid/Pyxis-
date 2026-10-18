@@ -6,17 +6,19 @@ import {
   type FormEvent,
 } from "react";
 import { useNavigate } from "react-router";
+import { useI18n } from "../i18n";
 import "./SubmitAlertPage.css";
 
 const SEVERITIES = [
-  { value: "low", label: "Faible" },
-  { value: "medium", label: "Moyenne" },
-  { value: "high", label: "Élevée" },
-  { value: "critical", label: "Critique" },
+  { value: "low", labelKey: "severity.low" },
+  { value: "medium", labelKey: "severity.medium" },
+  { value: "high", labelKey: "severity.high" },
+  { value: "critical", labelKey: "severity.critical" },
 ] as const;
 
 export default function SubmitAlertPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
 
   const [form, setForm] = useState({
     title: "",
@@ -69,7 +71,7 @@ export default function SubmitAlertPage() {
 
   function useMyLocation() {
     if (!("geolocation" in navigator)) {
-      window.alert("La géolocalisation n'est pas prise en charge par votre navigateur.");
+      window.alert(t("submit.geoUnsupported"));
       return;
     }
 
@@ -81,7 +83,7 @@ export default function SubmitAlertPage() {
         setLocating(false);
       },
       () => {
-        window.alert("Impossible d'obtenir votre position. Saisissez-la manuellement.");
+        window.alert(t("submit.geoFailed"));
         setLocating(false);
       },
       { enableHighAccuracy: true, timeout: 10000 },
@@ -96,7 +98,7 @@ export default function SubmitAlertPage() {
       ...form,
       image: imageName || null,
     });
-    alert("Formulaire validé. Connectez le backend pour enregistrer l'alerte.");
+    alert(t("submit.done"));
   }
 
   return (
@@ -104,14 +106,11 @@ export default function SubmitAlertPage() {
       <header className="submit-alert-hero">
         <div className="submit-alert-hero-text">
           <span className="submit-alert-badge">
-            <i className="submit-alert-badge-dot" /> Signalement citoyen
+            <i className="submit-alert-badge-dot" /> {t("submit.badge")}
           </span>
-          <p className="submit-alert-eyebrow">SAFEDZ · SIGNALEMENT CITOYEN</p>
-          <h1>Créer une alerte</h1>
-          <p className="submit-alert-lead">
-            Décrivez la situation. Votre signalement sera vérifié par nos
-            équipes avant toute diffusion.
-          </p>
+          <p className="submit-alert-eyebrow">{t("submit.eyebrow")}</p>
+          <h1>{t("submit.title")}</h1>
+          <p className="submit-alert-lead">{t("submit.lead")}</p>
         </div>
 
         <span className="submit-alert-hero-icon" aria-hidden="true">!</span>
@@ -122,20 +121,20 @@ export default function SubmitAlertPage() {
           <div className="submit-alert-section-head">
             <span className="submit-alert-step">01</span>
             <div className="submit-alert-section-title">
-              <h2>Informations sur l'alerte</h2>
-              <p>Donnez un titre clair et précisez la nature de l'urgence.</p>
+              <h2>{t("submit.section1")}</h2>
+              <p>{t("submit.section1Lead")}</p>
             </div>
           </div>
 
           <div className="submit-alert-field">
             <label htmlFor="alert-title">
-              Titre de l'alerte <span className="submit-alert-req">*</span>
+              {t("submit.titleLabel")} <span className="submit-alert-req">*</span>
             </label>
             <input
               id="alert-title"
               required
               maxLength={120}
-              placeholder="ex. Inondation dans un quartier résidentiel"
+              placeholder={t("submit.titlePlaceholder")}
               value={form.title}
               onChange={(e) => update("title", e.target.value)}
             />
@@ -144,7 +143,7 @@ export default function SubmitAlertPage() {
           <div className="submit-alert-grid">
             <div className="submit-alert-field">
               <label htmlFor="alert-type">
-                Type d'incident <span className="submit-alert-req">*</span>
+                {t("submit.typeLabel")} <span className="submit-alert-req">*</span>
               </label>
               <select
                 id="alert-type"
@@ -152,20 +151,20 @@ export default function SubmitAlertPage() {
                 value={form.type}
                 onChange={(e) => update("type", e.target.value)}
               >
-                <option value="">Sélectionnez le type d'incident</option>
-                <option value="flood">Inondation</option>
-                <option value="fire">Incendie</option>
-                <option value="earthquake">Séisme</option>
-                <option value="accident">Accident</option>
-                <option value="storm">Tempête</option>
-                <option value="landslide">Glissement de terrain</option>
-                <option value="other">Autre</option>
+                <option value="">{t("submit.typePlaceholder")}</option>
+                <option value="flood">{t("submit.type.flood")}</option>
+                <option value="fire">{t("submit.type.fire")}</option>
+                <option value="earthquake">{t("submit.type.earthquake")}</option>
+                <option value="accident">{t("submit.type.accident")}</option>
+                <option value="storm">{t("submit.type.storm")}</option>
+                <option value="landslide">{t("submit.type.landslide")}</option>
+                <option value="other">{t("submit.type.other")}</option>
               </select>
             </div>
 
             <div className="submit-alert-field submit-alert-severity-field">
               <span className="submit-alert-legend">
-                Gravité <span className="submit-alert-req">*</span>
+                {t("submit.severity")} <span className="submit-alert-req">*</span>
               </span>
               <div className="submit-alert-severity">
                 {SEVERITIES.map((option) => (
@@ -181,7 +180,7 @@ export default function SubmitAlertPage() {
                       checked={form.severity === option.value}
                       onChange={() => update("severity", option.value)}
                     />
-                    <span>{option.label}</span>
+                    <span>{t(option.labelKey)}</span>
                   </label>
                 ))}
               </div>
@@ -193,20 +192,20 @@ export default function SubmitAlertPage() {
           <div className="submit-alert-section-head">
             <span className="submit-alert-step">02</span>
             <div className="submit-alert-section-title">
-              <h2>Localisation</h2>
-              <p>Indiquez où se situe l'incident le plus précisément possible.</p>
+              <h2>{t("submit.section2")}</h2>
+              <p>{t("submit.section2Lead")}</p>
             </div>
           </div>
 
           <div className="submit-alert-grid">
             <div className="submit-alert-field">
               <label htmlFor="alert-wilaya">
-                Wilaya <span className="submit-alert-req">*</span>
+                {t("submit.wilaya")} <span className="submit-alert-req">*</span>
               </label>
               <input
                 id="alert-wilaya"
                 required
-                placeholder="ex. Béjaïa"
+                placeholder={t("submit.wilayaPlaceholder")}
                 value={form.wilaya}
                 onChange={(e) => update("wilaya", e.target.value)}
               />
@@ -214,12 +213,12 @@ export default function SubmitAlertPage() {
 
             <div className="submit-alert-field">
               <label htmlFor="alert-commune">
-                Commune <span className="submit-alert-req">*</span>
+                {t("submit.commune")} <span className="submit-alert-req">*</span>
               </label>
               <input
                 id="alert-commune"
                 required
-                placeholder="Nom de la commune"
+                placeholder={t("submit.communePlaceholder")}
                 value={form.commune}
                 onChange={(e) => update("commune", e.target.value)}
               />
@@ -227,10 +226,10 @@ export default function SubmitAlertPage() {
           </div>
 
           <div className="submit-alert-field">
-            <label htmlFor="alert-location">Localisation exacte</label>
+            <label htmlFor="alert-location">{t("submit.location")}</label>
             <input
               id="alert-location"
-              placeholder="Rue, quartier ou point de repère"
+              placeholder={t("submit.locationPlaceholder")}
               value={form.location}
               onChange={(e) => update("location", e.target.value)}
             />
@@ -239,9 +238,9 @@ export default function SubmitAlertPage() {
           <div className="submit-alert-position">
             <div className="submit-alert-position-head">
               <div>
-                <p className="submit-alert-sublabel">Position (coordonnées GPS)</p>
+                <p className="submit-alert-sublabel">{t("submit.gps")}</p>
                 <p className="submit-alert-sublabel-hint">
-                  Facultatif — aide les secours à vous localiser.
+                  {t("submit.gpsHint")}
                 </p>
               </div>
               <button
@@ -251,32 +250,32 @@ export default function SubmitAlertPage() {
                 disabled={locating}
               >
                 <span aria-hidden="true">◎</span>
-                {locating ? "Localisation…" : "Utiliser ma position"}
+                {locating ? t("submit.locating") : t("submit.useLocation")}
               </button>
             </div>
 
             <div className="submit-alert-grid">
               <div className="submit-alert-field">
-                <label htmlFor="alert-latitude">Latitude</label>
+                <label htmlFor="alert-latitude">{t("submit.latitude")}</label>
                 <input
                   id="alert-latitude"
                   type="number"
                   step="any"
                   inputMode="decimal"
-                  placeholder="ex. 36.7538"
+                  placeholder={t("submit.latitudePlaceholder")}
                   value={form.latitude}
                   onChange={(e) => update("latitude", e.target.value)}
                 />
               </div>
 
               <div className="submit-alert-field">
-                <label htmlFor="alert-longitude">Longitude</label>
+                <label htmlFor="alert-longitude">{t("submit.longitude")}</label>
                 <input
                   id="alert-longitude"
                   type="number"
                   step="any"
                   inputMode="decimal"
-                  placeholder="ex. 3.0588"
+                  placeholder={t("submit.longitudePlaceholder")}
                   value={form.longitude}
                   onChange={(e) => update("longitude", e.target.value)}
                 />
@@ -289,32 +288,32 @@ export default function SubmitAlertPage() {
           <div className="submit-alert-section-head">
             <span className="submit-alert-step">03</span>
             <div className="submit-alert-section-title">
-              <h2>Détails de l'incident</h2>
-              <p>Décrivez la situation et ajoutez une photo si possible.</p>
+              <h2>{t("submit.section3")}</h2>
+              <p>{t("submit.section3Lead")}</p>
             </div>
           </div>
 
           <div className="submit-alert-field">
             <label htmlFor="alert-description">
-              Description <span className="submit-alert-req">*</span>
+              {t("submit.description")} <span className="submit-alert-req">*</span>
             </label>
             <textarea
               id="alert-description"
               required
               rows={5}
               maxLength={2000}
-              placeholder="Décrivez l'incident, son impact et tout danger immédiat..."
+              placeholder={t("submit.descriptionPlaceholder")}
               value={form.description}
               onChange={(e) => update("description", e.target.value)}
             />
           </div>
 
           <div className="submit-alert-field">
-            <label htmlFor="alert-image">Photo de l'incident</label>
+            <label htmlFor="alert-image">{t("submit.photo")}</label>
 
             {imagePreview ? (
               <div className="submit-alert-photo">
-                <img src={imagePreview} alt="Incident sélectionné" />
+                <img src={imagePreview} alt={t("submit.photoAlt")} />
                 <div className="submit-alert-photo-bar">
                   <span className="submit-alert-photo-name">{imageName}</span>
                   <button
@@ -322,7 +321,7 @@ export default function SubmitAlertPage() {
                     className="submit-alert-photo-remove"
                     onClick={clearImage}
                   >
-                    Supprimer
+                    {t("submit.remove")}
                   </button>
                 </div>
               </div>
@@ -330,10 +329,10 @@ export default function SubmitAlertPage() {
               <label className="submit-alert-upload" htmlFor="alert-image">
                 <span className="submit-alert-upload-icon" aria-hidden="true">⬆</span>
                 <span className="submit-alert-upload-title">
-                  Cliquez pour ajouter une photo
+                  {t("submit.upload")}
                 </span>
                 <span className="submit-alert-upload-hint">
-                  PNG, JPG ou WEBP · max 5 Mo
+                  {t("submit.uploadHint")}
                 </span>
                 <input
                   ref={fileInputRef}
@@ -350,7 +349,7 @@ export default function SubmitAlertPage() {
 
         <div className="submit-alert-actions">
           <p className="submit-alert-note">
-            <span className="submit-alert-req">*</span> Champs obligatoires
+            <span className="submit-alert-req">*</span> {t("submit.required")}
           </p>
 
           <div className="submit-alert-buttons">
@@ -359,10 +358,10 @@ export default function SubmitAlertPage() {
               className="submit-alert-cancel"
               onClick={() => navigate("/alerts")}
             >
-              Annuler
+              {t("submit.cancel")}
             </button>
             <button type="submit" className="submit-alert-primary">
-              Soumettre l'alerte →
+              {t("submit.send")}
             </button>
           </div>
         </div>

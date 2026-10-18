@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap');
 
 :root {
   color-scheme: light;
@@ -49,6 +49,54 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* SafeDZ brand */
+  --color-primary: #f0544a;
+  --color-primary-hover: #ff6f66;
+  --color-navy: #a9c4b8;
+  --color-green: #45b98a;
+
+  /* Surfaces */
+  --color-background: #0c1411;
+  --color-surface: #141f1a;
+  --color-surface-muted: #1e2b25;
+
+  /* Text */
+  --color-text: #e7efeb;
+  --color-text-muted: #98ada2;
+  --color-text-inverse: #0c1411;
+
+  /* Borders and shadows */
+  --color-border: #2b3b34;
+  --shadow-card: 0 2px 8px rgb(0 0 0 / 35%);
+  --shadow-raised: 0 6px 20px rgb(0 0 0 / 45%);
+
+  /* Status */
+  --color-danger: #ff7468;
+  --color-danger-bg: #3a1c19;
+  --color-warning: #e8b45f;
+  --color-warning-bg: #382b17;
+  --color-success: #4cc394;
+  --color-success-bg: #143126;
+}
+
+:root[lang="ar"] {
+  --font-body: 'Noto Kufi Arabic', 'DM Sans', Arial, sans-serif;
+  --font-display: 'Noto Kufi Arabic', 'DM Serif Display', Georgia, serif;
+}
+
+:root[lang="ar"] h1,
+:root[lang="ar"] .display-heading {
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+:root[lang="ar"] body {
+  line-height: 1.8;
 }
 
 *,

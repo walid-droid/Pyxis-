@@ -2,15 +2,18 @@
    Incident map modal — layout, layer toggles and map styling
    ========================================================= */
 
-.modal--map {
-  width: min(1080px, 100%);
+.modal.modal--map {
+  width: min(1180px, 100%);
   max-height: min(88vh, 880px);
   max-height: min(88dvh, 880px);
 }
 
-.modal--map .modal-body {
-  display: flex;
-  flex-direction: column;
+.modal.modal--map .modal-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  flex: 1 1 auto;
+  min-height: 0;
   padding: 0;
   overflow: hidden;
 }
@@ -18,10 +21,15 @@
 /* ---- Info bar: badges + layer toggles ---- */
 
 .map-modal__info {
+  grid-column: 1;
+  grid-row: 1;
+  min-height: 0;
   display: grid;
+  align-content: start;
   gap: 12px;
   padding: 16px 24px;
-  border-bottom: 1px solid var(--color-border);
+  overflow: auto;
+  border-inline-end: 1px solid var(--color-border);
 }
 
 .map-modal__meta {
@@ -247,10 +255,10 @@
 
 .map-modal__stage {
   position: relative;
-  flex: 1 1 auto;
-  height: 52vh;
-  min-height: 260px;
-  max-height: 620px;
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  min-height: 0;
 }
 
 .safety-map {
@@ -358,6 +366,21 @@
   font-family: var(--font-body);
 }
 
+[dir="rtl"] .safety-map .leaflet-popup-content-wrapper {
+  text-align: right;
+}
+
+[dir="rtl"] .safety-map .leaflet-popup-content {
+  direction: rtl;
+  margin-right: 20px;
+  margin-left: 24px;
+}
+
+[dir="rtl"] .safety-map a.leaflet-popup-close-button {
+  right: auto;
+  left: 0;
+}
+
 .map-pop {
   display: grid;
   gap: 3px;
@@ -401,6 +424,8 @@
 /* ---- Legend footer ---- */
 
 .map-modal__legend {
+  grid-column: 1 / -1;
+  grid-row: 2;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -461,6 +486,22 @@
 
 /* ---- Status pills used in the info bar ---- */
 
+.modal--map .pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #eef1ef;
+  color: #3b4a43;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.modal--map .pill.sev-low      { background: #e3efe8; color: #16704a; }
+.modal--map .pill.sev-medium   { background: #fdf0d9; color: #a15c07; }
+.modal--map .pill.sev-high     { background: #fde4d6; color: #b4400f; }
+.modal--map .pill.sev-critical { background: #fbdcd9; color: #b3261e; }
+
 .modal--map .pill--ok {
   background: var(--color-success-bg);
   color: var(--color-success);
@@ -474,13 +515,24 @@
 /* ---- Responsive ---- */
 
 @media (max-width: 700px) {
-  .modal--map {
+  .modal.modal--map {
     max-height: 92vh;
     max-height: 92dvh;
   }
 
+  .modal.modal--map .modal-body {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(200px, 1fr) auto;
+    overflow: auto;
+  }
+
   .map-modal__info {
+    grid-column: 1;
+    grid-row: 1;
     padding: 14px 16px;
+    overflow: visible;
+    border-right: 0;
+    border-bottom: 1px solid var(--color-border);
   }
 
   .map-layer {
@@ -501,11 +553,13 @@
   }
 
   .map-modal__stage {
-    height: 46vh;
-    height: 46dvh;
+    grid-column: 1;
+    grid-row: 2;
   }
 
   .map-modal__legend {
+    grid-column: 1;
+    grid-row: 3;
     padding: 10px 16px;
     gap: 6px 12px;
   }
@@ -535,6 +589,11 @@
   }
 
   .safety-map .leaflet-popup-content {
-    margin-right: 40px;
+    margin-inline-end: 40px;
+  }
+
+  [dir="rtl"] .safety-map .leaflet-popup-content {
+    margin-right: 20px;
+    margin-left: 40px;
   }
 }

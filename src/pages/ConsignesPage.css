@@ -33,7 +33,7 @@
 
   border: 1px solid #294638;
   border-radius: var(--radius-card);
-  border-left: 5px solid var(--color-green);
+  border-inline-start: 5px solid var(--color-green);
 }
 
 .consignes-hero-text {
@@ -152,7 +152,7 @@
   gap: 10px;
   width: 100%;
   padding: 24px;
-  text-align: left;
+  text-align: start;
   font: inherit;
   color: inherit;
   cursor: pointer;
@@ -165,7 +165,7 @@
   background-repeat: no-repeat, no-repeat;
   background-position: right 12px bottom 0, center;
   background-size: min(230px, 60%) auto, cover;
-  border-left: 4px solid var(--ct-accent);
+  border-inline-start: 4px solid var(--ct-accent);
 }
 
 .consigne-card:hover {
@@ -340,7 +340,7 @@
 
 .consigne-steps li {
   position: relative;
-  padding-left: 38px;
+  padding-inline-start: 38px;
   color: var(--color-text);
   font-size: 0.88rem;
   line-height: 1.55;
@@ -351,7 +351,7 @@
   content: counter(step);
   position: absolute;
   top: 0;
-  left: 0;
+  inset-inline-start: 0;
   display: grid;
   place-items: center;
   width: 26px;

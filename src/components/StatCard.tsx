@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useI18n } from "../i18n";
 import "./StatCard.css";
 
 type StatCardProps = {
@@ -9,6 +10,7 @@ type StatCardProps = {
 };
 
 function StatCard({ value, label, tone = "", onClick }: StatCardProps) {
+  const { t } = useI18n();
   const className = `stat-card ${tone}`.trim();
 
   if (!onClick) {
@@ -24,7 +26,7 @@ function StatCard({ value, label, tone = "", onClick }: StatCardProps) {
     <button type="button" className={className} onClick={onClick}>
       <span className="stat-card__label">{label}</span>
       <span className="stat-card__value">{value}</span>
-      <span className="stat-card__hint">Voir le détail</span>
+      <span className="stat-card__hint">{t("common.viewDetail")}</span>
     </button>
   );
 }

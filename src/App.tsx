@@ -1,7 +1,10 @@
 import "./App.css";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Routes, Route, NavLink, Outlet, useLocation } from "react-router";
 import logo from "./assets/Logo SafeDZ.png";
+import ThemeToggle from "./components/ThemeToggle";
+import LanguageToggle from "./components/LanguageToggle";
+import { useI18n } from "./i18n";
 // Landing is currently implemented in JavaScript/JSX without type declarations.
 // @ts-expect-error No declaration file is available for this JSX module.
 import Landing from "./landing/Landing";
@@ -13,52 +16,164 @@ import ResourcesPage from "./pages/ResourcesPage";
 import SubmitAlertPage from "./pages/SubmitAlertPage";
 import EventsPage from "./pages/EventsPage";
 import ConsignesPage from "./pages/ConsignesPage";
-import AuthPage from "./pages/AuthPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+
+const NAV_ITEMS = [
+  { to: "/dashboard", labelKey: "nav.dashboard" },
+  { to: "/alerts", labelKey: "nav.alerts" },
+  { to: "/consignes", labelKey: "nav.consignes" },
+  { to: "/resources", labelKey: "nav.resources" },
+  { to: "/assistant", labelKey: "nav.assistant" },
+  { to: "/events", labelKey: "nav.events" },
+  { to: "/contacts", labelKey: "nav.contacts" },
+];
+
+const SIDEBAR_KEY = "safedz-sidebar-collapsed";
 
 function DashboardLayout() {
   const navRef = useRef<HTMLElement>(null);
   const { pathname } = useLocation();
+  const { t } = useI18n();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem(SIDEBAR_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
+
+  const setSidebarCollapsed = (value: boolean) => {
+    setCollapsed(value);
+    try {
+      localStorage.setItem(SIDEBAR_KEY, value ? "1" : "0");
+    } catch {
+      // Ignore storage failures (private mode, etc.).
+    }
+  };
+
+  useEffect(() => {
+    const closeOnHistory = () => setMenuOpen(false);
+    window.addEventListener("popstate", closeOnHistory);
+    return () => window.removeEventListener("popstate", closeOnHistory);
+  }, []);
 
   useEffect(() => {
     const active = navRef.current?.querySelector<HTMLElement>("a.active");
-    active?.scrollIntoView({ block: "nearest", inline: "center" });
+    active?.scrollIntoView({ block: "nearest" });
   }, [pathname]);
 
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [menuOpen]);
+
   return (
-    <>
-      <header className="app-header">
-        <NavLink to="/dashboard" className="app-brand">
-          <img src={logo} alt="" />
-          <span>SafeDZ</span>
-        </NavLink>
+    <div className={`app-layout${collapsed ? " is-collapsed" : ""}`}>
+      <header className="app-topbar">
+        <div className="app-topbar__start">
+          <NavLink to="/dashboard" className="app-brand" onClick={() => setMenuOpen(false)}>
+            <img src={logo} alt="" />
+            <span>SafeDZ</span>
+          </NavLink>
 
-        <nav className="app-nav" ref={navRef}>
-          <NavLink to="/dashboard">Tableau de bord</NavLink>
-          <NavLink to="/alerts">Alertes</NavLink>
-          <NavLink to="/consignes">Consignes</NavLink>
-          <NavLink to="/resources">Abris &amp; secours</NavLink>
-          <NavLink to="/assistant">Assistant IA</NavLink>
-          <NavLink to="/events">Événements</NavLink>
-          <NavLink to="/contacts">Contacts</NavLink>
-        </nav>
+          <button
+            type="button"
+            className="app-sidebar-toggle"
+            aria-label={collapsed ? t("nav.showSidebar") : t("nav.hideSidebar")}
+            aria-expanded={!collapsed}
+            aria-controls="app-sidebar"
+            onClick={() => setSidebarCollapsed(!collapsed)}
+          >
+            {collapsed ? (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="16" rx="2" />
+                <path d="M9 4v16" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="16" rx="2" />
+                <path d="m14 9-3 3 3 3" />
+              </svg>
+            )}
+          </button>
+        </div>
 
-        {/* <div className="header-actions">
-          <button className="login-button">Se connecter</button>
-          <button className="report-button">Signaler un incident</button>
-        </div> */}
+        <div className="app-topbar__end">
+          <LanguageToggle />
+          <ThemeToggle />
+
+          <button
+            type="button"
+            className="app-menu-toggle"
+            aria-label={menuOpen ? t("nav.closeMenu") : t("nav.openMenu")}
+            aria-expanded={menuOpen}
+            aria-controls="app-sidebar"
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            {menuOpen ? (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                <path d="M18 6 6 18M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                <path d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
+        </div>
       </header>
 
-      <Outlet />
-    </>
+      <aside
+        id="app-sidebar"
+        className={`app-sidebar${menuOpen ? " is-open" : ""}`}
+      >
+        <nav className="app-nav" ref={navRef} aria-label={t("nav.main")}>
+          {NAV_ITEMS.map((item) => (
+            <NavLink key={item.to} to={item.to} onClick={() => setMenuOpen(false)}>
+              {t(item.labelKey)}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="app-sidebar__foot">
+          <a className="app-sidebar__call" href="tel:14">
+            {t("nav.emergencyCall")}
+          </a>
+        </div>
+      </aside>
+
+      {menuOpen && (
+        <button
+          type="button"
+          className="app-sidebar__backdrop"
+          aria-label={t("nav.closeMenu")}
+          onClick={() => setMenuOpen(false)}
+        />
+      )}
+
+      <div className="app-main">
+        <Outlet />
+      </div>
+    </div>
   );
 }
 
 function App() {
+  const { t } = useI18n();
+
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
-      <Route path="/login" element={<AuthPage mode="login" />} />
-      <Route path="/register" element={<AuthPage mode="register" />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
 
       <Route element={<DashboardLayout />}>
         <Route path="/dashboard" element={<DashboardPage />} />
@@ -69,7 +184,7 @@ function App() {
         <Route path="/assistant" element={<AssistantPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/submit-alert" element={<SubmitAlertPage />} />
-        <Route path="*" element={<h1>Page introuvable</h1>} />
+        <Route path="*" element={<h1>{t("nav.notFound")}</h1>} />
       </Route>
     </Routes>
   );

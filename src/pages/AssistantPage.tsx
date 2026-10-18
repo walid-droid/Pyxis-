@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import logo from "../assets/Logo SafeDZ.png";
+import { useI18n } from "../i18n";
 import "./AssistantPage.css";
 
 type Message = { role: "assistant" | "user"; text: string };
@@ -10,10 +11,8 @@ async function askAssistant(_question: string): Promise<string> {
   throw new Error("Assistant IA non connecté");
 }
 
-const ERROR_ANSWER =
-  "Désolé, je n’ai pas pu répondre pour le moment. En cas de danger immédiat, contactez directement les services de secours.";
-
 export default function AssistantPage() {
+  const { t } = useI18n();
   const [messages, setMessages] = useState<Message[]>([]);
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(false);
@@ -59,7 +58,7 @@ export default function AssistantPage() {
     try {
       answer = await askAssistant(value);
     } catch {
-      answer = ERROR_ANSWER;
+      answer = t("assistant.error");
     }
 
     // Nouvelle conversation ou page quittée pendant l'attente : on n'affiche rien.
@@ -82,22 +81,22 @@ export default function AssistantPage() {
           <img className="assistant-logo" src={logo} alt="" />
           <div>
             <strong>SafeAI</strong>
-            <small>Assistant de crise</small>
+            <small>{t("assistant.crisis")}</small>
           </div>
         </div>
         <button type="button" className="assistant-new-chat" onClick={startNewChat}>
-          <span aria-hidden="true">＋</span> Nouvelle conversation
+          <span aria-hidden="true">＋</span> {t("assistant.newChat")}
         </button>
-        <div className="assistant-sidebar-label">VOTRE ASSISTANT</div>
+        <div className="assistant-sidebar-label">{t("assistant.yourAssistant")}</div>
         <div className="assistant-sidebar-note">
           <span aria-hidden="true">✦</span>
           <div>
-            <strong>Conseils de sécurité</strong>
-            <p>Des informations pratiques pour mieux réagir face aux situations d’urgence.</p>
+            <strong>{t("assistant.safetyTips")}</strong>
+            <p>{t("assistant.safetyTipsText")}</p>
           </div>
         </div>
         <div className="assistant-sidebar-bottom">
-          <span className="assistant-status-dot" aria-hidden="true" /> Assistant disponible en mode démo
+          <span className="assistant-status-dot" aria-hidden="true" /> {t("assistant.demo")}
         </div>
       </aside>
 
@@ -109,11 +108,11 @@ export default function AssistantPage() {
           <div className="assistant-topbar-actions">
             {messages.length > 0 && (
               <button type="button" className="assistant-mobile-new" onClick={startNewChat}>
-                <span aria-hidden="true">＋</span> Nouvelle
+                <span aria-hidden="true">＋</span> {t("assistant.new")}
               </button>
             )}
             <div className="assistant-online">
-              <span aria-hidden="true" /> En ligne
+              <span aria-hidden="true" /> {t("assistant.online")}
             </div>
           </div>
         </div>
@@ -123,26 +122,24 @@ export default function AssistantPage() {
           {messages.length === 0 ? (
             <div className="assistant-welcome">
               <div className="assistant-orb" aria-hidden="true"><span>✳</span></div>
-              <div className="assistant-eyebrow">VOTRE ASSISTANT DE PRÉVENTION</div>
-              <h1>Comment puis-je<br /><em>vous aider ?</em></h1>
-              <p className="assistant-intro">
-                Obtenez des conseils pratiques pour vous préparer aux crises et savoir comment réagir en toute sécurité.
-              </p>
+              <div className="assistant-eyebrow">{t("assistant.preventEyebrow")}</div>
+              <h1>{t("assistant.hello")}<br /><em>{t("assistant.help")}</em></h1>
+              <p className="assistant-intro">{t("assistant.intro")}</p>
             </div>
           ) : (
-            <div className="assistant-chat" role="log" aria-live="polite" aria-label="Conversation">
+            <div className="assistant-chat" role="log" aria-live="polite" aria-label={t("assistant.conversationAria")}>
               <div className="assistant-chat-heading">
                 <span className="assistant-mini-orb" aria-hidden="true">✳</span>
                 <div>
-                  <strong>Votre conversation</strong>
-                  <small>Conseils de prévention et de sécurité</small>
+                  <strong>{t("assistant.yourConversation")}</strong>
+                  <small>{t("assistant.conversationSub")}</small>
                 </div>
               </div>
               {messages.map((message, index) => (
                 <div className={`assistant-message-row ${message.role}`} key={`${index}-${message.role}`}>
                   {message.role === "assistant" && <span className="assistant-avatar" aria-hidden="true">✳</span>}
                   <div className="assistant-message">
-                    <div className="assistant-message-author">{message.role === "user" ? "Vous" : "SafeDZ · Assistant IA"}</div>
+                    <div className="assistant-message-author">{message.role === "user" ? t("assistant.you") : t("assistant.bot")}</div>
                     <p>{message.text}</p>
                   </div>
                 </div>
@@ -152,7 +149,7 @@ export default function AssistantPage() {
                   <span className="assistant-avatar" aria-hidden="true">✳</span>
                   <div className="assistant-message assistant-typing" role="status">
                     <span className="assistant-dots" aria-hidden="true"><i /><i /><i /></span>
-                    Préparation de la réponse…
+                    {t("assistant.typing")}
                   </div>
                 </div>
               )}
@@ -182,21 +179,21 @@ export default function AssistantPage() {
                     void sendMessage();
                   }
                 }}
-                placeholder="Posez votre question…"
-                aria-label="Votre question"
+                placeholder={t("assistant.placeholder")}
+                aria-label={t("assistant.questionAria")}
               />
               <button
                 type="submit"
                 className="assistant-send"
                 disabled={!question.trim() || loading}
-                aria-label="Envoyer le message"
+                aria-label={t("assistant.sendAria")}
               >
-                <span className="assistant-send-label">Envoyer</span>
+                <span className="assistant-send-label">{t("assistant.send")}</span>
                 <span className="assistant-send-icon" aria-hidden="true">↑</span>
               </button>
             </form>
             <p className="assistant-disclaimer">
-              Les réponses sont informatives et ne remplacent pas les consignes officielles des autorités.
+              {t("assistant.disclaimer")}
             </p>
           </div>
         </div>

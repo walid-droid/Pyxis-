@@ -1,42 +1,46 @@
 import { useState } from "react";
 import { mockEvents, type EventItem, type EventStatus } from "../mockdata/event";
+import { useI18n } from "../i18n";
 import "./EventsPage.css";
 
-const STATUS_FR: Record<string, string> = {
-  Upcoming: "À venir",
-  Ongoing: "En cours",
-  Ended: "Terminé",
+const STATUS_KEYS: Record<string, string> = {
+  Upcoming: "events.status.upcoming",
+  Ongoing: "events.status.ongoing",
+  Ended: "events.status.ended",
 };
 
 const STATUS_ORDER: EventStatus[] = ["Upcoming", "Ongoing", "Ended"];
 
 function EventCard({ event }: { event: EventItem }) {
+  const { t, tc } = useI18n();
+
   return (
     <li className={`event-item st-${event.status.toLowerCase()}`}>
       <div className="event-item-top">
-        <span className="event-category">{event.category}</span>
+        <span className="event-category">{tc(event.category)}</span>
         <span className={`event-status st-${event.status.toLowerCase()}`}>
-          {STATUS_FR[event.status]}
+          {t(STATUS_KEYS[event.status])}
         </span>
       </div>
 
-      <h3>{event.title}</h3>
-      <p>{event.description}</p>
+      <h3>{tc(event.title)}</h3>
+      <p>{tc(event.description)}</p>
 
       <div className="event-item-meta">
-        <span>{event.date} · {event.time}</span>
-        <span>{event.wilaya} · {event.commune}</span>
+        <span>{tc(event.date)} · {event.time}</span>
+        <span>{tc(event.wilaya)} · {tc(event.commune)}</span>
       </div>
 
       <div className="event-item-foot">
-        <span>{event.location}</span>
-        <span>{event.organizer}</span>
+        <span>{tc(event.location)}</span>
+        <span>{tc(event.organizer)}</span>
       </div>
     </li>
   );
 }
 
 function EventsPage() {
+  const { t, tc } = useI18n();
   const [status, setStatus] = useState<EventStatus | "all">("all");
   const [category, setCategory] = useState<string>("all");
 
@@ -52,18 +56,16 @@ function EventsPage() {
     <main className="events-page">
       <header className="events-hero">
         <div className="events-hero-text">
-          <p className="events-hero-eyebrow">Sensibilisation &amp; terrain</p>
-          <h1>Événements</h1>
-          <p className="events-hero-lead">
-            Découvrez les activités de sensibilisation, formations et actions citoyennes.
-          </p>
+          <p className="events-hero-eyebrow">{t("events.eyebrow")}</p>
+          <h1>{t("events.title")}</h1>
+          <p className="events-hero-lead">{t("events.lead")}</p>
         </div>
       </header>
 
       <div className="events-layout">
-        <aside className="events-filter" aria-label="Filtrer les événements">
+        <aside className="events-filter" aria-label={t("events.filterAria")}>
           <div className="events-filter-group">
-            <p className="events-filter-title">Statut</p>
+            <p className="events-filter-title">{t("events.status")}</p>
             <ul className="events-filter-list">
               <li>
                 <button
@@ -71,7 +73,7 @@ function EventsPage() {
                   className={`events-filter-btn${status === "all" ? " is-active" : ""}`}
                   onClick={() => setStatus("all")}
                 >
-                  Tous les événements
+                  {t("events.all")}
                   <span className="events-filter-count">{mockEvents.length}</span>
                 </button>
               </li>
@@ -82,7 +84,7 @@ function EventsPage() {
                     className={`events-filter-btn${status === value ? " is-active" : ""}`}
                     onClick={() => setStatus(value)}
                   >
-                    {STATUS_FR[value]}
+                    {t(STATUS_KEYS[value])}
                     <span className="events-filter-count">
                       {mockEvents.filter((event) => event.status === value).length}
                     </span>
@@ -93,7 +95,7 @@ function EventsPage() {
           </div>
 
           <div className="events-filter-group">
-            <p className="events-filter-title">Catégorie</p>
+            <p className="events-filter-title">{t("events.category")}</p>
             <ul className="events-filter-list">
               <li>
                 <button
@@ -101,7 +103,7 @@ function EventsPage() {
                   className={`events-filter-btn${category === "all" ? " is-active" : ""}`}
                   onClick={() => setCategory("all")}
                 >
-                  Toutes les catégories
+                  {t("events.allCategories")}
                   <span className="events-filter-count">{mockEvents.length}</span>
                 </button>
               </li>
@@ -112,7 +114,7 @@ function EventsPage() {
                     className={`events-filter-btn${category === value ? " is-active" : ""}`}
                     onClick={() => setCategory(value)}
                   >
-                    {value}
+                    {tc(value)}
                     <span className="events-filter-count">
                       {mockEvents.filter((event) => event.category === value).length}
                     </span>
@@ -125,7 +127,10 @@ function EventsPage() {
 
         <section className="events-content">
           <p className="events-summary">
-            {filteredEvents.length} événement{filteredEvents.length > 1 ? "s" : ""}
+            {t(
+              filteredEvents.length > 1 ? "events.countPlural" : "events.count",
+              { count: filteredEvents.length },
+            )}
           </p>
 
           {filteredEvents.length > 0 ? (
@@ -135,7 +140,7 @@ function EventsPage() {
               ))}
             </ul>
           ) : (
-            <p className="events-empty">Aucun événement ne correspond à ce filtre.</p>
+            <p className="events-empty">{t("events.empty")}</p>
           )}
         </section>
       </div>

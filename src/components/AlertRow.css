@@ -21,7 +21,7 @@
   background: var(--color-surface-muted);
   color: var(--color-text);
   font: inherit;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
   transition: background 140ms ease;
 }

@@ -41,6 +41,29 @@
   line-height: 1;
 }
 
+.auth-lang {
+  position: absolute;
+  top: clamp(20px, 3vw, 36px);
+  right: clamp(20px, 3vw, 36px);
+  z-index: 1;
+}
+
+.auth-lang .app-lang-toggle {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.auth-lang .app-lang-toggle:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+[dir="rtl"] .auth-lang {
+  right: auto;
+  left: clamp(20px, 3vw, 36px);
+}
+
 .auth-brand img {
   display: block;
   height: 48px;
@@ -79,7 +102,7 @@
 
 .auth-points li {
   position: relative;
-  padding-left: 34px;
+  padding-inline-start: 34px;
   color: #eaf3ee;
   font-size: 0.95rem;
 }
@@ -87,7 +110,7 @@
 .auth-points li::before {
   content: "✓";
   position: absolute;
-  left: 0;
+  inset-inline-start: 0;
   top: 50%;
   transform: translateY(-50%);
   display: grid;
@@ -175,7 +198,7 @@
 }
 
 .auth-form input::placeholder {
-  color: #9aa7a0;
+  color: var(--color-text-muted);
 }
 
 .auth-form input:hover {
@@ -270,13 +293,14 @@
 .auth-back {
   display: inline-flex;
   align-items: center;
+  align-self: flex-start;
   min-height: 44px;
-  color: var(--color-text-muted);
+  color: #9db3a8;
   font-size: 0.85rem;
 }
 
 .auth-back:hover {
-  color: var(--color-text);
+  color: #fff;
 }
 
 /* ---------- Responsive ---------- */

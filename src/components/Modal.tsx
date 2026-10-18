@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode } from "react";
+import { useI18n } from "../i18n";
 import "./Modal.css";
 
 type ModalProps = {
@@ -9,6 +10,8 @@ type ModalProps = {
 };
 
 function Modal({ title, onClose, children, className }: ModalProps) {
+  const { t } = useI18n();
+
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
@@ -32,7 +35,7 @@ function Modal({ title, onClose, children, className }: ModalProps) {
           <button
             type="button"
             className="modal-close"
-            aria-label="Fermer"
+            aria-label={t("common.close")}
             onClick={onClose}
           >
             ×

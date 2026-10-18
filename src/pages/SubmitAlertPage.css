@@ -213,7 +213,7 @@
 
 .submit-alert-form input::placeholder,
 .submit-alert-form textarea::placeholder {
-  color: #9aa7a0;
+  color: var(--color-text-muted);
 }
 
 .submit-alert-form input:hover,
@@ -376,7 +376,7 @@
 
 .submit-alert-upload:hover {
   border-color: var(--color-green);
-  background: #eef5ef;
+  background: var(--color-success-bg);
 }
 
 .submit-alert-upload:focus-within {
@@ -391,7 +391,7 @@
   height: 44px;
   margin-bottom: 6px;
   border-radius: 50%;
-  background: #e3efe8;
+  background: var(--color-success-bg);
   color: var(--color-green);
   font-size: 1.3rem;
   line-height: 1;
@@ -407,7 +407,7 @@
   font-size: 0.78rem;
 }
 
-.submit-alert-file-input {
+.submit-alert-form .submit-alert-file-input {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -415,6 +415,7 @@
   margin: -1px;
   overflow: hidden;
   clip: rect(0 0 0 0);
+  clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
 }

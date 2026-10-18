@@ -33,7 +33,7 @@
 
   border: 1px solid #294638;
   border-radius: var(--radius-card);
-  border-left: 5px solid var(--color-green);
+  border-inline-start: 5px solid var(--color-green);
 }
 
 .res-hero-text {

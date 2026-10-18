@@ -2,14 +2,16 @@ import { Link } from "react-router";
 import { generateSafetyData } from "../mockdata/safety";
 import { distanceKm, resolveCoords } from "../mockdata/locations";
 import type { Coords } from "../mockdata/locations";
+import { useI18n, type Lang } from "../i18n";
 import "./ResourcesPage.css";
 
 /** Same demo anchor as the dashboard: "Autour de moi · Sétif". */
 const CENTER = resolveCoords("Sétif");
 const SAFETY = generateSafetyData(CENTER, "abris-secours");
 
-/** « 1,2 km » — French decimal separator. */
-function formatKm(km: number): string {
+/** « 1,2 km » — French decimal separator, « 1٫2 كم » in Arabic. */
+function formatKm(km: number, lang: Lang): string {
+  if (lang === "ar") return `${km.toFixed(1).replace(".", "٫")} كم`;
   return `${km.toFixed(1).replace(".", ",")} km`;
 }
 
@@ -48,6 +50,7 @@ function RouteIcon() {
 }
 
 export default function ResourcesPage() {
+  const { t, tc, lang } = useI18n();
   const shelters = [...SAFETY.shelters].sort(
     (a, b) => distanceKm(CENTER, a.position) - distanceKm(CENTER, b.position),
   );
@@ -59,21 +62,19 @@ export default function ResourcesPage() {
     <main className="res-page">
       <header className="res-hero">
         <div className="res-hero-text">
-          <p className="res-hero-eyebrow">Abris &amp; secours</p>
-          <h1>Trouvez un abri près de vous.</h1>
-          <p className="res-hero-lead">
-            Les abris, postes de secours et itinéraires prévus autour de Sétif.
-          </p>
+          <p className="res-hero-eyebrow">{t("resources.eyebrow")}</p>
+          <h1>{t("resources.title")}</h1>
+          <p className="res-hero-lead">{t("resources.lead")}</p>
         </div>
 
         <div className="res-hero-aside">
           <p className="res-hero-alert">
             <span className="res-hero-alert-dot" aria-hidden="true" />
-            En cas de danger immédiat, appelez d'abord le 14
+            {t("resources.emergency")}
           </p>
 
           <Link className="res-hero-link" to="/contacts">
-            Tous les numéros
+            {t("resources.allNumbers")}
             <span aria-hidden="true">→</span>
           </Link>
         </div>
@@ -81,8 +82,8 @@ export default function ResourcesPage() {
 
       <section className="res-section cardSec" aria-labelledby="res-shelters">
         <header className="res-section-head">
-          <h2 id="res-shelters">Abris à proximité</h2>
-          <p>Points de mise à l'abri à rejoindre à pied si nécessaire.</p>
+          <h2 id="res-shelters">{t("resources.sheltersTitle")}</h2>
+          <p>{t("resources.sheltersLead")}</p>
         </header>
         <ul className="res-list">
           {shelters.map((shelter) => (
@@ -91,23 +92,23 @@ export default function ResourcesPage() {
                 <ShelterIcon />
               </span>
               <span className="res-row__body">
-                <span className="res-row__name">{shelter.name}</span>
+                <span className="res-row__name">{tc(shelter.name)}</span>
                 <span className="res-row__meta">
-                  Capacité {shelter.capacity} personnes
+                  {t("resources.capacity", { count: shelter.capacity })}
                 </span>
               </span>
               <span className="res-row__side">
                 <span className="res-chip">
-                  à {formatKm(distanceKm(CENTER, shelter.position))}
+                  {t("resources.at", { distance: formatKm(distanceKm(CENTER, shelter.position), lang) })}
                 </span>
                 <a
                   className="res-itin"
                   href={routesUrl(shelter.position)}
                   target="_blank"
                   rel="noreferrer"
-                  aria-label={`Itinéraire vers ${shelter.name}`}
+                  aria-label={t("resources.routeAria", { name: tc(shelter.name) })}
                 >
-                  Itinéraire <span aria-hidden="true">→</span>
+                  {t("resources.itinerary")} <span aria-hidden="true">→</span>
                 </a>
               </span>
             </li>
@@ -117,8 +118,8 @@ export default function ResourcesPage() {
 
       <section className="res-section cardSec" aria-labelledby="res-posts">
         <header className="res-section-head">
-          <h2 id="res-posts">Postes de secours</h2>
-          <p>Hôpitaux et unités des services de secours les plus proches.</p>
+          <h2 id="res-posts">{t("resources.postsTitle")}</h2>
+          <p>{t("resources.postsLead")}</p>
         </header>
         <ul className="res-list">
           {posts.map((post) => (
@@ -127,21 +128,21 @@ export default function ResourcesPage() {
                 <PostIcon />
               </span>
               <span className="res-row__body">
-                <span className="res-row__name">{post.name}</span>
-                <span className="res-row__meta">{post.kind}</span>
+                <span className="res-row__name">{tc(post.name)}</span>
+                <span className="res-row__meta">{tc(post.kind)}</span>
               </span>
               <span className="res-row__side">
                 <span className="res-chip">
-                  à {formatKm(distanceKm(CENTER, post.position))}
+                  {t("resources.at", { distance: formatKm(distanceKm(CENTER, post.position), lang) })}
                 </span>
                 <a
                   className="res-itin"
                   href={routesUrl(post.position)}
                   target="_blank"
                   rel="noreferrer"
-                  aria-label={`Itinéraire vers ${post.name}`}
+                  aria-label={t("resources.routeAria", { name: tc(post.name) })}
                 >
-                  Itinéraire <span aria-hidden="true">→</span>
+                  {t("resources.itinerary")} <span aria-hidden="true">→</span>
                 </a>
               </span>
             </li>
@@ -151,8 +152,8 @@ export default function ResourcesPage() {
 
       <section className="res-section cardSec" aria-labelledby="res-routes">
         <header className="res-section-head">
-          <h2 id="res-routes">Itinéraires d'évacuation</h2>
-          <p>Chemins conseillés vers les abris en cas d'évacuation.</p>
+          <h2 id="res-routes">{t("resources.routesTitle")}</h2>
+          <p>{t("resources.routesLead")}</p>
         </header>
         <ul className="res-list">
           {SAFETY.routes.map((route) => (
@@ -161,14 +162,16 @@ export default function ResourcesPage() {
                 <RouteIcon />
               </span>
               <span className="res-row__body">
-                <span className="res-row__name">{route.name}</span>
-                <span className="res-row__meta">vers {route.destination}</span>
+                <span className="res-row__name">{tc(route.name)}</span>
+                <span className="res-row__meta">
+                  {t("resources.towards", { destination: tc(route.destination) })}
+                </span>
               </span>
               <span className="res-row__side">
                 <span className={`res-chip res-chip--${route.status}`}>
                   {route.status === "clear"
-                    ? "Voie dégagée"
-                    : "Partiellement encombré"}
+                    ? t("resources.clear")
+                    : t("resources.partial")}
                 </span>
               </span>
             </li>
@@ -177,8 +180,9 @@ export default function ResourcesPage() {
       </section>
 
       <p className="res-note">
-        Dispositif de démonstration généré autour de Sétif. Pour le voir sur la
-        carte, ouvrez une rubrique depuis le <Link to="/dashboard">tableau de bord</Link>.
+        {t("resources.noteBefore")}
+        <Link to="/dashboard">{t("nav.dashboard")}</Link>
+        {t("resources.noteAfter")}
       </p>
     </main>
   );

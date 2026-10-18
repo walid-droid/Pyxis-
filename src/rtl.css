@@ -1,0 +1,98 @@
+[dir="rtl"] .app-main {
+  margin-left: 0;
+  margin-right: var(--app-sidebar-w);
+}
+
+[dir="rtl"] .app-sidebar {
+  left: auto;
+  right: 0;
+  border-right: 0;
+  border-left: 1px solid var(--color-border);
+}
+
+[dir="rtl"] .app-nav a.active {
+  box-shadow: inset -3px 0 0 var(--color-green);
+}
+
+[dir="rtl"] .app-sidebar-toggle svg {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .dashboard-quick__arrow,
+[dir="rtl"] .res-itin span[aria-hidden="true"],
+[dir="rtl"] .consignes-hero-link span[aria-hidden="true"],
+[dir="rtl"] .consigne-card__meta span[aria-hidden="true"] {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .dashboard-hero,
+[dir="rtl"] .alerts-hero,
+[dir="rtl"] .events-hero,
+[dir="rtl"] .res-hero,
+[dir="rtl"] .consignes-hero {
+  border-left: 0;
+  border-right: 5px solid var(--color-green);
+}
+
+[dir="rtl"] .dashboard-emergency {
+  border-left: 0;
+  border-right: 4px solid var(--color-danger);
+}
+
+[dir="rtl"] .consignes-grid .consigne-card {
+  border-left: 0;
+  border-right: 4px solid var(--ct-accent);
+}
+
+[dir="rtl"] .assistant-sidebar {
+  border-right: 0;
+  border-left: 1px solid var(--ai-line);
+}
+
+[dir="rtl"] .assistant-topbar-actions {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+[dir="rtl"] .map-modal__info {
+  border-right: 0;
+  border-left: 1px solid var(--color-border);
+}
+
+[dir="rtl"] .map-modal__calls,
+[dir="rtl"] .map-modal__note {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+[dir="rtl"] .submit-alert-form select {
+  padding-right: 14px;
+  padding-left: 40px;
+  background-position: left 14px center;
+}
+
+@media (min-width: 1025px) {
+  [dir="rtl"] .app-layout.is-collapsed .app-sidebar {
+    transform: translateX(100%);
+  }
+
+  [dir="rtl"] .app-layout.is-collapsed .app-main {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  [dir="rtl"] .app-main {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  [dir="rtl"] .app-sidebar {
+    transform: translateX(100%);
+  }
+
+  [dir="rtl"] .app-sidebar.is-open {
+    transform: translateX(0);
+  }
+}

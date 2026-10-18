@@ -6,9 +6,9 @@
   position: fixed;
   inset: 0;
   z-index: 1000;
-  display: grid;
-  place-items: center;
+  display: flex;
   padding: 24px;
+  overflow: auto;
   background: rgb(17 25 22 / 55%);
   animation: modal-fade-in 140ms ease;
 }
@@ -17,6 +17,9 @@
   display: flex;
   flex-direction: column;
   width: min(960px, 100%);
+  min-width: 0;
+  max-width: 100%;
+  margin: auto;
   max-height: min(82vh, 760px);
   max-height: min(82dvh, 760px);
   overflow: hidden;

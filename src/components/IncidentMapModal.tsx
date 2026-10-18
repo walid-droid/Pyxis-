@@ -19,6 +19,7 @@ import { generateSafetyData } from "../mockdata/safety";
 import type { EvacRoute, Shelter } from "../mockdata/safety";
 import { distanceKm } from "../mockdata/locations";
 import type { Coords } from "../mockdata/locations";
+import { useI18n, type Lang } from "../i18n";
 
 export type MapTone = "verified" | "unverified" | "incident" | "crisis";
 
@@ -37,11 +38,11 @@ export type MapItem = {
 
 type LayerKey = "zones" | "routes" | "shelters" | "posts";
 
-const LAYER_LABELS: Record<LayerKey, string> = {
-  zones: "Zones sûres",
-  routes: "Itinéraires d'évacuation",
-  shelters: "Abris",
-  posts: "Postes de secours",
+const LAYER_LABEL_KEYS: Record<LayerKey, string> = {
+  zones: "map.layer.zones",
+  routes: "map.layer.routes",
+  shelters: "map.layer.shelters",
+  posts: "map.layer.posts",
 };
 
 const LAYER_ICONS: Record<LayerKey, ReactNode> = {
@@ -130,8 +131,9 @@ function routeOptions(status: EvacRoute["status"]): PathOptions {
       };
 }
 
-/** « 1,2 km » — French decimal separator. */
-function formatKm(km: number): string {
+/** « 1,2 km » — French decimal separator, « 1٫2 كم » in Arabic. */
+function formatKm(km: number, lang: Lang): string {
+  if (lang === "ar") return `${km.toFixed(1).replace(".", "٫")} كم`;
   return `${km.toFixed(1).replace(".", ",")} km`;
 }
 
@@ -198,6 +200,7 @@ type IncidentMapModalProps = {
 };
 
 function IncidentMapModal({ item, onClose }: IncidentMapModalProps) {
+  const { t, tc, lang } = useI18n();
   const data = useMemo(() => generateSafetyData(item.position, item.id), [item]);
 
   const nearestShelter = useMemo(() => {
@@ -256,7 +259,7 @@ function IncidentMapModal({ item, onClose }: IncidentMapModalProps) {
           <p className="map-modal__desc">
             {item.description}
             {item.source && (
-              <span className="map-modal__source"> · Source : {item.source}</span>
+              <span className="map-modal__source"> · {t("common.source")} : {item.source}</span>
             )}
           </p>
         )}
@@ -268,11 +271,11 @@ function IncidentMapModal({ item, onClose }: IncidentMapModalProps) {
                 <ShelterGlyph />
               </span>
               <span className="map-modal__shelter-text">
-                <small>Abri le plus proche</small>
-                <strong>{nearestShelter.shelter.name}</strong>
+                <small>{t("map.nearestShelter")}</small>
+                <strong>{tc(nearestShelter.shelter.name)}</strong>
               </span>
               <span className="map-modal__shelter-dist">
-                à {formatKm(nearestShelter.km)}
+                {t("map.at", { distance: formatKm(nearestShelter.km, lang) })}
               </span>
             </div>
           )}
@@ -285,18 +288,18 @@ function IncidentMapModal({ item, onClose }: IncidentMapModalProps) {
               rel="noreferrer"
             >
               <NavigationIcon />
-              Itinéraire
+              {t("map.itinerary")}
             </a>
           )}
 
-          <div className="map-modal__calls" role="group" aria-label="Numéros d'urgence">
-            <span className="map-modal__calls-label">Appel direct</span>
-            <a className="map-modal__call" href="tel:14">14 · Secours</a>
-            <a className="map-modal__call" href="tel:17">17 · Police</a>
+          <div className="map-modal__calls" role="group" aria-label={t("map.callsAria")}>
+            <span className="map-modal__calls-label">{t("map.directCall")}</span>
+            <a className="map-modal__call" href="tel:14">14 · {t("map.rescue")}</a>
+            <a className="map-modal__call" href="tel:17">17 · {t("map.police")}</a>
           </div>
         </div>
 
-        <div className="map-modal__layers" role="group" aria-label="Couches de la carte">
+        <div className="map-modal__layers" role="group" aria-label={t("map.layersAria")}>
           {toggles.map(({ key, count }) => (
             <button
               key={key}
@@ -310,7 +313,7 @@ function IncidentMapModal({ item, onClose }: IncidentMapModalProps) {
               <span className="map-layer__icon" aria-hidden="true">
                 {LAYER_ICONS[key]}
               </span>
-              {LAYER_LABELS[key]}
+              {t(LAYER_LABEL_KEYS[key])}
               <span className="map-layer__count">{count}</span>
             </button>
           ))}
@@ -320,7 +323,7 @@ function IncidentMapModal({ item, onClose }: IncidentMapModalProps) {
       <div
         className="map-modal__stage"
         role="region"
-        aria-label="Carte de la zone et des dispositifs de sécurité"
+        aria-label={t("map.stageAria")}
       >
         <MapContainer
           key={item.id}
@@ -330,7 +333,7 @@ function IncidentMapModal({ item, onClose }: IncidentMapModalProps) {
           className="safety-map"
         >
           <TileLayer
-            attribution="Fonds de carte &copy; Esri"
+            attribution={t("map.attribution")}
             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
           />
 
@@ -361,12 +364,12 @@ function IncidentMapModal({ item, onClose }: IncidentMapModalProps) {
               >
                 <Tooltip sticky>
                   <div className="map-tip">
-                    <strong>{route.name}</strong>
+                    <strong>{tc(route.name)}</strong>
                     <span>
                       {route.status === "clear"
-                        ? "Voie dégagée"
-                        : "Partiellement encombrée"}{" "}
-                      · vers {route.destination}
+                        ? t("map.clear")
+                        : t("map.partial")}{" "}
+                      · {t("map.towards", { destination: tc(route.destination) })}
                     </span>
                   </div>
                 </Tooltip>
@@ -389,8 +392,8 @@ function IncidentMapModal({ item, onClose }: IncidentMapModalProps) {
               >
                 <Tooltip sticky>
                   <div className="map-tip">
-                    <strong>{zone.name}</strong>
-                    <span>Zone sûre · {zone.note}</span>
+                    <strong>{tc(zone.name)}</strong>
+                    <span>{t("map.safeZone")} · {tc(zone.note)}</span>
                   </div>
                 </Tooltip>
               </Circle>
@@ -405,8 +408,8 @@ function IncidentMapModal({ item, onClose }: IncidentMapModalProps) {
               >
                 <Popup>
                   <div className="map-pop">
-                    <strong>{shelter.name}</strong>
-                    <span>Abri · capacité {shelter.capacity} personnes</span>
+                    <strong>{tc(shelter.name)}</strong>
+                    <span>{t("map.shelterPopup", { capacity: shelter.capacity })}</span>
                   </div>
                 </Popup>
               </Marker>
@@ -421,8 +424,8 @@ function IncidentMapModal({ item, onClose }: IncidentMapModalProps) {
               >
                 <Popup>
                   <div className="map-pop">
-                    <strong>{post.name}</strong>
-                    <span>{post.kind}</span>
+                    <strong>{tc(post.name)}</strong>
+                    <span>{tc(post.kind)}</span>
                   </div>
                 </Popup>
               </Marker>
@@ -433,27 +436,25 @@ function IncidentMapModal({ item, onClose }: IncidentMapModalProps) {
       <footer className="map-modal__legend">
         <span className="legend__item zones">
           <i aria-hidden="true" />
-          Zones sûres
+          {t("map.zones")}
         </span>
         <span className="legend__item routes">
           <i aria-hidden="true" />
-          Itinéraire dégagé
+          {t("map.legendClear")}
         </span>
         <span className="legend__item routes-alt">
           <i aria-hidden="true" />
-          Partiellement encombré
+          {t("map.legendPartial")}
         </span>
         <span className="legend__item shelters">
           <i aria-hidden="true" />
-          Abris
+          {t("map.legendShelters")}
         </span>
         <span className="legend__item posts">
           <i aria-hidden="true" />
-          Postes de secours
+          {t("map.legendPosts")}
         </span>
-        <span className="map-modal__note">
-          Dispositif de démonstration généré autour du point sélectionné.
-        </span>
+        <span className="map-modal__note">{t("map.note")}</span>
       </footer>
     </Modal>
   );

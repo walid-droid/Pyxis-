@@ -193,12 +193,13 @@ body.hc #cur{display:block}#cur.big{width:68px;height:68px;margin:-34px 0 0 -34p
 .hero .wrap{max-width:1360px}
 @media(min-width:1600px){body{font-size:19px}.wrap{max-width:1360px}}
 @media(max-width:1100px){nav{gap:18px}.hr .tx{display:none}.stage{gap:36px}.cols{gap:28px}.agrid,.rgrid,.pgrid{gap:48px}}
-@media(max-width:480px){.wrap{padding:0 16px}h1{font-size:46px}.search button{padding:0 16px}.card{padding:22px}.two{grid-template-columns:1fr}.card h3{font-size:30px}.pz{top:76px;right:16px}.btns .btn{width:100%}}
+@media(max-width:480px){.wrap{padding:0 16px}header .logo span{display:none}.hr{gap:8px}header .btn{padding:0 12px}h1{font-size:46px}.search button{padding:0 16px}.card{padding:22px}.two{grid-template-columns:1fr}.card h3{font-size:30px}.pz{top:76px;right:16px}.btns .btn{width:100%}}
+@media(max-width:380px){header .wrap{gap:10px}.hr{gap:6px}.hr .tx{padding:0 4px;font-size:13px}header .btn{padding:0 10px;font-size:13px}}
 @media(max-height:560px) and (orientation:landscape){.hero .wrap{padding-top:90px}h1{font-size:44px}}
 @media(hover:none){.btn:hover{transform:none}}
 @media(max-width:900px){
 body{font-size:17px}.wrap{padding:0 20px}
-nav,.hr .tx{display:none}header .wrap{justify-content:space-between}
+nav{display:none}header .wrap{justify-content:space-between;gap:16px}.hr{gap:12px}.hr .tx{display:inline-flex;align-items:center;min-height:40px;padding:0 6px;font-size:14px;white-space:nowrap}header .btn{height:40px;padding:0 14px;font-size:14px;white-space:nowrap}
 .stage,.rgrid,.agrid,.pgrid,footer .top{grid-template-columns:1fr;gap:36px}
 .pv{display:none}.acard,.pv{position:static}
 .tl{grid-template-columns:1fr;gap:0;margin:56px 0 40px;padding-left:34px}

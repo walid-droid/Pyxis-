@@ -1,0 +1,249 @@
+/* =========================================================
+   Dark mode — refinements for colours that are hardcoded
+   in the component stylesheets.
+   ========================================================= */
+
+/* ---------- Dashboard ---------- */
+
+[data-theme="dark"] .dashboard-quick__card.assistant {
+  --tone: #5ed0c0;
+}
+
+/* ---------- Events ---------- */
+
+[data-theme="dark"] .events-page .event-status.st-upcoming {
+  color: #9db8ff;
+  background: #1c2a44;
+}
+
+/* ---------- Submit alert ---------- */
+
+[data-theme="dark"] .submit-alert-form input:hover,
+[data-theme="dark"] .submit-alert-form select:hover,
+[data-theme="dark"] .submit-alert-form textarea:hover {
+  border-color: color-mix(in srgb, var(--color-green) 40%, var(--color-border));
+}
+
+[data-theme="dark"] .submit-alert-upload {
+  border-color: var(--color-border);
+}
+
+/* ---------- Auth ---------- */
+
+[data-theme="dark"] .auth-form input:hover {
+  border-color: color-mix(in srgb, var(--color-green) 40%, var(--color-border));
+}
+
+/* ---------- Consignes ---------- */
+
+[data-theme="dark"] .consigne-card,
+[data-theme="dark"] .modal.consigne-modal {
+  --ct-surface: linear-gradient(158deg, #1a2a24 0%, #141f1a 72%);
+  --ct-head: #1b2b25;
+}
+
+[data-theme="dark"] .consigne-card--seismic,
+[data-theme="dark"] .consigne-modal--seismic {
+  --ct-accent: #e39a63;
+}
+
+[data-theme="dark"] .consigne-card--fire,
+[data-theme="dark"] .consigne-modal--fire {
+  --ct-accent: #ff7b70;
+}
+
+[data-theme="dark"] .consigne-card--flood,
+[data-theme="dark"] .consigne-modal--flood {
+  --ct-accent: #7fb2ff;
+}
+
+[data-theme="dark"] .consigne-card--gas,
+[data-theme="dark"] .consigne-modal--gas {
+  --ct-accent: #e8c26a;
+}
+
+[data-theme="dark"] .consigne-card--storm,
+[data-theme="dark"] .consigne-modal--storm {
+  --ct-accent: #aab6e0;
+}
+
+[data-theme="dark"] .consigne-card--heat,
+[data-theme="dark"] .consigne-modal--heat {
+  --ct-accent: #ffb067;
+}
+
+[data-theme="dark"] .consigne-card--road,
+[data-theme="dark"] .consigne-modal--road {
+  --ct-accent: #6fd3a6;
+}
+
+/* ---------- Map modal ---------- */
+
+[data-theme="dark"] .map-layer.is-on {
+  background: color-mix(in srgb, var(--layer) 18%, var(--color-surface));
+}
+
+[data-theme="dark"] .map-modal__call:hover {
+  background: color-mix(in srgb, var(--color-danger) 18%, var(--color-surface));
+}
+
+[data-theme="dark"] .map-modal__itinerary {
+  background: var(--color-green);
+  color: var(--color-text-inverse);
+}
+
+[data-theme="dark"] .map-modal__itinerary:hover {
+  background: color-mix(in srgb, var(--color-green) 80%, #fff);
+}
+
+[data-theme="dark"] .map-pin.crisis {
+  --pin-color: #3f6d5d;
+}
+
+[data-theme="dark"] .map-modal__shelter-icon,
+[data-theme="dark"] .legend__item.shelters i,
+[data-theme="dark"] .legend__item.posts i {
+  background: var(--color-surface);
+}
+
+[data-theme="dark"] .legend__item.zones i {
+  background: color-mix(in srgb, var(--color-green) 22%, var(--color-surface));
+}
+
+[data-theme="dark"] .modal--map .pill {
+  background: var(--color-surface-muted);
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .modal--map .pill.sev-low {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+[data-theme="dark"] .modal--map .pill.sev-medium {
+  background: #3a2c15;
+  color: #e8b45f;
+}
+
+[data-theme="dark"] .modal--map .pill.sev-high {
+  background: #3d2317;
+  color: #ff9a66;
+}
+
+[data-theme="dark"] .modal--map .pill.sev-critical {
+  background: #3d1c1a;
+  color: #ff7b70;
+}
+
+[data-theme="dark"] .safety-map .leaflet-popup-content-wrapper,
+[data-theme="dark"] .safety-map .leaflet-popup-tip,
+[data-theme="dark"] .safety-map .leaflet-tooltip {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .safety-map .leaflet-tooltip {
+  box-shadow: var(--shadow-card);
+}
+
+[data-theme="dark"] .safety-map .leaflet-tooltip-top::before {
+  border-top-color: var(--color-surface);
+}
+
+[data-theme="dark"] .safety-map .leaflet-tooltip-bottom::before {
+  border-bottom-color: var(--color-surface);
+}
+
+[data-theme="dark"] .safety-map .leaflet-tooltip-left::before {
+  border-left-color: var(--color-surface);
+}
+
+[data-theme="dark"] .safety-map .leaflet-tooltip-right::before {
+  border-right-color: var(--color-surface);
+}
+
+[data-theme="dark"] .safety-map a.leaflet-popup-close-button {
+  color: var(--color-text-muted);
+}
+
+[data-theme="dark"] .safety-map a.leaflet-popup-close-button:hover,
+[data-theme="dark"] .safety-map a.leaflet-popup-close-button:focus {
+  color: var(--color-text);
+}
+
+/* ---------- Assistant IA ---------- */
+
+[data-theme="dark"] .assistant-page {
+  --ai-green: #2f9e72;
+  --ai-green-dark: #26865f;
+  --ai-ink: #e7efeb;
+  --ai-text: #c3d3cb;
+  --ai-muted: #93a89c;
+  --ai-accent: #6fd3a6;
+  --ai-line: #293a33;
+  --ai-bg: #0f1815;
+  --ai-soft: #17342a;
+}
+
+[data-theme="dark"] .assistant-sidebar {
+  background: var(--color-surface);
+}
+
+[data-theme="dark"] .assistant-new-chat {
+  border-color: var(--ai-line);
+  color: var(--ai-ink);
+}
+
+[data-theme="dark"] .assistant-new-chat:hover {
+  background: #1b2c25;
+  border-color: #3a5147;
+}
+
+[data-theme="dark"] .assistant-topbar {
+  background: rgb(20 31 26 / 85%);
+}
+
+[data-theme="dark"] .assistant-mobile-new {
+  border-color: var(--ai-line);
+  background: var(--color-surface);
+  color: var(--ai-ink);
+}
+
+[data-theme="dark"] .assistant-orb {
+  border-color: var(--ai-line);
+  background: linear-gradient(145deg, #1b2b25, #142a22);
+  box-shadow: 0 8px 25px rgb(0 0 0 / 35%);
+}
+
+[data-theme="dark"] .assistant-orb span {
+  color: var(--ai-accent);
+}
+
+[data-theme="dark"] .assistant-mini-orb,
+[data-theme="dark"] .assistant-avatar {
+  background: #1d3a2f;
+  color: var(--ai-accent);
+}
+
+[data-theme="dark"] .assistant-message,
+[data-theme="dark"] .assistant-composer {
+  background: var(--color-surface);
+}
+
+[data-theme="dark"] .assistant-message-author {
+  color: var(--ai-muted);
+}
+
+[data-theme="dark"] .assistant-composer textarea {
+  color: var(--ai-ink);
+}
+
+[data-theme="dark"] .assistant-composer textarea::placeholder {
+  color: var(--ai-muted);
+}
+
+[data-theme="dark"] .assistant-status-dot,
+[data-theme="dark"] .assistant-online span {
+  box-shadow: 0 0 0 3px rgb(57 165 108 / 20%);
+}

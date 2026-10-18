@@ -4,11 +4,11 @@
 
 .contacts-page {
   min-height: calc(100vh - var(--app-header-h, 72px));
-  padding: clamp(24px, 5vw, 56px) 20px 80px;
+  padding: clamp(16px, 3vw, 40px) 20px 80px;
   background: var(--color-background);
   color: var(--color-text);
   font-family: var(--font-body);
-  text-align: left;
+  text-align: start;
 }
 
 .contacts-page *,
@@ -209,7 +209,7 @@
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: #e3efe8;
+  background: var(--color-success-bg);
   color: var(--color-green);
   font-family: var(--font-display);
   font-size: 1.3rem;

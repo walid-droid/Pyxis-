@@ -1,3 +1,4 @@
+import { useI18n } from "../i18n";
 import "./AlertRow.css";
 
 export type AlertRowTone =
@@ -21,7 +22,8 @@ type AlertRowProps = {
   /** Full accessible description of the row. */
   ariaLabel: string;
   selected?: boolean;
-  onClick: () => void;
+  /** When provided, the row becomes a button that opens the alert on the map. */
+  onClick?: () => void;
 };
 
 function AlertRow({
@@ -33,19 +35,14 @@ function AlertRow({
   selected = false,
   onClick,
 }: AlertRowProps) {
-  return (
-    <li>
-      <button
-        type="button"
-        className={`alert-row alert-row--${tone}${selected ? " is-selected" : ""}`}
-        aria-label={ariaLabel}
-        title="Afficher la carte et les zones de sécurité"
-        onClick={onClick}
-      >
-        <span className="alert-row__dot" aria-hidden="true" />
-        <span className="alert-row__title">{title}</span>
-        <span className="alert-row__label">{label}</span>
-        <span className="alert-row__meta">{meta}</span>
+  const { t } = useI18n();
+  const content = (
+    <>
+      <span className="alert-row__dot" aria-hidden="true" />
+      <span className="alert-row__title">{title}</span>
+      <span className="alert-row__label">{label}</span>
+      <span className="alert-row__meta">{meta}</span>
+      {onClick && (
         <svg
           className="alert-row__pin"
           viewBox="0 0 24 24"
@@ -59,7 +56,27 @@ function AlertRow({
           <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z" />
           <circle cx="12" cy="10" r="3" />
         </svg>
-      </button>
+      )}
+    </>
+  );
+
+  return (
+    <li>
+      {onClick ? (
+        <button
+          type="button"
+          className={`alert-row alert-row--${tone}${selected ? " is-selected" : ""}`}
+          aria-label={ariaLabel}
+          title={t("common.showMapZones")}
+          onClick={onClick}
+        >
+          {content}
+        </button>
+      ) : (
+        <div className={`alert-row alert-row--${tone}`} aria-label={ariaLabel}>
+          {content}
+        </div>
+      )}
     </li>
   );
 }

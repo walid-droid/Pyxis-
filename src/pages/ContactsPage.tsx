@@ -1,3 +1,4 @@
+import { useI18n } from "../i18n";
 import "./ContactsPage.css";
 
 type PhoneNumber = {
@@ -21,8 +22,6 @@ type Group = {
 };
 
 // Update this date each time you re-check the numbers.
-const LAST_CHECKED = "octobre 2026";
-
 const GROUPS: Group[] = [
   {
     id: "urgences",
@@ -103,23 +102,22 @@ function PhoneIcon() {
 }
 
 export default function ContactsPage() {
+  const { t, tc } = useI18n();
+
   return (
     <main className="contacts-page">
       <div className="ct-wrap">
         <header className="ct-hero">
           <div className="ct-hero-text">
-            <p className="ct-eyebrow">Contacts</p>
-            <h1 className="ct-title">Numéros d'urgence en Algérie</h1>
-            <p className="ct-lead">
-              En cas de danger immédiat, appelez d'abord les secours. Touchez un numéro pour lancer
-              l'appel depuis votre téléphone.
-            </p>
+            <p className="ct-eyebrow">{t("contacts.eyebrow")}</p>
+            <h1 className="ct-title">{t("contacts.title")}</h1>
+            <p className="ct-lead">{t("contacts.lead")}</p>
           </div>
 
           <a className="ct-hero-call" href="tel:14">
             <PhoneIcon />
             <span>
-              <small>Appel d'urgence</small>
+              <small>{t("contacts.emergency")}</small>
               14
             </span>
           </a>
@@ -128,26 +126,26 @@ export default function ContactsPage() {
         {GROUPS.map((group) => (
           <section key={group.id} className="ct-group" aria-labelledby={`ct-${group.id}`}>
             <div className="ct-group-head">
-              <h2 id={`ct-${group.id}`}>{group.title}</h2>
+              <h2 id={`ct-${group.id}`}>{tc(group.title)}</h2>
               {group.urgent && (
                 <span className="ct-badge">
-                  <span className="ct-badge-dot" /> Priorité
+                  <span className="ct-badge-dot" /> {t("contacts.priority")}
                 </span>
               )}
             </div>
-            <p className="ct-group-intro">{group.intro}</p>
+            <p className="ct-group-intro">{tc(group.intro)}</p>
 
             <ul className="ct-grid">
               {group.contacts.map((c) => (
                 <li key={c.name} className={"ct-card" + (group.urgent ? " ct-card--urgent" : "")}>
                   <div className="ct-card-head">
                     <span className="ct-card-icon" aria-hidden="true">
-                      {c.name.charAt(0)}
+                      {tc(c.name).charAt(0)}
                     </span>
-                    <h3>{c.name}</h3>
+                    <h3>{tc(c.name)}</h3>
                   </div>
 
-                  <p className="ct-role">{c.role}</p>
+                  <p className="ct-role">{tc(c.role)}</p>
 
                   <div className="ct-numbers">
                     {c.numbers.map((n) => (
@@ -155,7 +153,10 @@ export default function ContactsPage() {
                         key={n.tel}
                         className="ct-call"
                         href={`tel:${n.tel}`}
-                        aria-label={`Appeler le ${n.display} (${c.name})`}
+                        aria-label={t("contacts.callAria", {
+                          number: n.display,
+                          name: tc(c.name),
+                        })}
                       >
                         <PhoneIcon />
                         {n.display}
@@ -163,7 +164,7 @@ export default function ContactsPage() {
                     ))}
                   </div>
 
-                  {c.note && <p className="ct-note">{c.note}</p>}
+                  {c.note && <p className="ct-note">{tc(c.note)}</p>}
                 </li>
               ))}
             </ul>
@@ -171,9 +172,7 @@ export default function ContactsPage() {
         ))}
 
         <p className="ct-foot">
-          Liste vérifiée en {LAST_CHECKED} à partir de sources de presse algériennes. Les numéros
-          peuvent changer : en cas de doute, appelez le 14 ou le 17. Cette page ne remplace pas
-          l'appel aux secours.
+          {t("contacts.foot", { date: t("contacts.lastChecked") })}
         </p>
       </div>
     </main>
