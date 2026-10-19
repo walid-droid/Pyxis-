@@ -193,6 +193,26 @@
   color: var(--color-danger);
 }
 
+.app-sidebar__logout {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: var(--radius-button);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-align: center;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.app-sidebar__logout:hover {
+  background: var(--color-surface-muted);
+  color: var(--color-text);
+}
+
 .app-sidebar__backdrop {
   display: none;
 }

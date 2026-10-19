@@ -11,7 +11,7 @@ const STEPS = [
   ["Clôturé", "Le traitement du signalement est terminé."],
 ];
 
-export default function Tracking() {
+export default function Tracking({ onRequestSubmit }) {
   const tlRef = useRef(null);
   const fillRef = useRef(null);
   const stepRefs = useRef([]);
@@ -76,7 +76,7 @@ export default function Tracking() {
           ))}
         </div>
         <div className="btns">
-          <Link className="btn" to="/submit-alert">Signaler un incident</Link>
+          <Link className="btn" to="/submit-alert" onClick={onRequestSubmit}>Signaler un incident</Link>
           <a className="btn out" href="#" onClick={noop}>Suivre mon signalement</a>
         </div>
       </div>

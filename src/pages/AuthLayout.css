@@ -184,6 +184,7 @@
 
 .auth-form input[type="text"],
 .auth-form input[type="email"],
+.auth-form input[type="tel"],
 .auth-form input[type="password"] {
   box-sizing: border-box;
   width: 100%;
@@ -209,6 +210,31 @@
   outline: none;
   border-color: var(--color-green);
   box-shadow: 0 0 0 3px rgba(22, 112, 74, 0.15);
+}
+
+.auth-form input[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+.auth-form input[aria-invalid="true"]:focus {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.15);
+}
+
+.auth-field-hint,
+.auth-field-error {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.auth-field-hint {
+  color: var(--color-text-muted);
+}
+
+.auth-field-error {
+  color: var(--color-danger);
+  font-weight: 600;
 }
 
 .auth-row {

@@ -33,7 +33,9 @@ nav{display:flex;gap:28px;font-size:15px;font-weight:500;flex:1}
 nav a{position:relative;padding:4px 0}
 nav a:after{content:"";position:absolute;left:0;bottom:0;height:1px;width:100%;background:var(--ink);transform:scaleX(0);transform-origin:left;transition:transform .4s var(--ease)}
 nav a:hover:after{transform:scaleX(1)}
-.hr{display:flex;align-items:center;gap:24px;font-size:15px;font-weight:500}
+.hr{display:flex;align-items:center;gap:24px;font-size:15px;font-weight:500;margin-left:auto}
+/* les boutons du header sont calés sur le bord droit de l'écran, hors du conteneur .wrap */
+@media(min-width:901px){header .hr{position:absolute;right:32px;top:50%;transform:translateY(-50%);margin-left:0}}
 header .btn{height:42px;padding:0 18px;font-size:15px}
 
 /* hero */
@@ -277,3 +279,18 @@ main:focus{outline:0}
 /* Correctif mobile : la colonne hero ne doit pas dépasser le viewport
    (le min-content intrinsèque du champ de recherche élargissait le bloc) */
 @media(max-width:900px){.hero .wrap{width:100%;min-width:0}}
+
+/* modale : connexion requise pour signaler un incident */
+.lmodal{position:fixed;inset:0;z-index:400;display:grid;place-items:center;padding:24px;background:rgba(11,18,16,.55);animation:lmfade .18s ease}
+.lmodal-card{position:relative;width:min(520px,100%);background:#fff;border-radius:10px;padding:40px;box-shadow:0 30px 80px rgba(0,0,0,.4);animation:lmpop .22s var(--ease)}
+.lmodal-card h2{font-size:clamp(28px,4vw,40px);margin-bottom:16px}
+.lmodal-txt{color:var(--grey);font-size:18px;margin-bottom:28px}
+.lmodal-acts{display:flex;gap:14px;flex-wrap:wrap}
+.lmodal-acts .btn{height:48px}
+.lmodal-note{margin-top:28px;padding-top:20px;border-top:1px solid var(--line);font-size:15px;color:var(--grey)}
+.lmodal-x{position:absolute;top:16px;right:16px;width:40px;height:40px;border:1px solid var(--line);border-radius:50%;background:#fff;color:var(--ink);font-size:22px;line-height:1;cursor:pointer;transition:background .2s,color .2s}
+.lmodal-x:hover{background:var(--paper);color:var(--ink)}
+@keyframes lmfade{from{opacity:0}to{opacity:1}}
+@keyframes lmpop{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+@media(max-width:480px){.lmodal{padding:12px}.lmodal-card{padding:28px 22px}.lmodal-acts .btn{width:100%}}
+@media(prefers-reduced-motion:reduce){.lmodal,.lmodal-card{animation:none}}

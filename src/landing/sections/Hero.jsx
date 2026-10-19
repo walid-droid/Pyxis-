@@ -10,7 +10,7 @@ function shouldSkipVideo(reducedMotion) {
   return reducedMotion || !!(c && (c.saveData || /2g|3g/.test(c.effectiveType || "")));
 }
 
-export default function Hero({ reducedMotion }) {
+export default function Hero({ reducedMotion, onRequestSubmit }) {
   const [paused, setPaused] = useState(false);
   // "loading" -> "ready" quand la vidéo peut démarrer, "removed" si absente ou connexion lente
   const [video, setVideo] = useState(() => (shouldSkipVideo(reducedMotion) ? "removed" : "loading"));
@@ -107,7 +107,9 @@ export default function Hero({ reducedMotion }) {
           <p className="note">
             Si vous autorisez la géolocalisation lors d'un signalement, votre position pourra y être jointe pour aider les services à localiser l'incident. Un signalement en ligne ne remplace pas l'appel aux secours.
           </p>
-          <Link className="btn red" to="/submit-alert">Envoyer un signalement</Link>
+          <Link className="btn red" to="/submit-alert" onClick={onRequestSubmit}>
+            Envoyer un signalement
+          </Link>
         </div>
       </div>
     </section>

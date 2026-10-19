@@ -1,11 +1,13 @@
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { DASHBOARD_PATH } from "../config";
 import { useI18n } from "../i18n";
+import { signIn } from "../lib/session";
 import AuthLayout from "./AuthLayout";
 
 function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,7 +15,10 @@ function LoginPage() {
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     // Connect this to your authentication backend.
-    navigate(DASHBOARD_PATH);
+    signIn(email);
+    // Redirige vers la page demandée (ex. /submit-alert) si elle a été bloquée.
+    const from = (location.state as { from?: string } | null)?.from;
+    navigate(from ?? DASHBOARD_PATH);
   }
 
   return (

@@ -1,10 +1,12 @@
 import "./App.css";
-import { useEffect, useRef, useState } from "react";
-import { Routes, Route, NavLink, Outlet, useLocation } from "react-router";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Routes, Route, NavLink, Outlet, useLocation, useNavigate } from "react-router";
 import logo from "./assets/Logo SafeDZ.png";
 import ThemeToggle from "./components/ThemeToggle";
 import LanguageToggle from "./components/LanguageToggle";
 import { useI18n } from "./i18n";
+import { LOGIN_PATH } from "./config";
+import { getSession, signOut } from "./lib/session";
 // Landing is currently implemented in JavaScript/JSX without type declarations.
 // @ts-expect-error No declaration file is available for this JSX module.
 import Landing from "./landing/Landing";
@@ -34,8 +36,10 @@ const SIDEBAR_KEY = "safedz-sidebar-collapsed";
 function DashboardLayout() {
   const navRef = useRef<HTMLElement>(null);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const { t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [session, setSession] = useState(() => getSession());
   const [collapsed, setCollapsed] = useState(() => {
     try {
       return localStorage.getItem(SIDEBAR_KEY) === "1";
@@ -147,6 +151,19 @@ function DashboardLayout() {
           <a className="app-sidebar__call" href="tel:14">
             {t("nav.emergencyCall")}
           </a>
+          {session && (
+            <button
+              type="button"
+              className="app-sidebar__logout"
+              onClick={() => {
+                signOut();
+                setSession(null);
+                navigate("/");
+              }}
+            >
+              {t("nav.logout")}
+            </button>
+          )}
         </div>
       </aside>
 
@@ -166,6 +183,22 @@ function DashboardLayout() {
   );
 }
 
+function RequireAuth({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const allowed = getSession() !== null;
+
+  useEffect(() => {
+    if (allowed) return;
+    navigate(LOGIN_PATH, { replace: true, state: { from: location.pathname } });
+  }, [allowed, navigate, location.pathname]);
+
+  // Rien n'est rendu tant que la redirection vers la connexion est en cours.
+  if (!allowed) return null;
+
+  return <>{children}</>;
+}
+
 function App() {
   const { t } = useI18n();
 
@@ -183,7 +216,14 @@ function App() {
         <Route path="/contacts" element={<ContactsPage />} />
         <Route path="/assistant" element={<AssistantPage />} />
         <Route path="/events" element={<EventsPage />} />
-        <Route path="/submit-alert" element={<SubmitAlertPage />} />
+        <Route
+          path="/submit-alert"
+          element={
+            <RequireAuth>
+              <SubmitAlertPage />
+            </RequireAuth>
+          }
+        />
         <Route path="*" element={<h1>{t("nav.notFound")}</h1>} />
       </Route>
     </Routes>
