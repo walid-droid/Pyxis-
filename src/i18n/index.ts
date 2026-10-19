@@ -65,7 +65,7 @@ const fr = {
 
   "alerts.eyebrow": "Alertes vérifiées",
   "alerts.title": "Alertes",
-  "alerts.lead": "Retrouvez les alertes vérifiées par nos équipes, près de chez vous.",
+  "alerts.lead": "Retrouvez les alertes vérifiées par nos équipes, près de chez vous en temps réel .",
   "alerts.create": "+ Créer une alerte",
   "alerts.filterAria": "Filtrer les alertes",
   "alerts.severity": "Gravité",
@@ -94,8 +94,8 @@ const fr = {
   "events.status.ended": "Terminé",
 
   "resources.eyebrow": "Abris & secours",
-  "resources.title": "Trouvez un abri près de vous.",
-  "resources.lead": "Les abris, postes de secours et itinéraires prévus autour de Sétif.",
+  "resources.title": "Trouvez un abri",
+  "resources.lead": "Les abris, postes de secours et itinéraires prévus autour de vous.",
   "resources.emergency": "En cas de danger immédiat, appelez d'abord les services d'urgence",
   "resources.allNumbers": "Voir tous les numéros",
   "resources.sheltersTitle": "Abris à proximité",
@@ -116,14 +116,14 @@ const fr = {
   "resources.noteAfter": ".",
 
   "consignes.eyebrow": "Consignes de sécurité",
-  "consignes.title": "Les bons réflexes face aux situations d'urgence.",
+  "consignes.title": "Les réflexes ",
   "consignes.lead": "Sélectionnez une situation pour découvrir les étapes à suivre, pas à pas.",
   "consignes.emergency": "En cas de danger immédiat, appelez d'abord les secours",
   "consignes.allNumbers": "Voir tous les numéros",
   "consignes.steps": "{count} étapes · Voir les consignes",
 
   "contacts.eyebrow": "Contacts",
-  "contacts.title": "Numéros d'urgence en Algérie",
+  "contacts.title": "Numéros d'urgence ",
   "contacts.lead":
     "En cas de danger immédiat, appelez d'abord les secours. Touchez un numéro pour lancer l'appel depuis votre téléphone.",
   "contacts.emergency": "Appel d'urgence",

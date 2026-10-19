@@ -16,7 +16,7 @@ function ConsignesPage() {
           <p className="consignes-hero-eyebrow">{t("consignes.eyebrow")}</p>
           <h1>{t("consignes.title")}</h1>
           <p className="consignes-hero-lead">{t("consignes.lead")}</p>
-        </div>
+        </div>0
 
         <div className="consignes-hero-aside">
           <p className="consignes-hero-alert">
