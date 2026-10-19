@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-import { DASHBOARD_PATH } from "../config";
-import { useI18n } from "../i18n";
-import { signIn } from "../lib/session";
+import { DASHBOARD_PATH } from "../../config";
+import { useI18n } from "../../i18n";
+import { signIn } from "../../lib/session";
 import AuthLayout from "./AuthLayout";
 
 function LoginPage() {

@@ -1,7 +1,7 @@
-import "./DashboardPage.css";
+import "./HomePage.css";
 import type { ReactNode } from "react";
 import { Link, useNavigate } from "react-router";
-import { useI18n } from "../i18n";
+import { useI18n } from "../../i18n";
 
 const QUICK_LINKS: {
   key: string;
@@ -89,7 +89,7 @@ const QUICK_LINKS: {
   },
 ];
 
-function DashboardPage() {
+function HomePage() {
   const navigate = useNavigate();
   const { t } = useI18n();
 
@@ -159,4 +159,4 @@ function DashboardPage() {
   );
 }
 
-export default DashboardPage;
+export default HomePage;

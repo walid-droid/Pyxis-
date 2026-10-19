@@ -1,9 +1,9 @@
 import { Link } from "react-router";
-import { generateSafetyData } from "../mockdata/safety";
-import { distanceKm, resolveCoords } from "../mockdata/locations";
-import type { Coords } from "../mockdata/locations";
-import { useI18n, type Lang } from "../i18n";
-import "./ResourcesPage.css";
+import { generateSafetyData } from "../../mockdata/safety";
+import { distanceKm, resolveCoords } from "../../mockdata/locations";
+import type { Coords } from "../../mockdata/locations";
+import { useI18n, type Lang } from "../../i18n";
+import "./SheltersPage.css";
 
 /** Same demo anchor as the dashboard: "Autour de moi · Sétif". */
 const CENTER = resolveCoords("Sétif");
@@ -49,7 +49,7 @@ function RouteIcon() {
   );
 }
 
-export default function ResourcesPage() {
+export default function SheltersPage() {
   const { t, tc, lang } = useI18n();
   const shelters = [...SAFETY.shelters].sort(
     (a, b) => distanceKm(CENTER, a.position) - distanceKm(CENTER, b.position),

@@ -1,8 +1,8 @@
 import { useState, type ChangeEvent, type ClipboardEvent, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-import { DASHBOARD_PATH } from "../config";
-import { useI18n } from "../i18n";
-import { signIn } from "../lib/session";
+import { DASHBOARD_PATH } from "../../config";
+import { useI18n } from "../../i18n";
+import { signIn } from "../../lib/session";
 import AuthLayout from "./AuthLayout";
 
 // Un numéro algérien fait 10 chiffres : 0 + 5/6/7 + 8 chiffres.

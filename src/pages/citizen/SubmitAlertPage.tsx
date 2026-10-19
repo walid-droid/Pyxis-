@@ -6,7 +6,7 @@ import {
   type FormEvent,
 } from "react";
 import { useNavigate } from "react-router";
-import { useI18n } from "../i18n";
+import { useI18n } from "../../i18n";
 import "./SubmitAlertPage.css";
 
 const SEVERITIES = [

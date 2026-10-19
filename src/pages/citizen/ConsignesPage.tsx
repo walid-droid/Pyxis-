@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import Modal from "../components/Modal";
-import { mockConsignes, type Consigne } from "../mockdata/consigne";
-import { useI18n } from "../i18n";
+import Modal from "../../components/Modal";
+import { mockConsignes, type Consigne } from "../../mockdata/consigne";
+import { useI18n } from "../../i18n";
 import "./ConsignesPage.css";
 
 function ConsignesPage() {

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { mockEvents, type EventItem, type EventStatus } from "../mockdata/event";
-import { useI18n } from "../i18n";
+import { mockEvents, type EventItem, type EventStatus } from "../../mockdata/event";
+import { useI18n } from "../../i18n";
 import "./EventsPage.css";
 
 const STATUS_KEYS: Record<string, string> = {

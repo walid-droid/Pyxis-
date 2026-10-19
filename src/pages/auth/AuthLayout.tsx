@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router";
-import logo from "../assets/Logo CADM.png";
-import LanguageToggle from "../components/LanguageToggle";
-import { useI18n } from "../i18n";
+import logo from "../../assets/Logo CADM.png";
+import LanguageToggle from "../../components/LanguageToggle";
+import { useI18n } from "../../i18n";
 import "./AuthLayout.css";
 
 type AuthLayoutProps = {

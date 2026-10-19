@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import WarningCard from "../components/WarningCard";
-import IncidentMapModal from "../components/IncidentMapModal";
-import type { MapItem } from "../components/IncidentMapModal";
-import { mockWarnings, type Severity, type Warning } from "../mockdata/warning";
-import { resolveCoords } from "../mockdata/locations";
-import { useI18n } from "../i18n";
+import WarningCard from "../../components/WarningCard";
+import IncidentMapModal from "../../components/IncidentMapModal";
+import type { MapItem } from "../../components/IncidentMapModal";
+import { mockWarnings, type Severity, type Warning } from "../../mockdata/warning";
+import { resolveCoords } from "../../mockdata/locations";
+import { useI18n } from "../../i18n";
 import "./AlertsPage.css";
 
 const SEVERITY_ORDER: Severity[] = ["Low", "Medium", "High", "Critical"];

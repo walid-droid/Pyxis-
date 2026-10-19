@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import logo from "../assets/Logo CADM.png";
-import { useI18n } from "../i18n";
+import logo from "../../assets/Logo CADM.png";
+import { useI18n } from "../../i18n";
 import "./AssistantPage.css";
 
 type Message = { role: "assistant" | "user"; text: string };

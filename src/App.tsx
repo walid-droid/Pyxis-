@@ -10,16 +10,16 @@ import { getSession, signOut } from "./lib/session";
 // Landing is currently implemented in JavaScript/JSX without type declarations.
 // @ts-expect-error No declaration file is available for this JSX module.
 import Landing from "./landing/Landing";
-import ContactsPage from "./pages/ContactsPage";
-import AssistantPage from "./pages/AssistantPage";
-import DashboardPage from "./pages/DashboardPage";
-import AlertsPage from "./pages/AlertsPage";
-import ResourcesPage from "./pages/ResourcesPage";
-import SubmitAlertPage from "./pages/SubmitAlertPage";
-import EventsPage from "./pages/EventsPage";
-import ConsignesPage from "./pages/ConsignesPage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
+import ContactsPage from "./pages/citizen/ContactsPage";
+import AssistantPage from "./pages/citizen/AssistantPage";
+import HomePage from "./pages/citizen/HomePage";
+import AlertsPage from "./pages/citizen/AlertsPage";
+import SheltersPage from "./pages/citizen/SheltersPage";
+import SubmitAlertPage from "./pages/citizen/SubmitAlertPage";
+import EventsPage from "./pages/citizen/EventsPage";
+import ConsignesPage from "./pages/citizen/ConsignesPage";
+import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegisterPage";
 
 const NAV_ITEMS = [
   { to: "/dashboard", labelKey: "nav.dashboard" },
@@ -206,9 +206,9 @@ function App() {
       <Route path="/register" element={<RegisterPage />} />
 
       <Route element={<DashboardLayout />}>
-        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/dashboard" element={<HomePage />} />
         <Route path="/alerts" element={<AlertsPage />} />
-        <Route path="/resources" element={<ResourcesPage />} />
+        <Route path="/resources" element={<SheltersPage />} />
         <Route path="/consignes" element={<ConsignesPage />} />
         <Route path="/contacts" element={<ContactsPage />} />
         <Route path="/assistant" element={<AssistantPage />} />
