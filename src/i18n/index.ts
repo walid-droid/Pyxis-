@@ -2,7 +2,7 @@ import { createContext, useContext } from "react";
 
 export type Lang = "fr" | "ar";
 
-export const STORAGE_KEY = "safedz-lang";
+export const STORAGE_KEY = "cadm-lang";
 
 type Vars = Record<string, string | number>;
 
@@ -23,7 +23,6 @@ const fr = {
   "nav.events": "Événements",
   "nav.contacts": "Contacts",
   "nav.main": "Navigation principale",
-  "nav.emergencyCall": "Appel d'urgence · 14",
   "nav.showSidebar": "Afficher le menu",
   "nav.hideSidebar": "Réduire le menu",
   "nav.openMenu": "Ouvrir le menu",
@@ -42,7 +41,7 @@ const fr = {
   "verification.unverified": "Non vérifiée",
 
   "dashboard.live": "Veille active",
-  "dashboard.title": "Bienvenue sur SafeDZ",
+  "dashboard.title": "Bienvenue sur CADM",
   "dashboard.lead":
     "Votre espace personnel pour rester informé et réagir face aux situations d'urgence. Tout est à portée de main.",
   "dashboard.createAlert": "Créer une alerte",
@@ -135,7 +134,7 @@ const fr = {
     "Liste vérifiée en {date} à partir de sources de presse algériennes. Les numéros peuvent changer : en cas de doute, appelez le 14 ou le 17. Cette page ne remplace pas l'appel aux secours.",
 
   "submit.badge": "Signalement citoyen",
-  "submit.eyebrow": "SAFEDZ · SIGNALEMENT CITOYEN",
+  "submit.eyebrow": "CADM · SIGNALEMENT CITOYEN",
   "submit.title": "Créer une alerte",
   "submit.lead": "Décrivez la situation. Votre signalement sera vérifié par nos équipes avant toute diffusion.",
   "submit.section1": "Informations sur l'alerte",
@@ -202,7 +201,7 @@ const fr = {
   "assistant.yourConversation": "Votre conversation",
   "assistant.conversationSub": "Conseils de prévention et de sécurité",
   "assistant.you": "Vous",
-  "assistant.bot": "SafeDZ · Assistant IA",
+  "assistant.bot": "CADM · Assistant IA",
   "assistant.typing": "Préparation de la réponse…",
   "assistant.placeholder": "Posez votre question…",
   "assistant.questionAria": "Votre question",
@@ -214,15 +213,15 @@ const fr = {
     "Désolé, je n'ai pas pu répondre pour le moment. En cas de danger immédiat, contactez directement les services de secours.",
 
   "auth.back": "← Retour à l'accueil",
-  "auth.brandAria": "SafeDZ, accueil",
+  "auth.brandAria": "CADM, accueil",
   "auth.point1": "Alertes vérifiées en temps réel",
   "auth.point2": "Signalement d'incidents en un instant",
   "auth.point3": "Consignes et abris près de vous",
-  "auth.foot": "© 2026 SafeDZ · Pensé pour les citoyens en Algérie",
+  "auth.foot": "© 2026 CADM · Pensé pour les citoyens en Algérie",
   "login.farTitle": "Bon retour.",
   "login.farText": "Retrouvez les alertes vérifiées, les consignes et les abris près de vous.",
   "login.title": "Se connecter",
-  "login.lead": "Accédez à votre espace SafeDZ.",
+  "login.lead": "Accédez à votre espace CADM.",
   "login.email": "Adresse e-mail",
   "login.emailPlaceholder": "vous@exemple.dz",
   "login.password": "Mot de passe",
@@ -231,7 +230,7 @@ const fr = {
   "login.submit": "Se connecter",
   "login.switch": "Pas encore de compte ?",
   "login.create": "Créer un compte",
-  "register.farTitle": "Rejoignez SafeDZ.",
+  "register.farTitle": "Rejoignez CADM.",
   "register.farText":
     "Créez votre compte pour signaler des incidents, suivre les alertes et recevoir des consignes de sécurité.",
   "register.title": "Créer un compte",
@@ -299,7 +298,6 @@ const ar: Record<string, string> = {
   "nav.events": "الفعاليات",
   "nav.contacts": "جهات الاتصال",
   "nav.main": "التنقل الرئيسي",
-  "nav.emergencyCall": "اتصال الطوارئ · 14",
   "nav.showSidebar": "إظهار القائمة",
   "nav.hideSidebar": "تقليص القائمة",
   "nav.openMenu": "فتح القائمة",
@@ -318,7 +316,7 @@ const ar: Record<string, string> = {
   "verification.unverified": "غير موثّق",
 
   "dashboard.live": "مراقبة نشطة",
-  "dashboard.title": "مرحبًا بك في SafeDZ",
+  "dashboard.title": "مرحبًا بك في CADM",
   "dashboard.lead":
     "مساحتك الشخصية للبقاء على اطلاع والتصرف في حالات الطوارئ. كل شيء في متناول يدك.",
   "dashboard.createAlert": "إنشاء تنبيه",
@@ -411,7 +409,7 @@ const ar: Record<string, string> = {
     "قائمة تم التحقق منها في {date} من مصادر إعلامية جزائرية. قد تتغير الأرقام: عند الشك، اتصل بالرقم 14 أو 17. لا تغني هذه الصفحة عن الاتصال بالإنقاذ.",
 
   "submit.badge": "بلاغ مواطن",
-  "submit.eyebrow": "SAFEDZ · بلاغ مواطن",
+  "submit.eyebrow": "CADM · بلاغ مواطن",
   "submit.title": "إنشاء تنبيه",
   "submit.lead": "صف الوضع. سيتم التحقق من بلاغك من قبل فرقنا قبل أي نشر.",
   "submit.section1": "معلومات التنبيه",
@@ -477,7 +475,7 @@ const ar: Record<string, string> = {
   "assistant.yourConversation": "محادثتك",
   "assistant.conversationSub": "نصائح الوقاية والسلامة",
   "assistant.you": "أنت",
-  "assistant.bot": "SafeDZ · المساعد الذكي",
+  "assistant.bot": "CADM · المساعد الذكي",
   "assistant.typing": "جارٍ إعداد الرد…",
   "assistant.placeholder": "اطرح سؤالك…",
   "assistant.questionAria": "سؤالك",
@@ -488,15 +486,15 @@ const ar: Record<string, string> = {
     "عذرًا، لم أتمكن من الرد حاليًا. في حال خطر مباشر، تواصل مباشرة مع خدمات الإنقاذ.",
 
   "auth.back": "→ العودة إلى الرئيسية",
-  "auth.brandAria": "SafeDZ، الرئيسية",
+  "auth.brandAria": "CADM، الرئيسية",
   "auth.point1": "تنبيهات موثقة في الوقت الفعلي",
   "auth.point2": "الإبلاغ عن الحوادث في لحظة",
   "auth.point3": "إرشادات ومآوٍ قريبة منك",
-  "auth.foot": "© 2026 SafeDZ · صُمم للمواطنين في الجزائر",
+  "auth.foot": "© 2026 CADM · صُمم للمواطنين في الجزائر",
   "login.farTitle": "مرحبًا بعودتك.",
   "login.farText": "تابع التنبيهات الموثقة والإرشادات والمآوي القريبة منك.",
   "login.title": "تسجيل الدخول",
-  "login.lead": "ادخل إلى مساحتك في SafeDZ.",
+  "login.lead": "ادخل إلى مساحتك في CADM.",
   "login.email": "البريد الإلكتروني",
   "login.emailPlaceholder": "you@example.dz",
   "login.password": "كلمة المرور",
@@ -505,7 +503,7 @@ const ar: Record<string, string> = {
   "login.submit": "تسجيل الدخول",
   "login.switch": "ليس لديك حساب بعد؟",
   "login.create": "إنشاء حساب",
-  "register.farTitle": "انضم إلى SafeDZ.",
+  "register.farTitle": "انضم إلى CADM.",
   "register.farText":
     "أنشئ حسابك للإبلاغ عن الحوادث ومتابعة التنبيهات وتلقي إرشادات السلامة.",
   "register.title": "إنشاء حساب",

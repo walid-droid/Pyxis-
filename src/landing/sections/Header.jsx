@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { DASHBOARD_PATH, LOGIN_PATH } from "../../config";
 import { useRafScroll } from "../hooks";
 import { isAuthenticated } from "../../lib/session";
-import logo from "../../assets/Logo SafeDZ.png";
+import logo from "../../assets/Logo CADM.png";
 
 export default function Header({ onRequestSubmit }) {
   const [scrolled, setScrolled] = useState(false);
@@ -14,9 +14,9 @@ export default function Header({ onRequestSubmit }) {
   return (
     <header id="hd" className={scrolled ? "s" : undefined}>
       <div className="wrap">
-        <a className="logo" href="#top" aria-label="SafeDZ, accueil">
+        <a className="logo" href="#top" aria-label="CADM, accueil">
           <img src={logo} alt="" />
-          <span>SafeDZ</span>
+          <span>CADM</span>
         </a>
         <div className="hr">
           {connected ? (

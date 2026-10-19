@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router";
-import logo from "../assets/Logo SafeDZ.png";
+import logo from "../assets/Logo CADM.png";
 import LanguageToggle from "../components/LanguageToggle";
 import { useI18n } from "../i18n";
 import "./AuthLayout.css";
@@ -28,7 +28,7 @@ function AuthLayout({ farTitle, farText, children }: AuthLayoutProps) {
 
         <Link to="/" className="auth-brand" aria-label={t("auth.brandAria")}>
           <img src={logo} alt="" />
-          <span>SafeDZ</span>
+          <span>CADM</span>
         </Link>
 
         <div className="auth-aside-body">

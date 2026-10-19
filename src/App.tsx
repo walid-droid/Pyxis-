@@ -1,7 +1,7 @@
 import "./App.css";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Routes, Route, NavLink, Outlet, useLocation, useNavigate } from "react-router";
-import logo from "./assets/Logo SafeDZ.png";
+import logo from "./assets/Logo CADM.png";
 import ThemeToggle from "./components/ThemeToggle";
 import LanguageToggle from "./components/LanguageToggle";
 import { useI18n } from "./i18n";
@@ -31,7 +31,7 @@ const NAV_ITEMS = [
   { to: "/contacts", labelKey: "nav.contacts" },
 ];
 
-const SIDEBAR_KEY = "safedz-sidebar-collapsed";
+const SIDEBAR_KEY = "cadm-sidebar-collapsed";
 
 function DashboardLayout() {
   const navRef = useRef<HTMLElement>(null);
@@ -85,7 +85,7 @@ function DashboardLayout() {
         <div className="app-topbar__start">
           <NavLink to="/dashboard" className="app-brand" onClick={() => setMenuOpen(false)}>
             <img src={logo} alt="" />
-            <span>SafeDZ</span>
+            <span>CADM</span>
           </NavLink>
 
           <button
@@ -148,9 +148,6 @@ function DashboardLayout() {
         </nav>
 
         <div className="app-sidebar__foot">
-          <a className="app-sidebar__call" href="tel:14">
-            {t("nav.emergencyCall")}
-          </a>
           {session && (
             <button
               type="button"

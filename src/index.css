@@ -4,7 +4,7 @@
 :root {
   color-scheme: light;
 
-  /* SafeDZ brand */
+  /* CADM brand */
   --color-primary: #d92d20;
   --color-primary-hover: #b42318;
   --color-navy: #172a25;
@@ -54,7 +54,7 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  /* SafeDZ brand */
+  /* CADM brand */
   --color-primary: #f0544a;
   --color-primary-hover: #ff6f66;
   --color-navy: #a9c4b8;

@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import { LOGIN_PATH, REGISTER_PATH } from "../../config";
 import { noop } from "../utils";
-import logo from "../../assets/Logo SafeDZ.png";
+import logo from "../../assets/Logo CADM.png";
 
 export default function Footer() {
   return (
@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="top">
           <div>
             <div className="logo" style={{ marginBottom: 28 }}>
-              <img src={logo} alt="SafeDZ" />
+              <img src={logo} alt="CADM" />
             </div>
             <h2>L'information fiable, quand elle compte vraiment.</h2>
           </div>
@@ -45,7 +45,7 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <p className="copy">© 2026 SafeDZ · Pensé pour les citoyens en Algérie</p>
+        <p className="copy">© 2026 CADM · Pensé pour les citoyens en Algérie</p>
       </div>
     </footer>
   );

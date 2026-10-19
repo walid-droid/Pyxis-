@@ -38,16 +38,16 @@ export default function Sources() {
         <div className="cols">
           <div className="rv">
             <span className="big">01</span>
-            <h3>Pourquoi SafeDZ ?</h3>
+            <h3>Pourquoi CADM ?</h3>
             <p>
-              L'Algérie est exposée à plusieurs risques naturels et technologiques. SafeDZ facilite l'accès aux informations sur les risques et vise à améliorer la transmission des signalements entre les citoyens et les services concernés.
+              L'Algérie est exposée à plusieurs risques naturels et technologiques. CADM facilite l'accès aux informations sur les risques et vise à améliorer la transmission des signalements entre les citoyens et les services concernés.
             </p>
           </div>
           <div className="rv" style={{ "--d": ".1s" }}>
             <span className="big">02</span>
             <h3>Le cadre réglementaire</h3>
             <p>
-              SafeDZ est conçu en tenant compte de la réglementation algérienne relative à la prévention des risques de catastrophes et à la protection des données personnelles.
+              CADM est conçu en tenant compte de la réglementation algérienne relative à la prévention des risques de catastrophes et à la protection des données personnelles.
             </p>
           </div>
           <div className="rv" style={{ "--d": ".2s" }}>

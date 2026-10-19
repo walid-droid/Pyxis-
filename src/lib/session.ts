@@ -2,7 +2,7 @@
 // On conserve un simple indicateur dans le localStorage pour savoir si le visiteur
 // est connecté, afin de pouvoir conditionner l'accès à certaines pages.
 
-const SESSION_KEY = "safedz-session";
+const SESSION_KEY = "cadm-session";
 
 export type Session = {
   email: string;

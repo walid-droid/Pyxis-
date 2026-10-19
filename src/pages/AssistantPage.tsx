@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import logo from "../assets/Logo SafeDZ.png";
+import logo from "../assets/Logo CADM.png";
 import { useI18n } from "../i18n";
 import "./AssistantPage.css";
 
@@ -80,7 +80,7 @@ export default function AssistantPage() {
         <div className="assistant-side-title">
           <img className="assistant-logo" src={logo} alt="" />
           <div>
-            <strong>SafeAI</strong>
+            <strong>CADM-AI</strong>
             <small>{t("assistant.crisis")}</small>
           </div>
         </div>
@@ -103,7 +103,7 @@ export default function AssistantPage() {
       <section className="assistant-main">
         <div className="assistant-topbar">
           <div className="assistant-mobile-brand">
-            <img className="assistant-logo" src={logo} alt="" /> SafeDZ
+            <img className="assistant-logo" src={logo} alt="" /> CADM-AI
           </div>
           <div className="assistant-topbar-actions">
             {messages.length > 0 && (

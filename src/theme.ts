@@ -1,6 +1,6 @@
 export type Theme = "light" | "dark";
 
-const STORAGE_KEY = "safedz-theme";
+const STORAGE_KEY = "cadm-theme";
 
 export function getInitialTheme(): Theme {
   try {

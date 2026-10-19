@@ -3,7 +3,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 // pour que ses règles globales (body, header, h1…) ne touchent pas le dashboard.
 import css from "./landing.css?inline";
 import { useReducedMotion, useReveal, useRafScroll } from "./hooks";
-import logo from "../assets/Logo SafeDZ.png";
+import logo from "../assets/Logo CADM.png";
 import Header from "./sections/Header";
 import Hero from "./sections/Hero";
 import Situation from "./sections/Situation";
@@ -15,7 +15,7 @@ import Footer from "./sections/Footer";
 import RequireAuthModal from "./sections/RequireAuthModal";
 import { isAuthenticated } from "../lib/session";
 
-const TITLE = "SafeDZ — L'information fiable, quand elle compte vraiment";
+const TITLE = "CADM — L'information fiable, quand elle compte vraiment";
 
 function ScrollProgress() {
   const ref = useRef(null);
@@ -42,7 +42,7 @@ export default function Landing() {
 
   useLayoutEffect(() => {
     const style = document.createElement("style");
-    style.setAttribute("data-safedz-landing", "");
+    style.setAttribute("data-cadm-landing", "");
     style.textContent = css;
     document.head.appendChild(style);
     return () => style.remove();
