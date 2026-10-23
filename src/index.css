@@ -21,9 +21,9 @@
   --color-text-inverse: #ffffff;
 
   /* Borders and shadows */
-  --color-border: #dce2dc;
-  --shadow-card: 0 2px 8px rgb(17 25 22 / 4%);
-  --shadow-raised: 0 6px 20px rgb(17 25 22 / 12%);
+  --color-border: #e2e8e2;
+  --shadow-card: 0 1px 2px rgb(17 25 22 / 5%), 0 14px 30px -20px rgb(17 25 22 / 30%);
+  --shadow-raised: 0 26px 50px -26px rgb(17 25 22 / 38%);
 
   /* Status */
   --color-danger: #b42318;
@@ -38,9 +38,11 @@
   --font-display: 'DM Serif Display', Georgia, serif;
 
   /* Shape and spacing */
-  --radius-card: 3px;
-  --radius-button: 3px;
-  --radius-input: 3px;
+  --radius-card: 20px;
+  --radius-hero: 26px;
+  --radius-button: 14px;
+  --radius-input: 12px;
+  --radius-pill: 999px;
 
   font-family: var(--font-body);
   color: var(--color-text);
@@ -71,9 +73,9 @@
   --color-text-inverse: #0c1411;
 
   /* Borders and shadows */
-  --color-border: #2b3b34;
-  --shadow-card: 0 2px 8px rgb(0 0 0 / 35%);
-  --shadow-raised: 0 6px 20px rgb(0 0 0 / 45%);
+  --color-border: #2f3e37;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 40%), 0 14px 30px -20px rgb(0 0 0 / 60%);
+  --shadow-raised: 0 26px 50px -26px rgb(0 0 0 / 70%);
 
   /* Status */
   --color-danger: #ff7468;
@@ -114,7 +116,11 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: var(--color-background);
+  /* Halo vert très doux : évite l'aplat gris "template" et donne de la profondeur. */
+  background:
+    radial-gradient(1200px 560px at 8% -12%, color-mix(in srgb, var(--color-green) 10%, transparent), transparent 68%),
+    radial-gradient(1000px 520px at 98% 0%, color-mix(in srgb, var(--color-primary) 7%, transparent), transparent 70%),
+    var(--color-background);
   color: var(--color-text);
   font-family: var(--font-body);
   line-height: 1.6;

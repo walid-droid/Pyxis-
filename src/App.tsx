@@ -1,12 +1,26 @@
 import "./App.css";
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Routes, Route, NavLink, Outlet, useLocation, useNavigate } from "react-router";
-import logo from "./assets/Logo CADM.png";
-import ThemeToggle from "./components/ThemeToggle";
-import LanguageToggle from "./components/LanguageToggle";
+import { useEffect, type ReactNode } from "react";
+import {
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useNavigate,
+} from "react-router";
+import AppShell, { type ShellNavItem } from "./components/AppShell";
 import { useI18n } from "./i18n";
-import { LOGIN_PATH } from "./config";
-import { getSession, signOut } from "./lib/session";
+import {
+  DASHBOARD_PATH,
+  LOGIN_PATH,
+  RESP_DASHBOARD_PATH,
+  RESP_LOGIN_PATH,
+} from "./config";
+import {
+  getRespSession,
+  getSession,
+  signOut,
+  signOutResp,
+} from "./lib/session";
 // Landing is currently implemented in JavaScript/JSX without type declarations.
 // @ts-expect-error No declaration file is available for this JSX module.
 import Landing from "./landing/Landing";
@@ -20,8 +34,16 @@ import EventsPage from "./pages/citizen/EventsPage";
 import ConsignesPage from "./pages/citizen/ConsignesPage";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
+import RespLoginPage from "./pages/resp-crise/RespLoginPage";
+import CommandDashboard from "./pages/resp-crise/CommandDashboard";
+import IncidentManagement from "./pages/resp-crise/IncidentManagement";
+import CommandChain from "./pages/resp-crise/CommandChain";
+import ReportValidation from "./pages/resp-crise/ReportValidation";
+import AlertBroadcast from "./pages/resp-crise/AlertBroadcast";
+import CrisisResources from "./pages/resp-crise/CrisisResources";
+import JournalReports from "./pages/resp-crise/JournalReports";
 
-const NAV_ITEMS = [
+const CITIZEN_NAV: ShellNavItem[] = [
   { to: "/dashboard", labelKey: "nav.dashboard" },
   { to: "/alerts", labelKey: "nav.alerts" },
   { to: "/consignes", labelKey: "nav.consignes" },
@@ -31,152 +53,51 @@ const NAV_ITEMS = [
   { to: "/contacts", labelKey: "nav.contacts" },
 ];
 
-const SIDEBAR_KEY = "cadm-sidebar-collapsed";
+const RESP_NAV: ShellNavItem[] = [
+  { to: RESP_DASHBOARD_PATH, labelKey: "nav.respDashboard", end: true },
+  { to: "/responsable/incidents/1", labelKey: "nav.respIncident" },
+  { to: "/responsable/chaine", labelKey: "nav.respChain" },
+  { to: "/responsable/signalements", labelKey: "nav.respReports" },
+  { to: "/responsable/diffusion", labelKey: "nav.respBroadcast" },
+  { to: "/responsable/ressources", labelKey: "nav.respResources" },
+  { to: "/responsable/journal", labelKey: "nav.respJournal" },
+];
 
-function DashboardLayout() {
-  const navRef = useRef<HTMLElement>(null);
-  const { pathname } = useLocation();
+/** Espace citoyen. */
+function CitizenLayout() {
   const navigate = useNavigate();
-  const { t } = useI18n();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [session, setSession] = useState(() => getSession());
-  const [collapsed, setCollapsed] = useState(() => {
-    try {
-      return localStorage.getItem(SIDEBAR_KEY) === "1";
-    } catch {
-      return false;
-    }
-  });
-
-  const setSidebarCollapsed = (value: boolean) => {
-    setCollapsed(value);
-    try {
-      localStorage.setItem(SIDEBAR_KEY, value ? "1" : "0");
-    } catch {
-      // Ignore storage failures (private mode, etc.).
-    }
-  };
-
-  useEffect(() => {
-    const closeOnHistory = () => setMenuOpen(false);
-    window.addEventListener("popstate", closeOnHistory);
-    return () => window.removeEventListener("popstate", closeOnHistory);
-  }, []);
-
-  useEffect(() => {
-    const active = navRef.current?.querySelector<HTMLElement>("a.active");
-    active?.scrollIntoView({ block: "nearest" });
-  }, [pathname]);
-
-  useEffect(() => {
-    if (!menuOpen) return;
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setMenuOpen(false);
-    };
-
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [menuOpen]);
 
   return (
-    <div className={`app-layout${collapsed ? " is-collapsed" : ""}`}>
-      <header className="app-topbar">
-        <div className="app-topbar__start">
-          <NavLink to="/dashboard" className="app-brand" onClick={() => setMenuOpen(false)}>
-            <img src={logo} alt="" />
-            <span>CADM</span>
-          </NavLink>
+    <AppShell
+      homePath={DASHBOARD_PATH}
+      storageKey="cadm-sidebar-collapsed"
+      navItems={CITIZEN_NAV}
+      authenticated={getSession() !== null}
+      onSignOut={() => {
+        signOut();
+        navigate("/");
+      }}
+    />
+  );
+}
 
-          <button
-            type="button"
-            className="app-sidebar-toggle"
-            aria-label={collapsed ? t("nav.showSidebar") : t("nav.hideSidebar")}
-            aria-expanded={!collapsed}
-            aria-controls="app-sidebar"
-            onClick={() => setSidebarCollapsed(!collapsed)}
-          >
-            {collapsed ? (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <rect x="3" y="4" width="18" height="16" rx="2" />
-                <path d="M9 4v16" />
-              </svg>
-            ) : (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <rect x="3" y="4" width="18" height="16" rx="2" />
-                <path d="m14 9-3 3 3 3" />
-              </svg>
-            )}
-          </button>
-        </div>
+/** Espace responsable de crise (navigation et session dédiées). */
+function RespLayout() {
+  const navigate = useNavigate();
 
-        <div className="app-topbar__end">
-          <LanguageToggle />
-          <ThemeToggle />
-
-          <button
-            type="button"
-            className="app-menu-toggle"
-            aria-label={menuOpen ? t("nav.closeMenu") : t("nav.openMenu")}
-            aria-expanded={menuOpen}
-            aria-controls="app-sidebar"
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            {menuOpen ? (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-                <path d="M18 6 6 18M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-                <path d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            )}
-          </button>
-        </div>
-      </header>
-
-      <aside
-        id="app-sidebar"
-        className={`app-sidebar${menuOpen ? " is-open" : ""}`}
-      >
-        <nav className="app-nav" ref={navRef} aria-label={t("nav.main")}>
-          {NAV_ITEMS.map((item) => (
-            <NavLink key={item.to} to={item.to} onClick={() => setMenuOpen(false)}>
-              {t(item.labelKey)}
-            </NavLink>
-          ))}
-        </nav>
-
-        <div className="app-sidebar__foot">
-          {session && (
-            <button
-              type="button"
-              className="app-sidebar__logout"
-              onClick={() => {
-                signOut();
-                setSession(null);
-                navigate("/");
-              }}
-            >
-              {t("nav.logout")}
-            </button>
-          )}
-        </div>
-      </aside>
-
-      {menuOpen && (
-        <button
-          type="button"
-          className="app-sidebar__backdrop"
-          aria-label={t("nav.closeMenu")}
-          onClick={() => setMenuOpen(false)}
-        />
-      )}
-
-      <div className="app-main">
-        <Outlet />
-      </div>
-    </div>
+  return (
+    <AppShell
+      variant="crisis"
+      homePath={RESP_DASHBOARD_PATH}
+      storageKey="cadm-resp-sidebar-collapsed"
+      navItems={RESP_NAV}
+      navGroupKey="resp.shellGroup"
+      authenticated={getRespSession() !== null}
+      onSignOut={() => {
+        signOutResp();
+        navigate(RESP_LOGIN_PATH);
+      }}
+    />
   );
 }
 
@@ -196,17 +117,37 @@ function RequireAuth({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+/** Accès à l'espace responsable : redirige vers sa page de connexion dédiée. */
+function RequireRespAuth({ children }: { children: ReactNode }) {
+  const location = useLocation();
+  const allowed = getRespSession() !== null;
+
+  if (!allowed) {
+    return (
+      <Navigate
+        to={RESP_LOGIN_PATH}
+        replace
+        state={{ from: location.pathname }}
+      />
+    );
+  }
+
+  return <>{children}</>;
+}
+
 function App() {
   const { t } = useI18n();
 
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
-      <Route path="/login" element={<LoginPage />} />
+      <Route path={LOGIN_PATH} element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path={RESP_LOGIN_PATH} element={<RespLoginPage />} />
 
-      <Route element={<DashboardLayout />}>
-        <Route path="/dashboard" element={<HomePage />} />
+      {/* ---------- Espace citoyen ---------- */}
+      <Route element={<CitizenLayout />}>
+        <Route path={DASHBOARD_PATH} element={<HomePage />} />
         <Route path="/alerts" element={<AlertsPage />} />
         <Route path="/resources" element={<SheltersPage />} />
         <Route path="/consignes" element={<ConsignesPage />} />
@@ -222,6 +163,29 @@ function App() {
           }
         />
         <Route path="*" element={<h1>{t("nav.notFound")}</h1>} />
+      </Route>
+
+      {/* ---------- Espace responsable de crise ---------- */}
+      <Route
+        element={
+          <RequireRespAuth>
+            <RespLayout />
+          </RequireRespAuth>
+        }
+      >
+        <Route path={RESP_DASHBOARD_PATH} element={<CommandDashboard />} />
+        <Route
+          path="/responsable/incidents/:id"
+          element={<IncidentManagement />}
+        />
+        <Route path="/responsable/chaine" element={<CommandChain />} />
+        <Route
+          path="/responsable/signalements"
+          element={<ReportValidation />}
+        />
+        <Route path="/responsable/diffusion" element={<AlertBroadcast />} />
+        <Route path="/responsable/ressources" element={<CrisisResources />} />
+        <Route path="/responsable/journal" element={<JournalReports />} />
       </Route>
     </Routes>
   );

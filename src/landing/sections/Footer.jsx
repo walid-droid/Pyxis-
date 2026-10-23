@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { LOGIN_PATH, REGISTER_PATH } from "../../config";
+import { LOGIN_PATH, REGISTER_PATH, RESP_LOGIN_PATH } from "../../config";
 import { noop } from "../utils";
 import logo from "../../assets/Logo CADM.png";
 
@@ -36,6 +36,7 @@ export default function Footer() {
               <h4>Compte</h4>
               <Link to={LOGIN_PATH}>Se connecter</Link>
               <Link to={REGISTER_PATH}>Créer un compte</Link>
+              <Link to={RESP_LOGIN_PATH}>Espace responsable</Link>
             </div>
             <div>
               <h4>Informations</h4>

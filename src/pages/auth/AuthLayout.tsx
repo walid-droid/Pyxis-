@@ -9,14 +9,29 @@ type AuthLayoutProps = {
   farTitle: string;
   farText: string;
   children: ReactNode;
+  /** Petite étiquette au-dessus du titre (espace responsable). */
+  eyebrow?: string;
+  /** Liste de points forts ; par défaut les trois arguments citoyens. */
+  points?: string[];
+  variant?: "citizen" | "crisis";
 };
 
 /** Shared shell for the login and registration pages. */
-function AuthLayout({ farTitle, farText, children }: AuthLayoutProps) {
+function AuthLayout({
+  farTitle,
+  farText,
+  children,
+  eyebrow,
+  points,
+  variant = "citizen",
+}: AuthLayoutProps) {
   const { t } = useI18n();
+  const bullets = points ?? [t("auth.point1"), t("auth.point2"), t("auth.point3")];
 
   return (
-    <main className="auth-page">
+    <main
+      className={`auth-page${variant === "crisis" ? " auth-page--resp" : ""}`}
+    >
       <aside className="auth-aside">
         <div className="auth-lang">
           <LanguageToggle />
@@ -32,13 +47,14 @@ function AuthLayout({ farTitle, farText, children }: AuthLayoutProps) {
         </Link>
 
         <div className="auth-aside-body">
+          {eyebrow && <p className="auth-eyebrow">{eyebrow}</p>}
           <h1>{farTitle}</h1>
           <p>{farText}</p>
 
           <ul className="auth-points">
-            <li>{t("auth.point1")}</li>
-            <li>{t("auth.point2")}</li>
-            <li>{t("auth.point3")}</li>
+            {bullets.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
           </ul>
         </div>
 

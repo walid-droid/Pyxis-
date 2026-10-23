@@ -41,3 +41,48 @@ export function signOut(): void {
     // Ignore storage failures (private mode, etc.).
   }
 }
+
+/* ------------------------------------------------------------------
+   Espace responsable de crise — session indépendante de celle du
+   citoyen, avec sa propre page de connexion.
+   ------------------------------------------------------------------ */
+
+const RESP_SESSION_KEY = "cadm-resp-session";
+
+export type RespSession = {
+  email: string;
+  role: "responsable";
+  createdAt: number;
+};
+
+export function getRespSession(): RespSession | null {
+  try {
+    const raw = localStorage.getItem(RESP_SESSION_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as RespSession;
+    return typeof parsed?.email === "string" ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+export function signInResp(email: string): void {
+  try {
+    const session: RespSession = {
+      email,
+      role: "responsable",
+      createdAt: Date.now(),
+    };
+    localStorage.setItem(RESP_SESSION_KEY, JSON.stringify(session));
+  } catch {
+    // Ignore storage failures (private mode, etc.).
+  }
+}
+
+export function signOutResp(): void {
+  try {
+    localStorage.removeItem(RESP_SESSION_KEY);
+  } catch {
+    // Ignore storage failures (private mode, etc.).
+  }
+}

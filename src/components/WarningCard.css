@@ -47,8 +47,8 @@
 
 .warning-card__severity,
 .warning-card__verification {
-  padding: 4px 7px;
-  border-radius: 3px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
   font-size: 0.7rem;
   font-weight: 600;
 }

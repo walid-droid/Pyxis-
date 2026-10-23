@@ -4,46 +4,66 @@
 :root {
   --app-sidebar-w: 220px;
   --app-topbar-h: 64px;
+  --app-topbar-inset: 12px;
+  --app-topbar-x: 16px;
   --app-mobilebar-h: 60px;
-  --app-header-h: var(--app-topbar-h);
+  /* Hauteur réellement occupée en haut de l'écran (barre + ses marges). */
+  --app-header-h: calc(var(--app-topbar-h) + var(--app-topbar-inset) * 2);
 }
 
 .app-layout {
   min-height: 100vh;
 }
 
+/* Barre flottante : même traitement que l'en-tête de la page d'accueil. */
 .app-topbar {
   position: fixed;
-  inset: 0 0 auto 0;
+  inset: var(--app-topbar-inset) var(--app-topbar-x) auto var(--app-topbar-x);
   z-index: 130;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  height: var(--app-header-h);
-  padding: 0 20px;
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  height: var(--app-topbar-h);
+  padding: 0 16px;
+  background: color-mix(in srgb, var(--color-surface) 78%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  box-shadow: 0 24px 48px -36px rgb(17 25 22 / 55%);
+  transition: top 240ms ease, background-color 240ms ease, box-shadow 240ms ease;
+}
+
+.app-topbar.is-scrolled {
+  top: 8px;
+  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  box-shadow: 0 18px 36px -26px rgb(17 25 22 / 50%);
 }
 
 .app-main {
   min-height: 100vh;
-  margin-left: var(--app-sidebar-w);
+  margin-left: calc(var(--app-sidebar-w) + var(--app-topbar-x) * 2);
   padding-top: var(--app-header-h);
   transition: margin-left 220ms ease;
 }
 
+/* Panneau flottant, aligné sur la barre du haut. */
 .app-sidebar {
   position: fixed;
-  inset: var(--app-header-h) auto 0 0;
+  inset: var(--app-header-h) auto var(--app-topbar-x) var(--app-topbar-x);
   z-index: 120;
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: var(--app-sidebar-w);
-  padding: 16px 14px 20px;
-  background: var(--color-surface);
-  border-right: 1px solid var(--color-border);
+  padding: 16px 14px 18px;
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  box-shadow: 0 24px 48px -36px rgb(17 25 22 / 55%);
   overflow-y: auto;
   transition: transform 220ms ease;
 }
@@ -51,22 +71,34 @@
 .app-brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
   flex-shrink: 0;
   font-family: var(--font-display);
-  font-size: 1.55rem;
+  font-size: 1.6rem;
   line-height: 1;
+  letter-spacing: -0.02em;
 }
 
 .app-brand img {
   display: block;
   height: 40px;
   width: auto;
-  border-radius: 6px;
+  border-radius: 14px;
+  box-shadow: 0 10px 22px -14px rgb(17 25 22 / 60%), 0 0 0 1px rgb(17 25 22 / 6%);
 }
 
 .app-brand span {
   white-space: nowrap;
+  color: var(--color-text);
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .app-brand span {
+    background: linear-gradient(100deg, var(--color-text) 8%, var(--color-green) 96%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 
 .app-topbar__start {
@@ -80,6 +112,41 @@
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+/* Indicateur de connexion réseau, aligné sur les actions du header. */
+.app-connection {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.app-connection__dot {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-success);
+  box-shadow: 0 0 0 3px var(--color-success-bg);
+}
+
+.app-connection.is-offline {
+  border-color: color-mix(in srgb, var(--color-danger) 30%, var(--color-border));
+  color: var(--color-danger);
+}
+
+.app-connection.is-offline .app-connection__dot {
+  background: var(--color-danger);
+  box-shadow: 0 0 0 3px var(--color-danger-bg);
 }
 
 .app-sidebar-toggle,
@@ -145,6 +212,7 @@
 }
 
 .app-nav a {
+  position: relative;
   display: flex;
   align-items: center;
   min-height: 44px;
@@ -165,7 +233,68 @@
   background: var(--color-success-bg);
   color: var(--color-green);
   font-weight: 600;
-  box-shadow: inset 3px 0 0 var(--color-green);
+}
+
+/* Indicateur arrondi, plutôt qu'un filet carré. */
+.app-nav a.active::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 22px;
+  border-radius: var(--radius-pill);
+  background: var(--color-green);
+}
+
+/* Groupe « Responsable de crise » */
+.app-nav__title {
+  margin: 14px 0 4px;
+  padding: 12px 12px 0;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.app-nav__title--first {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* Badge de rôle dans la barre du haut (espace responsable). */
+.app-topbar__role {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border: 1px solid color-mix(in srgb, var(--color-green) 25%, var(--color-border));
+  border-radius: var(--radius-pill);
+  background: var(--color-success-bg);
+  color: var(--color-green);
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .app-topbar__role {
+    display: none;
+  }
+
+  .app-connection {
+    padding: 0 10px;
+  }
+
+  .app-connection__label {
+    display: none;
+  }
 }
 
 .app-sidebar__foot {
@@ -202,7 +331,7 @@
 
 @media (min-width: 1025px) {
   .app-layout.is-collapsed .app-sidebar {
-    transform: translateX(-100%);
+    transform: translateY(calc(-100% - var(--app-header-h)));
     visibility: hidden;
     transition: transform 220ms ease, visibility 0s linear 220ms;
   }
@@ -247,11 +376,14 @@
 
 @media (max-width: 1024px) {
   :root {
-    --app-header-h: var(--app-mobilebar-h);
+    --app-topbar-inset: 10px;
+    --app-topbar-x: 10px;
+    --app-header-h: calc(var(--app-mobilebar-h) + var(--app-topbar-inset) * 2);
   }
 
   .app-topbar {
-    padding: 0 16px;
+    height: var(--app-mobilebar-h);
+    padding: 0 12px;
   }
 
   .app-topbar .app-brand {
@@ -275,15 +407,15 @@
   }
 
   .app-sidebar {
-    z-index: 150;
-    transform: translateX(-100%);
-    box-shadow: 0 0 40px rgb(17 25 22 / 20%);
+    z-index: 126;
+    transform: translateY(calc(-100% - var(--app-header-h)));
+    box-shadow: 0 30px 60px -30px rgb(17 25 22 / 45%);
     visibility: hidden;
     transition: transform 220ms ease, visibility 0s linear 220ms;
   }
 
   .app-sidebar.is-open {
-    transform: translateX(0);
+    transform: translateY(0);
     visibility: visible;
     transition: transform 220ms ease;
   }
@@ -301,6 +433,16 @@
 }
 
 @media (max-width: 600px) {
+  :root {
+    --app-topbar-inset: 8px;
+    --app-topbar-x: 8px;
+    --app-header-h: calc(var(--app-mobilebar-h) + var(--app-topbar-inset) * 2);
+  }
+
+  .app-topbar {
+    padding: 0 10px;
+  }
+
   .page-container {
     padding: 24px 16px;
   }

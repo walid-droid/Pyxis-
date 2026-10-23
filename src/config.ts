@@ -6,3 +6,7 @@ export const DASHBOARD_PATH = "/dashboard";
 // "Se connecter" → /login, "Créer un compte" → /register.
 export const LOGIN_PATH = "/login";
 export const REGISTER_PATH = "/register";
+
+// Espace responsable de crise : connexion et accueil dédiés.
+export const RESP_LOGIN_PATH = "/responsable/login";
+export const RESP_DASHBOARD_PATH = "/responsable";

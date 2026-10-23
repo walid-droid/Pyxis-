@@ -24,7 +24,7 @@
   background-color: #172b22;
   background-image:
     linear-gradient(150deg, rgba(18, 32, 25, 0.96) 0%, rgba(29, 68, 54, 0.88) 55%, rgba(28, 85, 64, 0.8) 100%),
-    url("../../public/topographic.svg");
+    url("/topographic.svg");
   background-size: cover;
   background-position: right center;
   background-repeat: no-repeat;
@@ -37,8 +37,22 @@
   align-self: flex-start;
   color: #fff;
   font-family: var(--font-display);
-  font-size: 1.7rem;
+  font-size: 1.75rem;
+  letter-spacing: -0.02em;
   line-height: 1;
+}
+
+.auth-brand span {
+  color: #fff;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .auth-brand span {
+    background: linear-gradient(100deg, #fff 10%, #9fe0c4 96%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 
 .auth-lang {
@@ -68,7 +82,8 @@
   display: block;
   height: 48px;
   width: auto;
-  border-radius: 8px;
+  border-radius: 14px;
+  box-shadow: 0 12px 24px -14px rgb(0 0 0 / 55%), 0 0 0 1px rgb(255 255 255 / 12%);
 }
 
 .auth-aside-body {
@@ -90,6 +105,32 @@
   color: #d7e4dc;
   font-size: 1.02rem;
   line-height: 1.7;
+}
+
+/* Étiquette « Accès restreint » (espace responsable). */
+.auth-aside-body .auth-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 6px 12px;
+  border: 1px solid rgb(240 180 41 / 35%);
+  border-radius: var(--radius-pill);
+  background: rgb(240 180 41 / 12%);
+  color: #f6c65b;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.auth-eyebrow::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f6c65b;
 }
 
 .auth-points {
@@ -146,8 +187,8 @@
   padding: clamp(24px, 3.5vw, 40px);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 16px;
-  box-shadow: 0 20px 50px rgb(17 25 22 / 10%);
+  border-radius: 24px;
+  box-shadow: 0 26px 60px -28px rgb(17 25 22 / 34%);
 }
 
 .auth-card-head h2 {
@@ -161,6 +202,16 @@
   margin: 0;
   color: var(--color-text-muted);
   font-size: 0.92rem;
+}
+
+.auth-kicker {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: var(--color-green);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 /* ---------- Form ---------- */
@@ -188,9 +239,9 @@
 .auth-form input[type="password"] {
   box-sizing: border-box;
   width: 100%;
-  padding: 13px 14px;
+  padding: 13px 16px;
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: var(--radius-input);
   background: var(--color-surface);
   color: var(--color-text);
   font: inherit;
@@ -226,6 +277,17 @@
   margin: 0;
   font-size: 0.8rem;
   line-height: 1.45;
+}
+
+.auth-notice {
+  margin: 2px 0 0;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-input);
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
 }
 
 .auth-field-hint {
@@ -286,7 +348,7 @@
   font: inherit;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 6px 16px rgba(217, 45, 32, 0.22);
+  box-shadow: 0 16px 32px -16px rgba(217, 45, 32, 0.45);
   transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
 }
 
@@ -316,16 +378,32 @@
   text-underline-offset: 3px;
 }
 
+/* Lien vers l'autre espace (citoyen ↔ responsable). */
+.auth-switch--resp {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--color-border);
+  font-size: 0.82rem;
+}
+
 .auth-back {
   display: inline-flex;
   align-items: center;
   align-self: flex-start;
-  min-height: 44px;
-  color: #9db3a8;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.08);
+  color: #d7e4dc;
   font-size: 0.85rem;
+  font-weight: 600;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
 }
 
 .auth-back:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.28);
   color: #fff;
 }
 
@@ -362,4 +440,29 @@
     justify-content: flex-start;
     padding: 28px 20px 48px;
   }
+}
+
+/* =========================================================
+   Espace responsable de crise
+   ========================================================= */
+
+.auth-page--resp .auth-aside {
+  background-image:
+    linear-gradient(150deg, rgba(10, 22, 18, 0.97) 0%, rgba(20, 52, 42, 0.92) 55%, rgba(16, 74, 54, 0.86) 100%),
+    url("/topographic.svg");
+}
+
+.auth-page--resp .auth-card {
+  border-top: 3px solid var(--color-green);
+}
+
+.auth-page--resp .auth-submit {
+  border-color: var(--color-green);
+  background: var(--color-green);
+  box-shadow: 0 16px 32px -16px rgb(22 112 74 / 45%);
+}
+
+.auth-page--resp .auth-submit:hover {
+  border-color: color-mix(in srgb, var(--color-green) 85%, #000);
+  background: color-mix(in srgb, var(--color-green) 85%, #000);
 }

@@ -1,18 +1,16 @@
-[dir="rtl"] .app-main {
+﻿[dir="rtl"] .app-main {
   margin-left: 0;
-  margin-right: var(--app-sidebar-w);
+  margin-right: calc(var(--app-sidebar-w) + var(--app-topbar-x) * 2);
 }
 
+/* Panneau flottant : la bordure vient de la règle de base. */
 [dir="rtl"] .app-sidebar {
   left: auto;
-  right: 0;
-  border-right: 0;
-  border-left: 1px solid var(--color-border);
+  right: var(--app-topbar-x);
 }
 
-[dir="rtl"] .app-nav a.active {
-  box-shadow: inset -3px 0 0 var(--color-green);
-}
+/* L'indicateur arrondi de l'onglet actif utilise inset-inline-start :
+   il se retourne automatiquement en RTL, pas de règle spécifique nécessaire. */
 
 [dir="rtl"] .app-sidebar-toggle svg {
   transform: scaleX(-1);
@@ -72,10 +70,6 @@
 }
 
 @media (min-width: 1025px) {
-  [dir="rtl"] .app-layout.is-collapsed .app-sidebar {
-    transform: translateX(100%);
-  }
-
   [dir="rtl"] .app-layout.is-collapsed .app-main {
     margin-left: 0;
     margin-right: 0;
@@ -87,12 +81,9 @@
     margin-left: 0;
     margin-right: 0;
   }
+}
 
-  [dir="rtl"] .app-sidebar {
-    transform: translateX(100%);
-  }
-
-  [dir="rtl"] .app-sidebar.is-open {
-    transform: translateX(0);
-  }
+/* Responsable de crise: fleches des listes. */
+[dir="rtl"] .rc-item__arrow {
+  transform: scaleX(-1);
 }

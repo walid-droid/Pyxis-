@@ -25,15 +25,17 @@
   color: #fff;
   background-color: #172b22;
   background-image:
+    linear-gradient(180deg, rgb(255 255 255 / 8%) 0%, rgb(255 255 255 / 0%) 46%),
     linear-gradient(120deg, rgba(18, 32, 25, 0.95) 0%, rgba(29, 68, 54, 0.86) 55%, rgba(28, 85, 64, 0.78) 100%),
-    url("../../public/topographic.svg");
+    url("/topographic.svg");
   background-size: cover;
   background-position: right center;
   background-repeat: no-repeat;
 
   border: 1px solid #294638;
-  border-radius: var(--radius-card);
+  border-radius: var(--radius-hero);
   border-inline-start: 5px solid var(--color-green);
+  box-shadow: 0 34px 64px -48px rgb(17 25 22 / 85%), inset 0 1px 0 rgb(255 255 255 / 10%);
 }
 
 .consignes-hero-text {
@@ -98,13 +100,14 @@
   align-items: center;
   gap: 10px;
   flex-shrink: 0;
-  padding: 14px 24px;
+  min-height: 44px;
+  padding: 12px 22px;
   border: 1px solid #ff5a4f;
-  border-radius: 999px;
+  border-radius: var(--radius-button);
   background: #ff5a4f;
   color: #fff;
   font-weight: 600;
-  box-shadow: 0 10px 26px rgba(255, 90, 79, 0.32);
+  box-shadow: 0 16px 32px -16px rgba(255, 90, 79, 0.5);
   transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
 }
 
@@ -179,43 +182,43 @@
 .consigne-card.consigne-card--seismic {
   --ct-accent: #b5541b;
   --ct-surface: linear-gradient(158deg, #fdf3e8 0%, #ffffff 72%);
-  --ct-image: url("../assets/svg/seisme.svg");
+  --ct-image: url("../../assets/svg/seisme.svg");
 }
 
 .consigne-card.consigne-card--fire {
   --ct-accent: #d92d20;
   --ct-surface: linear-gradient(158deg, #fdecea 0%, #ffffff 72%);
-  --ct-image: url("../assets/svg/incendie.svg");
+  --ct-image: url("../../assets/svg/incendie.svg");
 }
 
 .consigne-card.consigne-card--flood {
   --ct-accent: #1d6fd1;
   --ct-surface: linear-gradient(158deg, #e9f2fd 0%, #ffffff 72%);
-  --ct-image: url("../assets/svg/inondation.svg");
+  --ct-image: url("../../assets/svg/inondation.svg");
 }
 
 .consigne-card.consigne-card--gas {
   --ct-accent: #b5850a;
   --ct-surface: linear-gradient(158deg, #fdf6e0 0%, #ffffff 72%);
-  --ct-image: url("../assets/svg/fuite-de-gaz.svg");
+  --ct-image: url("../../assets/svg/fuite-de-gaz.svg");
 }
 
 .consigne-card.consigne-card--storm {
   --ct-accent: #4c5c86;
   --ct-surface: linear-gradient(158deg, #eef1f8 0%, #ffffff 72%);
-  --ct-image: url("../assets/svg/tempete.svg");
+  --ct-image: url("../../assets/svg/tempete.svg");
 }
 
 .consigne-card.consigne-card--heat {
   --ct-accent: #e0791f;
   --ct-surface: linear-gradient(158deg, #fdeede 0%, #ffffff 72%);
-  --ct-image: url("../assets/svg/canicule.svg");
+  --ct-image: url("../../assets/svg/canicule.svg");
 }
 
 .consigne-card.consigne-card--road {
   --ct-accent: #0f6b45;
   --ct-surface: linear-gradient(158deg, #e7f4ee 0%, #ffffff 72%);
-  --ct-image: url("../assets/svg/accident-route.svg");
+  --ct-image: url("../../assets/svg/accident-route.svg");
 }
 
 /* ---- Matching modal themes: light tinted, one colour per risk ---- */
@@ -241,49 +244,49 @@
   --ct-accent: #b5541b;
   --ct-head: #fdf3e8;
   --ct-surface: linear-gradient(158deg, #fdf3e8 0%, #ffffff 60%);
-  --ct-image: url("../assets/svg/seisme.svg");
+  --ct-image: url("../../assets/svg/seisme.svg");
 }
 
 .consigne-modal--fire {
   --ct-accent: #d92d20;
   --ct-head: #fdecea;
   --ct-surface: linear-gradient(158deg, #fdecea 0%, #ffffff 60%);
-  --ct-image: url("../assets/svg/incendie.svg");
+  --ct-image: url("../../assets/svg/incendie.svg");
 }
 
 .consigne-modal--flood {
   --ct-accent: #1d6fd1;
   --ct-head: #e9f2fd;
   --ct-surface: linear-gradient(158deg, #e9f2fd 0%, #ffffff 60%);
-  --ct-image: url("../assets/svg/inondation.svg");
+  --ct-image: url("../../assets/svg/inondation.svg");
 }
 
 .consigne-modal--gas {
   --ct-accent: #b5850a;
   --ct-head: #fdf6e0;
   --ct-surface: linear-gradient(158deg, #fdf6e0 0%, #ffffff 60%);
-  --ct-image: url("../assets/svg/fuite-de-gaz.svg");
+  --ct-image: url("../../assets/svg/fuite-de-gaz.svg");
 }
 
 .consigne-modal--storm {
   --ct-accent: #4c5c86;
   --ct-head: #eef1f8;
   --ct-surface: linear-gradient(158deg, #eef1f8 0%, #ffffff 60%);
-  --ct-image: url("../assets/svg/tempete.svg");
+  --ct-image: url("../../assets/svg/tempete.svg");
 }
 
 .consigne-modal--heat {
   --ct-accent: #e0791f;
   --ct-head: #fdeede;
   --ct-surface: linear-gradient(158deg, #fdeede 0%, #ffffff 60%);
-  --ct-image: url("../assets/svg/canicule.svg");
+  --ct-image: url("../../assets/svg/canicule.svg");
 }
 
 .consigne-modal--road {
   --ct-accent: #0f6b45;
   --ct-head: #e7f4ee;
   --ct-surface: linear-gradient(158deg, #e7f4ee 0%, #ffffff 60%);
-  --ct-image: url("../assets/svg/accident-route.svg");
+  --ct-image: url("../../assets/svg/accident-route.svg");
 }
 
 .consigne-card__title {

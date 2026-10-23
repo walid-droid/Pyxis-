@@ -25,7 +25,7 @@
   overflow: hidden;
   background: var(--color-surface);
   border-radius: var(--radius-card);
-  box-shadow: 0 24px 60px rgb(17 25 22 / 30%);
+  box-shadow: 0 32px 80px -32px rgb(17 25 22 / 40%);
   animation: modal-pop-in 160ms ease;
 }
 
