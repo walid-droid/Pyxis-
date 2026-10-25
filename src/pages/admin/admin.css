@@ -15,6 +15,11 @@
   padding: clamp(16px, 3vw, 40px);
 }
 
+/* Accueil administrateur : colonne plus étroite, plus aérée. */
+.ad-page--home {
+  max-width: 1320px;
+}
+
 /* Dimension de base : évite les SVG non contraints dans les cartes. */
 .ad-icon {
   display: block;
@@ -286,6 +291,10 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
   gap: 18px;
+}
+
+.ad-stat-grid--home {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .ad-grid--main {
@@ -1222,14 +1231,24 @@
   gap: 14px;
 }
 
+.ad-quick-grid--home {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* Cartes d'accès rapide alignées sur celles de l'espace citoyen. */
 .ad-quick {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 17px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 14px;
+  row-gap: 2px;
+  padding: 18px 20px;
   border: 1px solid var(--color-border);
-  border-radius: 14px;
+  border-radius: var(--radius-card);
   background: var(--color-surface);
+  box-shadow: var(--shadow-card);
   color: inherit;
   text-decoration: none;
   transition: transform 160ms ease, border-color 160ms ease,
@@ -1237,48 +1256,137 @@
 }
 
 .ad-quick:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   border-color: color-mix(in srgb, var(--color-green) 35%, var(--color-border));
-  box-shadow: 0 14px 28px -22px rgb(17 25 22 / 40%);
+  box-shadow: var(--shadow-raised);
 }
 
 .ad-quick__top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  display: contents;
 }
 
 .ad-quick__icon {
+  grid-column: 1;
+  grid-row: 1 / span 2;
   display: inline-grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 11px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
   background: var(--color-success-bg);
   color: var(--color-green);
 }
 
 .ad-quick__icon .ad-icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
 }
 
 .ad-quick__top > .ad-icon {
-  width: 15px;
-  height: 15px;
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  width: 16px;
+  height: 16px;
   color: var(--color-text-muted);
 }
 
 .ad-quick strong {
-  font-size: 0.9rem;
+  grid-column: 2;
+  grid-row: 1;
+  font-size: 0.94rem;
 }
 
 .ad-quick p {
+  grid-column: 2;
+  grid-row: 2;
   margin: 0;
   color: var(--color-text-muted);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   line-height: 1.5;
+}
+
+/* ---------- Bandeau « à traiter » ---------- */
+
+.ad-todo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 18px;
+  padding: 20px clamp(18px, 2.4vw, 26px);
+  border: 1px solid var(--color-border);
+  border-inline-start: 4px solid var(--color-green);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.ad-todo--warn {
+  border-inline-start-color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning-bg) 55%, var(--color-surface));
+}
+
+.ad-todo__icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--color-success-bg);
+  color: var(--color-green);
+}
+
+.ad-todo--warn .ad-todo__icon {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.ad-todo__body {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+.ad-todo__body strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 400;
+}
+
+.ad-todo__body p {
+  margin: 2px 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.ad-todo__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-text);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.ad-todo__list li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ad-todo__list li::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-warning);
+}
+
+.ad-todo .ad-btn {
+  flex: none;
 }
 
 .ad-health {
@@ -2678,6 +2786,11 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .ad-stat-grid--home,
+  .ad-quick-grid--home {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .ad-terr-layout {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -2749,6 +2862,15 @@
 @media (max-width: 520px) {
   .ad-stat-grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ad-quick-grid--home {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ad-todo .ad-btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .ad-card {

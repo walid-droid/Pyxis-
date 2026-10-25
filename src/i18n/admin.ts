@@ -717,6 +717,13 @@ export const ADMIN_FR: Record<string, string> = {
   "admin.dash.quick.journalDesc": "Consulter l'historique complet des actions d'administration.",
   "admin.dash.openJournal": "Ouvrir le journal d'audit",
   "admin.dash.vacancies": "{wilayas} wilayas et {communes} communes sans responsable désigné.",
+  "admin.dash.territories": "Collectivités",
+  "admin.dash.territoriesHint": "{count} communes",
+  "admin.dash.todoTitle": "À traiter",
+  "admin.dash.todoLead": "Les points à régler pour que la plateforme soit totalement prête.",
+  "admin.dash.todoNone": "Rien à signaler : la plateforme est configurée.",
+  "admin.dash.todoOrgs": "{count} organisations à valider",
+  "admin.dash.todoVacancies": "{wilayas} wilayas et {communes} communes sans responsable",
 
   /* ---------- Comptes (compléments) ---------- */
   "admin.users.statsTotal": "Comptes",
@@ -1614,6 +1621,13 @@ export const ADMIN_AR: Record<string, string> = {
   "admin.dash.quick.journalDesc": "الاطلاع على التاريخ الكامل لإجراءات الإدارة.",
   "admin.dash.openJournal": "فتح سجل التدقيق",
   "admin.dash.vacancies": "{wilayas} ولاية و{communes} بلدية بدون مسؤول معيّن.",
+  "admin.dash.territories": "الجماعات المحلية",
+  "admin.dash.territoriesHint": "{count} بلدية",
+  "admin.dash.todoTitle": "بحاجة إلى معالجة",
+  "admin.dash.todoLead": "النقاط الواجب معالجتها لتصبح المنصة جاهزة بالكامل.",
+  "admin.dash.todoNone": "لا شيء يستدعي الانتباه: المنصة مُعدّة.",
+  "admin.dash.todoOrgs": "{count} منظمات بانتظار الاعتماد",
+  "admin.dash.todoVacancies": "{wilayas} ولاية و{communes} بلدية بدون مسؤول",
 
   /* ---------- الحسابات (إضافات) ---------- */
   "admin.users.statsTotal": "الحسابات",
