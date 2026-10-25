@@ -7,6 +7,7 @@ type StatCardProps = {
   label: string;
   tone?: string;
   badge?: string;
+  badgeTone?: "neutral" | "success" | "warning" | "danger" | "info";
   onClick?: () => void;
 };
 
@@ -15,6 +16,7 @@ function StatCard({
   label,
   tone = "",
   badge,
+  badgeTone = "danger",
   onClick,
 }: StatCardProps) {
   const { t } = useI18n();
@@ -22,7 +24,11 @@ function StatCard({
   const labelContent = (
     <span className="stat-card__label">
       {label}
-      {badge && <span className="stat-card__badge">{badge}</span>}
+      {badge && (
+        <span className={`stat-card__badge stat-card__badge--${badgeTone}`}>
+          {badge}
+        </span>
+      )}
     </span>
   );
 

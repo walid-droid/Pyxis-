@@ -13,7 +13,7 @@ type AuthLayoutProps = {
   eyebrow?: string;
   /** Liste de points forts ; par défaut les trois arguments citoyens. */
   points?: string[];
-  variant?: "citizen" | "crisis";
+  variant?: "citizen" | "crisis" | "admin";
 };
 
 /** Shared shell for the login and registration pages. */
@@ -30,7 +30,9 @@ function AuthLayout({
 
   return (
     <main
-      className={`auth-page${variant === "crisis" ? " auth-page--resp" : ""}`}
+      className={`auth-page${variant === "crisis" ? " auth-page--resp" : ""}${
+        variant === "admin" ? " auth-page--admin" : ""
+      }`}
     >
       <aside className="auth-aside">
         <div className="auth-lang">

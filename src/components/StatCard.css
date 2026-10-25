@@ -43,26 +43,55 @@ button.stat-card {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px 8px;
+  min-width: 0;
   color: var(--color-text-muted);
   font-size: 0.9rem;
   font-weight: 600;
 }
 
 .stat-card__badge {
+  max-width: 100%;
   padding: 3px 9px;
   border-radius: var(--radius-pill);
-  background: var(--color-danger);
-  color: #fff;
-  font-size: 0.63rem;
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+  font-size: 0.64rem;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
   text-transform: uppercase;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
-:root[data-theme="dark"] .stat-card__badge {
+.stat-card__badge--danger {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+.stat-card__badge--success {
+  background: var(--color-success-bg);
+  color: var(--color-green);
+}
+
+.stat-card__badge--warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.stat-card__badge--info {
+  background: color-mix(in srgb, #1d4ed8 10%, var(--color-surface));
+  color: #1d4ed8;
+}
+
+:root[data-theme="dark"] .stat-card__badge--danger {
   color: #1b0e0c;
+}
+
+:root[data-theme="dark"] .stat-card__badge--info {
+  background: rgb(29 78 216 / 22%);
+  color: #93b4ff;
 }
 
 .stat-card__hint {

@@ -20,7 +20,7 @@ type AppShellProps = {
   navItems: ShellNavItem[];
   /** Titre affiché au-dessus des liens (espace responsable). */
   navGroupKey?: string;
-  variant?: "citizen" | "crisis";
+  variant?: "citizen" | "crisis" | "admin";
   authenticated: boolean;
   onSignOut: () => void;
 };
@@ -92,7 +92,11 @@ function AppShell({
   return (
     <div
       className={`app-layout${collapsed ? " is-collapsed" : ""}${
-        variant === "crisis" ? " app-layout--resp" : ""
+        variant === "crisis"
+          ? " app-layout--resp"
+          : variant === "admin"
+            ? " app-layout--admin"
+            : ""
       }`}
     >
       <header className={`app-topbar${scrolled ? " is-scrolled" : ""}`}>
@@ -102,8 +106,10 @@ function AppShell({
             <span>CADM</span>
           </NavLink>
 
-          {variant === "crisis" && (
-            <span className="app-topbar__role">{t("resp.topbarRole")}</span>
+          {variant !== "citizen" && (
+            <span className="app-topbar__role">
+              {t(variant === "admin" ? "admin.topbarRole" : "resp.topbarRole")}
+            </span>
           )}
 
           <button

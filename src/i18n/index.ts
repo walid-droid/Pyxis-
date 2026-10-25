@@ -1,4 +1,5 @@
 import { createContext, useContext } from "react";
+import { ADMIN_AR, ADMIN_FR } from "./admin";
 
 export type Lang = "fr" | "ar";
 
@@ -12,6 +13,7 @@ const fr = {
 
   "common.close": "Fermer",
   "common.cancel": "Annuler",
+  "common.save": "Enregistrer",
   "common.online": "En ligne",
   "common.offline": "Hors ligne",
   "common.durationHM": "{hours} h {minutes}",
@@ -245,6 +247,8 @@ const fr = {
   "login.create": "Créer un compte",
   "login.respPrompt": "Responsable de crise ?",
   "login.respLink": "Accéder au PC de crise",
+  "login.adminPrompt": "Administrateur système ?",
+  "login.adminLink": "Accès administration",
   "register.farTitle": "Rejoignez CADM.",
   "register.farText":
     "Créez votre compte pour signaler des incidents, suivre les alertes et recevoir des consignes de sécurité.",
@@ -855,6 +859,7 @@ const ar: Record<string, string> = {
 
   "common.close": "إغلاق",
   "common.cancel": "إلغاء",
+  "common.save": "حفظ",
   "common.online": "متصل",
   "common.offline": "غير متصل",
   "common.durationHM": "{hours} س {minutes} د",
@@ -1086,6 +1091,8 @@ const ar: Record<string, string> = {
   "login.create": "إنشاء حساب",
   "login.respPrompt": "مسؤول أزمة؟",
   "login.respLink": "الدخول إلى مركز الأزمة",
+  "login.adminPrompt": "مسؤول النظام؟",
+  "login.adminLink": "دخول الإدارة",
   "register.farTitle": "انضم إلى CADM.",
   "register.farText":
     "أنشئ حسابك للإبلاغ عن الحوادث ومتابعة التنبيهات وتلقي إرشادات السلامة.",
@@ -1690,7 +1697,10 @@ const ar: Record<string, string> = {
   "resp.log.d13": "نقل قيادة الحادث INC-004 إلى القائد أ. بن سالم.",
 };
 
-const dictionaries: Record<Lang, Record<string, string>> = { fr, ar };
+const dictionaries: Record<Lang, Record<string, string>> = {
+  fr: { ...fr, ...ADMIN_FR },
+  ar: { ...ar, ...ADMIN_AR },
+};
 
 function interpolate(text: string, vars?: Vars): string {
   if (!vars) return text;

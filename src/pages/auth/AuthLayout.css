@@ -466,3 +466,38 @@
   border-color: color-mix(in srgb, var(--color-green) 85%, #000);
   background: color-mix(in srgb, var(--color-green) 85%, #000);
 }
+
+/* =========================================================
+   Espace administrateur système
+   ========================================================= */
+
+.auth-page--admin .auth-aside {
+  background-image:
+    linear-gradient(150deg, rgba(11, 20, 17, 0.97) 0%, rgba(18, 43, 35, 0.93) 52%, rgba(20, 64, 50, 0.86) 100%),
+    url("/topographic.svg");
+}
+
+.auth-page--admin .auth-card {
+  border-top: 3px solid #f0b429;
+}
+
+.auth-page--admin .auth-submit {
+  border-color: var(--color-green);
+  background: var(--color-green);
+  box-shadow: 0 16px 32px -16px rgb(22 112 74 / 45%);
+}
+
+.auth-page--admin .auth-submit:hover {
+  border-color: color-mix(in srgb, var(--color-green) 85%, #000);
+  background: color-mix(in srgb, var(--color-green) 85%, #000);
+}
+
+.auth-page--admin .auth-aside-body .auth-eyebrow {
+  border-color: rgb(143 211 182 / 35%);
+  background: rgb(143 211 182 / 12%);
+  color: #8fd3b6;
+}
+
+.auth-page--admin .auth-eyebrow::before {
+  background: #8fd3b6;
+}

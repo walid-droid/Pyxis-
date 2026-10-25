@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-import { DASHBOARD_PATH, RESP_LOGIN_PATH } from "../../config";
+import { DASHBOARD_PATH, ADMIN_LOGIN_PATH, RESP_LOGIN_PATH } from "../../config";
 import { useI18n } from "../../i18n";
 import { signIn } from "../../lib/session";
 import AuthLayout from "./AuthLayout";
@@ -81,6 +81,11 @@ function LoginPage() {
       <p className="auth-switch auth-switch--resp">
         {t("login.respPrompt")}{" "}
         <Link to={RESP_LOGIN_PATH}>{t("login.respLink")}</Link>
+      </p>
+
+      <p className="auth-switch auth-switch--resp">
+        {t("login.adminPrompt")}{" "}
+        <Link to={ADMIN_LOGIN_PATH}>{t("login.adminLink")}</Link>
       </p>
     </AuthLayout>
   );
