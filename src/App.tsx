@@ -10,6 +10,7 @@ import {
 import AppShell, { type ShellNavItem } from "./components/AppShell";
 import { useI18n } from "./i18n";
 import {
+  ADMIN_ASSISTANT_PATH,
   ADMIN_DASHBOARD_PATH,
   ADMIN_DOCUMENTS_PATH,
   ADMIN_JOURNAL_PATH,
@@ -18,8 +19,12 @@ import {
   ADMIN_SETTINGS_PATH,
   ADMIN_TERRITORIES_PATH,
   ADMIN_USERS_PATH,
+  ASSISTANT_PATH,
   DASHBOARD_PATH,
+  FORGOT_PASSWORD_PATH,
   LOGIN_PATH,
+  MY_REPORTS_PATH,
+  RESP_ASSISTANT_PATH,
   RESP_DASHBOARD_PATH,
   RESP_LOGIN_PATH,
 } from "./config";
@@ -34,15 +39,16 @@ import {
 // @ts-expect-error No declaration file is available for this JSX module.
 import Landing from "./landing/Landing";
 import ContactsPage from "./pages/citizen/ContactsPage";
-import AssistantPage from "./pages/citizen/AssistantPage";
 import HomePage from "./pages/citizen/HomePage";
 import AlertsPage from "./pages/citizen/AlertsPage";
 import SheltersPage from "./pages/citizen/SheltersPage";
 import SubmitAlertPage from "./pages/citizen/SubmitAlertPage";
+import MyReportsPage from "./pages/citizen/MyReportsPage";
 import EventsPage from "./pages/citizen/EventsPage";
 import ConsignesPage from "./pages/citizen/ConsignesPage";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import RespLoginPage from "./pages/resp-crise/RespLoginPage";
 import CommandDashboard from "./pages/resp-crise/CommandDashboard";
 import IncidentManagement from "./pages/resp-crise/IncidentManagement";
@@ -67,8 +73,8 @@ const CITIZEN_NAV: ShellNavItem[] = [
   { to: "/alerts", labelKey: "nav.alerts" },
   { to: "/consignes", labelKey: "nav.consignes" },
   { to: "/resources", labelKey: "nav.resources" },
-  { to: "/assistant", labelKey: "nav.assistant" },
   { to: "/events", labelKey: "nav.events" },
+  { to: MY_REPORTS_PATH, labelKey: "nav.myReports" },
   { to: "/contacts", labelKey: "nav.contacts" },
 ];
 
@@ -180,6 +186,7 @@ function App() {
       <Route path="/" element={<Landing />} />
       <Route path={LOGIN_PATH} element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path={FORGOT_PASSWORD_PATH} element={<ForgotPasswordPage />} />
       <Route path={RESP_LOGIN_PATH} element={<RespLoginPage />} />
       <Route path={ADMIN_LOGIN_PATH} element={<AdminLoginPage />} />
 
@@ -190,13 +197,24 @@ function App() {
         <Route path="/resources" element={<SheltersPage />} />
         <Route path="/consignes" element={<ConsignesPage />} />
         <Route path="/contacts" element={<ContactsPage />} />
-        <Route path="/assistant" element={<AssistantPage />} />
+        <Route
+          path={ASSISTANT_PATH}
+          element={<Navigate to={DASHBOARD_PATH} replace />}
+        />
         <Route path="/events" element={<EventsPage />} />
         <Route
           path="/submit-alert"
           element={
             <RequireAuth>
               <SubmitAlertPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path={MY_REPORTS_PATH}
+          element={
+            <RequireAuth>
+              <MyReportsPage />
             </RequireAuth>
           }
         />
@@ -223,6 +241,10 @@ function App() {
         />
         <Route path="/responsable/diffusion" element={<AlertBroadcast />} />
         <Route path="/responsable/ressources" element={<CrisisResources />} />
+        <Route
+          path={RESP_ASSISTANT_PATH}
+          element={<Navigate to={RESP_DASHBOARD_PATH} replace />}
+        />
         <Route path="/responsable/journal" element={<JournalReports />} />
       </Route>
 
@@ -237,6 +259,10 @@ function App() {
         }
       >
         <Route path={ADMIN_DASHBOARD_PATH} element={<AdminDashboard />} />
+        <Route
+          path={ADMIN_ASSISTANT_PATH}
+          element={<Navigate to={ADMIN_DASHBOARD_PATH} replace />}
+        />
         <Route path={ADMIN_USERS_PATH} element={<UsersRolesPage />} />
         <Route path={ADMIN_TERRITORIES_PATH} element={<TerritoriesPage />} />
         <Route

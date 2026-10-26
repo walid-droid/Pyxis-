@@ -1,17 +1,13 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router";
 import { useRafScroll } from "../hooks";
-import { clamp, noop } from "../utils";
+import { clamp } from "../utils";
+import { useLandingCopy } from "../landingCopy";
 
-const STEPS = [
-  ["Reçu", "Votre signalement a été enregistré."],
-  ["En cours de vérification", "Les informations sont en cours d'examen."],
-  ["Équipe mobilisée", "Une équipe a été envoyée sur les lieux."],
-  ["Intervention en cours", "Les équipes interviennent sur place."],
-  ["Clôturé", "Le traitement du signalement est terminé."],
-];
-
-export default function Tracking({ onRequestSubmit }) {
+export default function Tracking({ onRequestSubmit, onOpenTracking }) {
+  const copy = useLandingCopy();
+  const tracking = copy.tracking;
+  const STEPS = tracking.steps;
   const tlRef = useRef(null);
   const fillRef = useRef(null);
   const stepRefs = useRef([]);
@@ -27,8 +23,11 @@ export default function Tracking({ onRequestSubmit }) {
     const vh = window.innerHeight;
     const r = tl.getBoundingClientRect();
     const vert = window.innerWidth <= 900;
+    const rtl = document.documentElement.dir === "rtl";
     const p = clamp((0.75 * vh - r.top) / (vert ? r.height : 0.4 * vh), 0, 1);
-    const P = sts.map((e) => (vert ? e.offsetTop : e.offsetLeft));
+    const P = sts.map((e) =>
+      vert ? e.offsetTop : rtl ? tl.clientWidth - (e.offsetLeft + e.offsetWidth) : e.offsetLeft
+    );
     const len = p * P[STEPS.length - 1];
 
     tl.style.setProperty("--rail", P[STEPS.length - 1] + 15 + "px");
@@ -56,11 +55,9 @@ export default function Tracking({ onRequestSubmit }) {
   return (
     <section className="track" id="suivi">
       <div className="wrap">
-        <p className="eyebrow rv">Suivi des signalements</p>
-        <h2 className="rv">Que devient votre signalement ?</h2>
-        <p className="allp rv">
-          Chaque signalement peut être suivi depuis son enregistrement jusqu'à sa clôture. Consultez les étapes de son traitement pour savoir où en est votre demande.
-        </p>
+        <p className="eyebrow rv">{tracking.eyebrow}</p>
+        <h2 className="rv">{tracking.title}</h2>
+        <p className="allp rv">{tracking.lead}</p>
         <div className="tl" id="tl" ref={tlRef}>
           <div className="fill" id="tf" ref={fillRef} />
           {STEPS.map(([title, text], i) => (
@@ -76,8 +73,12 @@ export default function Tracking({ onRequestSubmit }) {
           ))}
         </div>
         <div className="btns">
-          <Link className="btn" to="/submit-alert" onClick={onRequestSubmit}>Signaler un incident</Link>
-          <a className="btn out" href="#" onClick={noop}>Suivre mon signalement</a>
+          <Link className="btn" to="/submit-alert" onClick={onRequestSubmit}>
+            {tracking.report}
+          </Link>
+          <button className="btn out" type="button" onClick={onOpenTracking}>
+            {tracking.follow}
+          </button>
         </div>
       </div>
     </section>

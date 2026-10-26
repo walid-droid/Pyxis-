@@ -1,4 +1,5 @@
-import { Link } from "react-router";
+import { useMemo } from "react";
+import { Link, useSearchParams } from "react-router";
 import { generateSafetyData } from "../../mockdata/safety";
 import { distanceKm, resolveCoords } from "../../mockdata/locations";
 import type { Coords } from "../../mockdata/locations";
@@ -6,8 +7,14 @@ import { useI18n, type Lang } from "../../i18n";
 import "./SheltersPage.css";
 
 /** Same demo anchor as the dashboard: "Autour de moi · Sétif". */
-const CENTER = resolveCoords("Sétif");
-const SAFETY = generateSafetyData(CENTER, "abris-secours");
+const DEMO_CENTER = resolveCoords("Sétif");
+
+/** Reads a coordinate from the URL, ignoring missing or out-of-range values. */
+function parseCoord(value: string | null, min: number, max: number): number | null {
+  if (value === null || value.trim() === "") return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed >= min && parsed <= max ? parsed : null;
+}
 
 /** « 1,2 km » — French decimal separator, « 1٫2 كم » in Arabic. */
 function formatKm(km: number, lang: Lang): string {
@@ -51,11 +58,24 @@ function RouteIcon() {
 
 export default function SheltersPage() {
   const { t, tc, lang } = useI18n();
-  const shelters = [...SAFETY.shelters].sort(
-    (a, b) => distanceKm(CENTER, a.position) - distanceKm(CENTER, b.position),
+  const [searchParams] = useSearchParams();
+
+  const lat = parseCoord(searchParams.get("lat"), -90, 90);
+  const lng = parseCoord(searchParams.get("lng"), -180, 180);
+  const isGeo = lat !== null && lng !== null;
+
+  // La landing transmet la position du visiteur via /resources?lat=…&lng=…
+  const center = useMemo<Coords>(() => {
+    if (lat !== null && lng !== null) return [lat, lng];
+    return DEMO_CENTER;
+  }, [lat, lng]);
+  const safety = useMemo(() => generateSafetyData(center, "abris-secours"), [center]);
+
+  const shelters = [...safety.shelters].sort(
+    (a, b) => distanceKm(center, a.position) - distanceKm(center, b.position),
   );
-  const posts = [...SAFETY.posts].sort(
-    (a, b) => distanceKm(CENTER, a.position) - distanceKm(CENTER, b.position),
+  const posts = [...safety.posts].sort(
+    (a, b) => distanceKm(center, a.position) - distanceKm(center, b.position),
   );
 
   return (
@@ -65,6 +85,13 @@ export default function SheltersPage() {
           <p className="res-hero-eyebrow">{t("resources.eyebrow")}</p>
           <h1>{t("resources.title")}</h1>
           <p className="res-hero-lead">{t("resources.lead")}</p>
+          {isGeo && (
+            <p className="res-hero-geo">
+              <span className="res-hero-geo-dot" aria-hidden="true" />
+              {t("resources.aroundMe")}
+              <Link to="/resources">{t("resources.resetPosition")}</Link>
+            </p>
+          )}
         </div>
 
         <div className="res-hero-aside">
@@ -99,7 +126,7 @@ export default function SheltersPage() {
               </span>
               <span className="res-row__side">
                 <span className="res-chip">
-                  {t("resources.at", { distance: formatKm(distanceKm(CENTER, shelter.position), lang) })}
+                  {t("resources.at", { distance: formatKm(distanceKm(center, shelter.position), lang) })}
                 </span>
                 <a
                   className="res-itin"
@@ -133,7 +160,7 @@ export default function SheltersPage() {
               </span>
               <span className="res-row__side">
                 <span className="res-chip">
-                  {t("resources.at", { distance: formatKm(distanceKm(CENTER, post.position), lang) })}
+                  {t("resources.at", { distance: formatKm(distanceKm(center, post.position), lang) })}
                 </span>
                 <a
                   className="res-itin"
@@ -156,7 +183,7 @@ export default function SheltersPage() {
           <p>{t("resources.routesLead")}</p>
         </header>
         <ul className="res-list">
-          {SAFETY.routes.map((route) => (
+          {safety.routes.map((route) => (
             <li key={route.id} className="res-row">
               <span className="res-row__icon" aria-hidden="true">
                 <RouteIcon />
@@ -180,7 +207,7 @@ export default function SheltersPage() {
       </section>
 
       <p className="res-note">
-        {t("resources.noteBefore")}
+        {isGeo ? t("resources.noteGeoBefore") : t("resources.noteBefore")}
         <Link to="/dashboard">{t("nav.dashboard")}</Link>
         {t("resources.noteAfter")}
       </p>

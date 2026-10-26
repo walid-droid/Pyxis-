@@ -10,6 +10,7 @@ export default function ThemeToggle() {
 
   const next: Theme = theme === "dark" ? "light" : "dark";
   const label = next === "dark" ? t("theme.toDark") : t("theme.toLight");
+  const shortLabel = next === "dark" ? t("theme.dark") : t("theme.light");
 
   function toggleTheme() {
     setTheme(next);
@@ -36,6 +37,7 @@ export default function ThemeToggle() {
           <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
         </svg>
       )}
+      <span className="app-control-label">{shortLabel}</span>
     </button>
   );
 }

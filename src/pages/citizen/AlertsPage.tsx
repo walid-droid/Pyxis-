@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import WarningCard from "../../components/WarningCard";
 import IncidentMapModal from "../../components/IncidentMapModal";
 import type { MapItem } from "../../components/IncidentMapModal";
@@ -16,12 +16,24 @@ const verifiedWarnings = mockWarnings.filter(
   (warning) => warning.verification === "verified",
 );
 
+/** Recherche insensible aux accents : « bejaia » retrouve « Béjaïa ». */
+function normalizeText(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("fr");
+}
+
 function AlertsPage() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { t, tc } = useI18n();
   const [severity, setSeverity] = useState<"all" | Severity>("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [mapItem, setMapItem] = useState<MapItem | null>(null);
+
+  const query = (searchParams.get("q") ?? "").trim();
+  const normalizedQuery = normalizeText(query);
 
   const buildWarningItem = (warning: Warning): MapItem => ({
     id: `warning-${warning.id}`,
@@ -48,9 +60,33 @@ function AlertsPage() {
     ],
   });
 
-  const filteredWarnings = verifiedWarnings.filter(
+  // La recherche de la landing arrive ici sous la forme /alerts?q=…
+  const matchesQuery = (warning: Warning) => {
+    if (!normalizedQuery) return true;
+    return normalizeText(
+      [
+        warning.title,
+        warning.location,
+        warning.source,
+        warning.description,
+        tc(warning.title),
+        tc(warning.location),
+        tc(warning.source),
+        tc(warning.description),
+      ].join(" "),
+    ).includes(normalizedQuery);
+  };
+
+  const searchWarnings = verifiedWarnings.filter(matchesQuery);
+  const filteredWarnings = searchWarnings.filter(
     (warning) => severity === "all" || warning.severity === severity,
   );
+
+  const clearSearch = () => {
+    const next = new URLSearchParams(searchParams);
+    next.delete("q");
+    setSearchParams(next, { replace: true });
+  };
 
   const openWarning = (warning: Warning) => {
     setSelectedId(`warning-${warning.id}`);
@@ -94,7 +130,7 @@ function AlertsPage() {
                   onClick={() => setSeverity("all")}
                 >
                   {t("alerts.allSeverities")}
-                  <span className="alerts-filter-count">{verifiedWarnings.length}</span>
+                  <span className="alerts-filter-count">{searchWarnings.length}</span>
                 </button>
               </li>
               {SEVERITY_ORDER.map((value) => (
@@ -106,7 +142,7 @@ function AlertsPage() {
                   >
                     {t(`severity.${value.toLowerCase()}`)}
                     <span className="alerts-filter-count">
-                      {verifiedWarnings.filter((warning) => warning.severity === value).length}
+                      {searchWarnings.filter((warning) => warning.severity === value).length}
                     </span>
                   </button>
                 </li>
@@ -116,9 +152,18 @@ function AlertsPage() {
         </aside>
 
         <section className="alerts-content">
+          {query && (
+            <div className="alerts-search">
+              <span role="status">{t("alerts.searchNote", { query })}</span>
+              <button type="button" className="alerts-search-clear" onClick={clearSearch}>
+                {t("alerts.clearSearch")}
+              </button>
+            </div>
+          )}
+
           <p className="alerts-summary">
             {t(
-              filteredWarnings.length > 1 ? "alerts.countPlural" : "alerts.count",
+              filteredWarnings.length === 1 ? "alerts.count" : "alerts.countPlural",
               { count: filteredWarnings.length },
             )}
           </p>
@@ -135,7 +180,18 @@ function AlertsPage() {
               ))}
             </div>
           ) : (
-            <p className="alerts-empty">{t("alerts.empty")}</p>
+            <div className="alerts-empty">
+              <p>
+                {query && severity === "all"
+                  ? t("alerts.emptySearch", { query })
+                  : t("alerts.empty")}
+              </p>
+              {query && (
+                <button type="button" className="alerts-search-clear" onClick={clearSearch}>
+                  {t("alerts.clearSearch")}
+                </button>
+              )}
+            </div>
           )}
 
           <p className="alerts-note">{t("alerts.note")}</p>

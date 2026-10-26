@@ -1,28 +1,27 @@
 import { Fragment, useRef, useState } from "react";
 import { useRafScroll } from "../hooks";
 import { clamp } from "../utils";
-
-const QUOTE = "Les décisions concernant les alertes et les interventions restent du ressort des services compétents.";
-const WORDS = QUOTE.split(" ");
+import { useLandingCopy } from "../landingCopy";
 
 // Les mots s'allument au fil du scroll.
-function Quote() {
+function Quote({ text }) {
   const ref = useRef(null);
   const [on, setOn] = useState(0);
+  const words = text.split(" ");
 
   useRafScroll(() => {
     if (!ref.current) return;
     const qr = ref.current.getBoundingClientRect();
     const qp = clamp((window.innerHeight * 0.85 - qr.top) / (window.innerHeight * 0.5), 0, 1);
-    setOn(Math.min(WORDS.length, Math.ceil(qp * WORDS.length)));
+    setOn(Math.min(words.length, Math.ceil(qp * words.length)));
   });
 
   return (
     <p className="quote" id="q" ref={ref}>
-      {WORDS.map((w, i) => (
+      {words.map((w, i) => (
         <Fragment key={i}>
           <span className={i < on ? "on" : undefined}>{w}</span>
-          {i < WORDS.length - 1 ? " " : null}
+          {i < words.length - 1 ? " " : null}
         </Fragment>
       ))}
     </p>
@@ -30,36 +29,26 @@ function Quote() {
 }
 
 export default function Sources() {
+  const copy = useLandingCopy();
+  const sources = copy.sources;
+
   return (
-    <section className="src">
+    <section className="src" id="sources">
       <div className="wrap">
-        <p className="eyebrow rv">Sources et responsabilité</p>
-        <h2 className="rv">Des informations claires, des décisions humaines</h2>
+        <p className="eyebrow rv">{sources.eyebrow}</p>
+        <h2 className="rv">{sources.title}</h2>
         <div className="cols">
-          <div className="rv">
-            <span className="big">01</span>
-            <h3>Pourquoi CADM ?</h3>
-            <p>
-              L'Algérie est exposée à plusieurs risques naturels et technologiques. CADM facilite l'accès aux informations sur les risques et vise à améliorer la transmission des signalements entre les citoyens et les services concernés.
-            </p>
-          </div>
-          <div className="rv" style={{ "--d": ".1s" }}>
-            <span className="big">02</span>
-            <h3>Le cadre réglementaire</h3>
-            <p>
-              CADM est conçu en tenant compte de la réglementation algérienne relative à la prévention des risques de catastrophes et à la protection des données personnelles.
-            </p>
-          </div>
-          <div className="rv" style={{ "--d": ".2s" }}>
-            <span className="big">03</span>
-            <h3>Le rôle de l'intelligence artificielle</h3>
-            <p>
-              L'intelligence artificielle peut aider à analyser les signalements et à repérer les informations qui nécessitent une attention particulière.
-            </p>
-            <p>Les informations importantes doivent être vérifiées par les personnes habilitées.</p>
-          </div>
+          {sources.columns.map((column, index) => (
+            <div key={column.number} className="rv" style={{ "--d": `${index * 0.1}s` }}>
+              <span className="big">{column.number}</span>
+              <h3>{column.title}</h3>
+              {column.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
+          ))}
         </div>
-        <Quote />
+        <Quote text={sources.quote} />
       </div>
     </section>
   );

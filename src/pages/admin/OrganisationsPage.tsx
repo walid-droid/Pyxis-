@@ -1,7 +1,6 @@
 import "./admin.css";
 import { useMemo, useState } from "react";
 import { Link } from "react-router";
-import StatCard from "../../components/StatCard";
 import { ADMIN_USERS_PATH } from "../../config";
 import { useI18n } from "../../i18n";
 import { useAdmin } from "./adminStore";
@@ -508,13 +507,6 @@ function OrganisationsPage() {
     });
   }, [state.organisations, query, kindFilter, statusFilter]);
 
-  const coveredWilayas = new Set(
-    state.organisations
-      .filter((organisation) => organisation.status === "active")
-      .map((organisation) => organisation.wilaya)
-      .filter(Boolean),
-  ).size;
-
   const pendingOrgs = state.organisations.filter(
     (organisation) => organisation.status === "pending",
   );
@@ -626,43 +618,6 @@ function OrganisationsPage() {
       />
 
       {notice && <AdminToast message={notice} />}
-
-      <div className="ad-stat-grid">
-        <StatCard
-          tone="verified"
-          value={linkedUsers.length}
-          label={t("admin.org.accounts")}
-          badge={t("admin.org.accountsHint", {
-            count: linkedUsers.length,
-          })}
-          badgeTone="success"
-        />
-        <StatCard
-          tone="ongoing"
-          value={coveredWilayas}
-          label={t("admin.org.wilayas")}
-          badge={t("admin.org.wilayasHint", {
-            count: state.organisations.length,
-          })}
-          badgeTone="neutral"
-        />
-        <StatCard
-          tone="crisis"
-          value={pendingOrgs.length}
-          label={t("admin.org.pending")}
-          badge={t("admin.org.pendingHint")}
-          badgeTone={pendingOrgs.length > 0 ? "warning" : "neutral"}
-        />
-        <StatCard
-          tone="upcoming"
-          value={state.organisations.length}
-          label={t("admin.org.listTitle")}
-          badge={t("admin.org.listHint", {
-            count: state.organisations.length,
-          })}
-          badgeTone="info"
-        />
-      </div>
 
       <section className="ad-card">
         <div className="ad-toolbar">

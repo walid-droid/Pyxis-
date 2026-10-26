@@ -27,17 +27,17 @@
 }
 
 .alert-row:hover {
-  background: #f1f4f1;
+  background: var(--color-surface-muted);
 }
 
 .alert-row:focus-visible {
-  outline: 2px solid var(--color-green);
+  outline: 2px solid var(--color-brand);
   outline-offset: 1px;
 }
 
 .alert-row.is-selected {
-  background: color-mix(in srgb, var(--color-green) 8%, #fff);
-  box-shadow: inset 3px 0 0 var(--color-green);
+  background: color-mix(in srgb, var(--color-brand) 8%, var(--color-surface));
+  box-shadow: inset 3px 0 0 var(--color-brand);
 }
 
 .alert-row__dot {
@@ -82,7 +82,7 @@
   flex-shrink: 0;
   width: 15px;
   height: 15px;
-  color: var(--color-green);
+  color: var(--color-brand);
   opacity: 0;
   transition: opacity 140ms ease;
 }
@@ -121,13 +121,13 @@
 }
 
 .alert-list__more:hover {
-  border-color: var(--color-green);
+  border-color: var(--color-brand);
   background: var(--color-surface-muted);
-  color: var(--color-green);
+  color: var(--color-brand);
 }
 
 .alert-list__more:focus-visible {
-  outline: 2px solid var(--color-green);
+  outline: 2px solid var(--color-brand);
   outline-offset: 1px;
 }
 

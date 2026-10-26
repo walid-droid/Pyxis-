@@ -1,6 +1,5 @@
 import "./admin.css";
 import { useMemo, useState } from "react";
-import StatCard from "../../components/StatCard";
 import { useI18n } from "../../i18n";
 import { useAdmin } from "./adminStore";
 import {
@@ -606,10 +605,6 @@ function TerritoriesPage() {
 
   const allCommunes = state.wilayas.flatMap((wilaya) => wilaya.communes);
   const activeCommunes = allCommunes.filter((commune) => commune.active);
-  const population = allCommunes.reduce(
-    (total, commune) => total + commune.population,
-    0,
-  );
   const vacantWilayas = state.wilayas.filter((wilaya) => !wilaya.wali).length;
   const vacantCommunes = allCommunes.filter(
     (commune) => !commune.apcPresident,
@@ -875,46 +870,6 @@ function TerritoriesPage() {
           </div>
         </section>
       )}
-
-      <div className="ad-stat-grid">
-        <StatCard
-          tone="verified"
-          value={state.wilayas.length}
-          label={t("admin.terr.wilayas")}
-          badge={t("admin.terr.wilayasHint", {
-            count: state.wilayas.length,
-          })}
-          badgeTone="neutral"
-        />
-        <StatCard
-          tone="ongoing"
-          value={allCommunes.length}
-          label={t("admin.terr.communes")}
-          badge={t("admin.terr.communesHint", {
-            count: activeCommunes.length,
-          })}
-          badgeTone="success"
-        />
-        <StatCard
-          tone="crisis"
-          value={formatPopulation(population, lang)}
-          label={t("admin.terr.population")}
-          badge={t("admin.terr.populationHint")}
-          badgeTone="info"
-        />
-        <StatCard
-          tone="upcoming"
-          value={vacantWilayas + vacantCommunes}
-          label={t("admin.terr.vacancies")}
-          badge={t("admin.terr.vacanciesStat", {
-            wilayas: vacantWilayas,
-            communes: vacantCommunes,
-          })}
-          badgeTone={
-            vacantWilayas + vacantCommunes > 0 ? "warning" : "neutral"
-          }
-        />
-      </div>
 
       <div className="ad-terr-layout">
         <section className="ad-card">

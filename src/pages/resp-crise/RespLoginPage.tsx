@@ -12,30 +12,26 @@ function RespLoginPage() {
   const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [leaving, setLeaving] = useState(false);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (leaving) return;
     // Connect this to your authentication backend.
     signInResp(email);
     const from = (location.state as { from?: string } | null)?.from;
-    navigate(from ?? RESP_DASHBOARD_PATH);
+    setLeaving(true);
+    window.setTimeout(() => navigate(from ?? RESP_DASHBOARD_PATH), 220);
   }
 
   return (
     <AuthLayout
       variant="crisis"
-      eyebrow={t("resp.login.badge")}
-      farTitle={t("resp.login.farTitle")}
-      farText={t("resp.login.farText")}
-      points={[
-        t("resp.login.point1"),
-        t("resp.login.point2"),
-        t("resp.login.point3"),
-      ]}
+      leaving={leaving}
     >
       <header className="auth-card-head auth-card-head--resp">
         <span className="auth-kicker">{t("resp.login.kicker")}</span>
-        <h2>{t("resp.login.title")}</h2>
+        <h1>{t("resp.login.title")}</h1>
         <p>{t("resp.login.lead")}</p>
       </header>
 

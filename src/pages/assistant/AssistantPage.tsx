@@ -11,7 +11,12 @@ async function askAssistant(_question: string): Promise<string> {
   throw new Error("Assistant IA non connecté");
 }
 
-export default function AssistantPage() {
+type AssistantPageProps = {
+  /** Ferme l'assistant lorsqu'il est affiché dans une fenêtre modale. */
+  onClose?: () => void;
+};
+
+export default function AssistantPage({ onClose }: AssistantPageProps) {
   const { t } = useI18n();
   const [messages, setMessages] = useState<Message[]>([]);
   const [question, setQuestion] = useState("");
@@ -75,7 +80,7 @@ export default function AssistantPage() {
   }
 
   return (
-    <main className="assistant-page">
+    <main className={`assistant-page${onClose ? " assistant-page--popup" : ""}`}>
       <aside className="assistant-sidebar">
         <div className="assistant-side-title">
           <img className="assistant-logo" src={logo} alt="" />
@@ -105,6 +110,7 @@ export default function AssistantPage() {
           <div className="assistant-mobile-brand">
             <img className="assistant-logo" src={logo} alt="" /> CADM-AI
           </div>
+          <span className="assistant-topbar-title">{t("nav.assistant")}</span>
           <div className="assistant-topbar-actions">
             {messages.length > 0 && (
               <button type="button" className="assistant-mobile-new" onClick={startNewChat}>
@@ -114,6 +120,26 @@ export default function AssistantPage() {
             <div className="assistant-online">
               <span aria-hidden="true" /> {t("assistant.online")}
             </div>
+            {onClose && (
+              <button
+                type="button"
+                className="assistant-close"
+                onClick={onClose}
+                aria-label={t("common.close")}
+                title={t("common.close")}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  aria-hidden="true"
+                >
+                  <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
 

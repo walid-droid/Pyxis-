@@ -7,6 +7,8 @@ import {
 } from "react";
 import { useNavigate } from "react-router";
 import { useI18n } from "../../i18n";
+import { createReport, saveReport } from "../../lib/reports";
+import type { ReportSeverity, ReportType } from "../../mockdata/report";
 import "./SubmitAlertPage.css";
 
 const SEVERITIES = [
@@ -93,12 +95,24 @@ export default function SubmitAlertPage() {
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    // Connect this to your backend API to save the alert.
-    console.log("Alerte soumise :", {
-      ...form,
-      image: imageName || null,
+    const latitude = form.latitude.trim() === "" ? undefined : Number(form.latitude);
+    const longitude = form.longitude.trim() === "" ? undefined : Number(form.longitude);
+
+    const report = createReport({
+      title: form.title.trim(),
+      description: form.description.trim(),
+      type: (form.type || "other") as ReportType,
+      severity: form.severity as ReportSeverity,
+      wilaya: form.wilaya.trim(),
+      commune: form.commune.trim(),
+      place: form.location.trim() || undefined,
+      latitude: Number.isFinite(latitude) ? latitude : undefined,
+      longitude: Number.isFinite(longitude) ? longitude : undefined,
     });
-    alert(t("submit.done"));
+
+    saveReport(report);
+    // Le suivi du signalement se poursuit dans l'espace « Mes signalements ».
+    navigate("/my-reports", { state: { submitted: report.id } });
   }
 
   return (

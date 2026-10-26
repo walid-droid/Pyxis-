@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import FieldCanvas from "../FieldCanvas";
-import { noop } from "../utils";
-
-const TITLE = "Les bonnes informations, au bon moment.";
+import { useLandingCopy } from "../landingCopy";
 
 function shouldSkipVideo(reducedMotion) {
   const c = navigator.connection;
@@ -11,10 +9,23 @@ function shouldSkipVideo(reducedMotion) {
 }
 
 export default function Hero({ reducedMotion, onRequestSubmit }) {
+  const navigate = useNavigate();
+  const copy = useLandingCopy();
+  const hero = copy.hero;
   const [paused, setPaused] = useState(false);
+  const [query, setQuery] = useState("");
+  const [geo, setGeo] = useState("idle");
   // "loading" -> "ready" quand la vidéo peut démarrer, "removed" si absente ou connexion lente
   const [video, setVideo] = useState(() => (shouldSkipVideo(reducedMotion) ? "removed" : "loading"));
   const videoRef = useRef(null);
+  const aliveRef = useRef(true);
+
+  useEffect(() => {
+    aliveRef.current = true;
+    return () => {
+      aliveRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     const v = videoRef.current;
@@ -28,6 +39,41 @@ export default function Hero({ reducedMotion, onRequestSubmit }) {
   }, [paused, video]);
 
   const ready = video === "ready";
+
+  // La recherche de la landing est branchée sur la liste des alertes.
+  const submitSearch = (event) => {
+    event.preventDefault();
+    const q = query.trim();
+    navigate(q ? `/alerts?q=${encodeURIComponent(q)}` : "/alerts");
+  };
+
+  // La géolocalisation recentre les abris et postes de secours sur la position du visiteur.
+  const locate = () => {
+    if (!("geolocation" in navigator)) {
+      navigate("/resources");
+      return;
+    }
+
+    setGeo("locating");
+    try {
+      navigator.geolocation.getCurrentPosition(
+        ({ coords }) => {
+          if (!aliveRef.current) return;
+          navigate(
+            `/resources?lat=${coords.latitude.toFixed(5)}&lng=${coords.longitude.toFixed(5)}`,
+          );
+        },
+        () => {
+          if (!aliveRef.current) return;
+          // Position refusée ou indisponible : on affiche le dispositif de démonstration.
+          navigate("/resources");
+        },
+        { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 },
+      );
+    } catch {
+      if (aliveRef.current) navigate("/resources");
+    }
+  };
 
   return (
     <section className={"hero" + (ready ? " hvid" : "")}>
@@ -53,62 +99,71 @@ export default function Hero({ reducedMotion, onRequestSubmit }) {
         id="pz"
         type="button"
         aria-pressed={paused}
-        aria-label={paused ? "Relancer l'animation" : "Mettre l'animation en pause"}
+        aria-label={paused ? hero.play : hero.pause}
         onClick={() => setPaused((p) => !p)}
       />
       <div className="wrap">
-        <p className="eyebrow">Prévention et alertes en Algérie</p>
-        <h1 aria-label={TITLE}>
-          {TITLE.split(" ").map((w, i) => (
+        <p className="eyebrow">{hero.eyebrow}</p>
+        <h1 aria-label={hero.title}>
+          {hero.title.split(" ").map((w, i) => (
             <span className="w" key={i}>
               <i style={{ "--i": i }} aria-hidden="true">{w}</i>
             </span>
           ))}
         </h1>
         <p className="lead rv" style={{ "--d": ".9s" }}>
-          Retrouvez les alertes, les consignes de sécurité et les informations utiles dans votre commune et votre wilaya.
+          {hero.lead}
         </p>
-        <form className="search rv" style={{ "--d": "1.05s" }} onSubmit={noop} role="search">
+        <form className="search rv" style={{ "--d": "1.05s" }} onSubmit={submitSearch} role="search">
           <input
             type="search"
-            placeholder="Rechercher une commune ou une wilaya"
-            aria-label="Rechercher une commune ou une wilaya"
+            name="q"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={hero.searchPlaceholder}
+            aria-label={hero.searchPlaceholder}
           />
-          <button type="submit">Rechercher</button>
+          <button type="submit">{hero.search}</button>
         </form>
         <div>
-          <a className="loc rv" style={{ "--d": "1.15s" }} href="#" onClick={noop}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <button
+            className="loc rv"
+            style={{ "--d": "1.15s" }}
+            type="button"
+            onClick={locate}
+            disabled={geo === "locating"}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
               <circle cx="12" cy="12" r="3" />
               <circle cx="12" cy="12" r="8" />
               <path d="M12 1v3M12 20v3M1 12h3M20 12h3" />
             </svg>
-            Utiliser ma position
-          </a>
+            {geo === "locating" ? hero.locating : hero.locate}
+          </button>
         </div>
         <div className="q3 rv" style={{ "--d": "1.3s" }}>
-          <a href="#alerte">Que se passe-t-il ?</a>
-          <a href="#risques">Suis-je concerné ?</a>
-          <a href="#sit">Que dois-je faire ?</a>
+          {hero.quick.map((item) => (
+            <a key={item.href} href={item.href}>
+              {item.label}
+            </a>
+          ))}
         </div>
       </div>
       <div className="ems dark" id="signalement">
         <div className="wrap">
-          <b>En cas de danger immédiat</b>
+          <b>{hero.emergency.title}</b>
           <a className="n" href="tel:14">
-            <small>Protection civile</small>
+            <small>{hero.emergency.civil}</small>
             <span className="num">14 <em>·</em> 1021</span>
           </a>
           <a className="n" href="tel:1055">
-            <small>Gendarmerie nationale</small>
+            <small>{hero.emergency.gendarmerie}</small>
             <span className="num">1055</span>
           </a>
           <div className="sp" />
-          <p className="note">
-            Si vous autorisez la géolocalisation lors d'un signalement, votre position pourra y être jointe pour aider les services à localiser l'incident. Un signalement en ligne ne remplace pas l'appel aux secours.
-          </p>
+          <p className="note">{hero.emergency.note}</p>
           <Link className="btn red" to="/submit-alert" onClick={onRequestSubmit}>
-            Envoyer un signalement
+            {hero.emergency.cta}
           </Link>
         </div>
       </div>

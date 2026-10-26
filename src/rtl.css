@@ -29,7 +29,7 @@
 [dir="rtl"] .res-hero,
 [dir="rtl"] .consignes-hero {
   border-left: 0;
-  border-right: 5px solid var(--color-green);
+  border-right: 5px solid var(--color-brand);
 }
 
 [dir="rtl"] .dashboard-emergency {
@@ -70,6 +70,10 @@
 }
 
 @media (min-width: 1025px) {
+  [dir="rtl"] .app-layout.is-collapsed .app-sidebar {
+    transform: translateX(calc(100% + var(--app-topbar-x) * 2));
+  }
+
   [dir="rtl"] .app-layout.is-collapsed .app-main {
     margin-left: 0;
     margin-right: 0;
@@ -77,6 +81,14 @@
 }
 
 @media (max-width: 1024px) {
+  [dir="rtl"] .app-sidebar {
+    transform: translateX(calc(100% + var(--app-topbar-x) * 2));
+  }
+
+  [dir="rtl"] .app-sidebar.is-open {
+    transform: translateX(0);
+  }
+
   [dir="rtl"] .app-main {
     margin-left: 0;
     margin-right: 0;
@@ -86,4 +98,17 @@
 /* Responsable de crise: fleches des listes. */
 [dir="rtl"] .rc-item__arrow {
   transform: scaleX(-1);
+}
+
+[dir="rtl"] .rc-quick-card__arrow,
+[dir="rtl"] .rc-incident-picker__open span {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .rc-quick-card:hover .rc-quick-card__arrow {
+  transform: translateX(-3px) scaleX(-1);
+}
+
+[dir="rtl"] .rc-incident-picker__item:hover .rc-incident-picker__open span {
+  transform: translateX(-3px) scaleX(-1);
 }

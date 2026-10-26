@@ -12,30 +12,26 @@ function AdminLoginPage() {
   const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [leaving, setLeaving] = useState(false);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (leaving) return;
     // Connect this to your authentication backend.
     signInAdmin(email);
     const from = (location.state as { from?: string } | null)?.from;
-    navigate(from ?? ADMIN_DASHBOARD_PATH);
+    setLeaving(true);
+    window.setTimeout(() => navigate(from ?? ADMIN_DASHBOARD_PATH), 220);
   }
 
   return (
     <AuthLayout
       variant="admin"
-      eyebrow={t("admin.login.badge")}
-      farTitle={t("admin.login.farTitle")}
-      farText={t("admin.login.farText")}
-      points={[
-        t("admin.login.point1"),
-        t("admin.login.point2"),
-        t("admin.login.point3"),
-      ]}
+      leaving={leaving}
     >
       <header className="auth-card-head auth-card-head--resp">
         <span className="auth-kicker">{t("admin.login.kicker")}</span>
-        <h2>{t("admin.login.title")}</h2>
+        <h1>{t("admin.login.title")}</h1>
         <p>{t("admin.login.lead")}</p>
       </header>
 

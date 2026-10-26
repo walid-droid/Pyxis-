@@ -1,6 +1,7 @@
 import "./resp-crise.css";
 import { useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router";
+import Modal from "../../components/Modal";
 import { useI18n } from "../../i18n";
 import { mockIncidents, type Incident } from "../../mockdata/incident";
 import { resolveCoords } from "../../mockdata/locations";
@@ -230,6 +231,7 @@ function IncidentDetail({ id }: { id?: string }) {
   const [commander, setCommander] = useState("R. Amrani");
   const [steps, setSteps] = useState<Step[]>([]);
   const [notice, setNotice] = useState<string | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [clockMinutes, setClockMinutes] = useState(
     DEMO_OPENED_MINUTES + (incident.ageMinutes ?? 0),
   );
@@ -294,6 +296,19 @@ function IncidentDetail({ id }: { id?: string }) {
     1,
     scopedIncidents.findIndex((item) => item.id === incident.id) + 1,
   );
+
+  // Pop-up « Tous les incidents » : actifs d'abord, puis par gravité.
+  const pickerIncidents = [...allIncidents].sort((a, b) => {
+    const aStatus = a.id === incident.id ? status : a.status;
+    const bStatus = b.id === incident.id ? status : b.status;
+    const aActive = aStatus === "Reported" || aStatus === "Responding";
+    const bActive = bStatus === "Reported" || bStatus === "Responding";
+    if (aActive !== bActive) return aActive ? -1 : 1;
+    return (
+      SEVERITY_LADDER.indexOf(b.severity) -
+        SEVERITY_LADDER.indexOf(a.severity) || a.id - b.id
+    );
+  });
 
   const closed = status === "Resolved";
   const assignedTeams = mockTeams.filter((team) => teamIds.includes(team.id));
@@ -655,6 +670,13 @@ function IncidentDetail({ id }: { id?: string }) {
         </div>
 
         <div className="rc-hero__aside">
+          <button
+            type="button"
+            className="rc-btn rc-btn--ghost"
+            onClick={() => setPickerOpen(true)}
+          >
+            {t("resp.inc.allIncidents")}
+          </button>
           <button
             type="button"
             className="rc-btn rc-btn--ghost-danger"
@@ -1440,6 +1462,94 @@ function IncidentDetail({ id }: { id?: string }) {
             </div>
           </fieldset>
         </ConfirmDialog>
+      )}
+
+      {pickerOpen && (
+        <Modal
+          title={t("resp.inc.allIncidentsTitle")}
+          onClose={() => setPickerOpen(false)}
+          className="rc-incident-picker"
+        >
+          <div className="rc-incident-picker__head">
+            <p className="rc-incident-picker__lead">
+              {t("resp.inc.allIncidentsLead")}
+            </p>
+            <span className="rc-incident-picker__count">
+              {pickerIncidents.length === 1
+                ? t("resp.inc.allIncidentsCountOne")
+                : t("resp.inc.allIncidentsCount", {
+                    count: pickerIncidents.length,
+                  })}
+            </span>
+          </div>
+
+          <ul className="rc-incident-picker__list">
+            {pickerIncidents.map((item) => {
+              const itemStatus =
+                item.id === incident.id ? status : item.status;
+              const isCurrent = item.id === incident.id;
+
+              return (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    className={`rc-incident-picker__item${
+                      isCurrent ? " is-current" : ""
+                    }`}
+                    aria-current={isCurrent ? "true" : undefined}
+                    onClick={() => {
+                      setPickerOpen(false);
+                      if (!isCurrent) {
+                        navigate(`/responsable/incidents/${item.id}`);
+                      }
+                    }}
+                  >
+                    <span className="rc-incident-picker__body">
+                      <span className="rc-incident-picker__line">
+                        <span className="rc-incident-picker__ref">
+                          INC-{String(item.id).padStart(3, "0")}
+                        </span>
+                        <span className="rc-incident-picker__title">
+                          {tc(item.event)}
+                        </span>
+                        {isCurrent && (
+                          <span className="rc-incident-picker__current">
+                            {t("resp.inc.currentIncident")}
+                          </span>
+                        )}
+                      </span>
+                      <span className="rc-incident-picker__meta">
+                        <span
+                          className={`rc-badge rc-badge--${tone(
+                            item.severity,
+                          )}`}
+                        >
+                          <BadgeIcon tone={tone(item.severity)} />
+                          {t(`severity.${tone(item.severity)}`)}
+                        </span>
+                        <span
+                          className={`rc-badge rc-badge--${tone(itemStatus)}`}
+                        >
+                          <BadgeIcon tone={tone(itemStatus)} />
+                          {t(`resp.st.${tone(itemStatus)}`)}
+                        </span>
+                        <span className="rc-incident-picker__place">
+                          {tc(item.location)}
+                        </span>
+                      </span>
+                    </span>
+                    {!isCurrent && (
+                      <span className="rc-incident-picker__open">
+                        {t("resp.inc.openIncident")}
+                        <span aria-hidden="true">→</span>
+                      </span>
+                    )}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </Modal>
       )}
     </main>
   );

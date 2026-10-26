@@ -3,6 +3,24 @@
    in the component stylesheets.
    ========================================================= */
 
+/* ---------- Surfaces en verre ---------- */
+
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .dashboard-quick__card,
+[data-theme="dark"] .ad-card:not(.ad-card--flat),
+[data-theme="dark"] .rc-card,
+[data-theme="dark"] .ct-card {
+  background: var(--glass-bg);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 5%),
+    var(--shadow-card);
+}
+
+[data-theme="dark"] .app-sidebar {
+  border-color: var(--glass-border);
+  background: color-mix(in srgb, var(--color-surface) 72%, transparent);
+}
+
 /* ---------- Dashboard ---------- */
 
 [data-theme="dark"] .dashboard-quick__card.assistant {
@@ -21,7 +39,7 @@
 [data-theme="dark"] .submit-alert-form input:hover,
 [data-theme="dark"] .submit-alert-form select:hover,
 [data-theme="dark"] .submit-alert-form textarea:hover {
-  border-color: color-mix(in srgb, var(--color-green) 40%, var(--color-border));
+  border-color: color-mix(in srgb, var(--color-brand) 40%, var(--color-border));
 }
 
 [data-theme="dark"] .submit-alert-upload {
@@ -31,7 +49,7 @@
 /* ---------- Auth ---------- */
 
 [data-theme="dark"] .auth-form input:hover {
-  border-color: color-mix(in srgb, var(--color-green) 40%, var(--color-border));
+  border-color: color-mix(in srgb, var(--color-brand) 40%, var(--color-border));
 }
 
 /* ---------- Consignes ---------- */
@@ -88,12 +106,12 @@
 }
 
 [data-theme="dark"] .map-modal__itinerary {
-  background: var(--color-green);
-  color: var(--color-text-inverse);
+  background: var(--color-brand);
+  color: #fff;
 }
 
 [data-theme="dark"] .map-modal__itinerary:hover {
-  background: color-mix(in srgb, var(--color-green) 80%, #fff);
+  background: var(--color-brand-hover);
 }
 
 [data-theme="dark"] .map-pin.crisis {
@@ -175,15 +193,15 @@
 /* ---------- Assistant IA ---------- */
 
 [data-theme="dark"] .assistant-page {
-  --ai-green: #2f9e72;
-  --ai-green-dark: #26865f;
-  --ai-ink: #e7efeb;
-  --ai-text: #c3d3cb;
-  --ai-muted: #93a89c;
-  --ai-accent: #6fd3a6;
-  --ai-line: #293a33;
-  --ai-bg: #0f1815;
-  --ai-soft: #17342a;
+  --ai-green: var(--color-brand);
+  --ai-green-dark: var(--color-brand-hover);
+  --ai-ink: #f5f3f1;
+  --ai-text: #d4d4d8;
+  --ai-muted: #a1a1aa;
+  --ai-accent: #ff8a80;
+  --ai-line: #26262b;
+  --ai-bg: #08080a;
+  --ai-soft: #2a1512;
 }
 
 [data-theme="dark"] .assistant-sidebar {
@@ -196,12 +214,12 @@
 }
 
 [data-theme="dark"] .assistant-new-chat:hover {
-  background: #1b2c25;
-  border-color: #3a5147;
+  background: var(--color-brand-soft);
+  border-color: color-mix(in srgb, var(--color-brand) 35%, var(--ai-line));
 }
 
 [data-theme="dark"] .assistant-topbar {
-  background: rgb(20 31 26 / 85%);
+  background: rgb(17 17 20 / 85%);
 }
 
 [data-theme="dark"] .assistant-mobile-new {
@@ -211,8 +229,8 @@
 }
 
 [data-theme="dark"] .assistant-orb {
-  border-color: var(--ai-line);
-  background: linear-gradient(145deg, #1b2b25, #142a22);
+  border-color: color-mix(in srgb, var(--color-brand) 30%, var(--ai-line));
+  background: linear-gradient(145deg, #2a1512, #1a0f0e);
   box-shadow: 0 8px 25px rgb(0 0 0 / 35%);
 }
 
@@ -222,7 +240,7 @@
 
 [data-theme="dark"] .assistant-mini-orb,
 [data-theme="dark"] .assistant-avatar {
-  background: #1d3a2f;
+  background: var(--color-brand-soft);
   color: var(--ai-accent);
 }
 

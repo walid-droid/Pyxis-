@@ -94,26 +94,49 @@ function RegisterPage() {
   }
 
   return (
-    <AuthLayout
-      farTitle={t("register.farTitle")}
-      farText={t("register.farText")}
-    >
+    <AuthLayout raised>
       <header className="auth-card-head">
-        <h2>{t("register.title")}</h2>
+        <h1>{t("register.title")}</h1>
         <p>{t("register.lead")}</p>
       </header>
 
       <form className="auth-form" onSubmit={handleSubmit}>
-        <div className="auth-field">
-          <label htmlFor="register-name">{t("register.name")}</label>
-          <input
-            id="register-name"
-            required
-            autoComplete="name"
-            placeholder={t("register.namePlaceholder")}
-            value={form.name}
-            onChange={(e) => update("name", e.target.value)}
-          />
+        <div className="auth-field-row">
+          <div className="auth-field">
+            <label htmlFor="register-name">{t("register.name")}</label>
+            <input
+              id="register-name"
+              type="text"
+              required
+              autoComplete="name"
+              placeholder={t("register.namePlaceholder")}
+              value={form.name}
+              onChange={(e) => update("name", e.target.value)}
+            />
+          </div>
+
+          <div className="auth-field">
+            <label htmlFor="register-phone">{t("register.phone")}</label>
+            <input
+              id="register-phone"
+              type="tel"
+              inputMode="tel"
+              required
+              autoComplete="tel"
+              maxLength={13}
+              placeholder={t("register.phonePlaceholder")}
+              value={form.phone}
+              onChange={handlePhoneChange}
+              onPaste={handlePhonePaste}
+              aria-describedby={phoneError ? "register-phone-hint" : undefined}
+              aria-invalid={phoneError ? true : undefined}
+            />
+            {phoneError && (
+              <p className="auth-field-error" id="register-phone-hint" role="alert">
+                {phoneError}
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="auth-field">
@@ -129,59 +152,34 @@ function RegisterPage() {
           />
         </div>
 
-        <div className="auth-field">
-          <label htmlFor="register-phone">{t("register.phone")}</label>
-          <input
-            id="register-phone"
-            type="tel"
-            inputMode="tel"
-            required
-            autoComplete="tel"
-            maxLength={13}
-            placeholder={t("register.phonePlaceholder")}
-            value={form.phone}
-            onChange={handlePhoneChange}
-            onPaste={handlePhonePaste}
-            aria-describedby="register-phone-hint"
-            aria-invalid={phoneError ? true : undefined}
-          />
-          {phoneError ? (
-            <p className="auth-field-error" id="register-phone-hint" role="alert">
-              {phoneError}
-            </p>
-          ) : (
-            <p className="auth-field-hint" id="register-phone-hint">
-              {t("register.phoneHint")}
-            </p>
-          )}
-        </div>
+        <div className="auth-field-row">
+          <div className="auth-field">
+            <label htmlFor="register-password">{t("register.password")}</label>
+            <input
+              id="register-password"
+              type="password"
+              required
+              minLength={6}
+              autoComplete="new-password"
+              placeholder="••••••••"
+              value={form.password}
+              onChange={(e) => update("password", e.target.value)}
+            />
+          </div>
 
-        <div className="auth-field">
-          <label htmlFor="register-password">{t("register.password")}</label>
-          <input
-            id="register-password"
-            type="password"
-            required
-            minLength={6}
-            autoComplete="new-password"
-            placeholder="••••••••"
-            value={form.password}
-            onChange={(e) => update("password", e.target.value)}
-          />
-        </div>
-
-        <div className="auth-field">
-          <label htmlFor="register-confirm">{t("register.confirm")}</label>
-          <input
-            id="register-confirm"
-            type="password"
-            required
-            minLength={6}
-            autoComplete="new-password"
-            placeholder="••••••••"
-            value={form.confirm}
-            onChange={(e) => update("confirm", e.target.value)}
-          />
+          <div className="auth-field">
+            <label htmlFor="register-confirm">{t("register.confirm")}</label>
+            <input
+              id="register-confirm"
+              type="password"
+              required
+              minLength={6}
+              autoComplete="new-password"
+              placeholder="••••••••"
+              value={form.confirm}
+              onChange={(e) => update("confirm", e.target.value)}
+            />
+          </div>
         </div>
 
         <label className="auth-check">

@@ -10,6 +10,13 @@
   --color-navy: #172a25;
   --color-green: #16704a;
 
+  /* Brand (crimson) — distinct du rouge d'alerte critique */
+  --color-brand: #b3261e;
+  --color-brand-hover: #8f1b15;
+  --color-brand-soft: #fdecea;
+  --color-brand-glow: rgb(179 38 30 / 32%);
+  --color-alert: #e11d2e;
+
   /* Surfaces */
   --color-background: #f3f5f2;
   --color-surface: #ffffff;
@@ -24,6 +31,26 @@
   --color-border: #e2e8e2;
   --shadow-card: 0 1px 2px rgb(17 25 22 / 5%), 0 14px 30px -20px rgb(17 25 22 / 30%);
   --shadow-raised: 0 26px 50px -26px rgb(17 25 22 / 38%);
+
+  /* Glassmorphism — même recette que la carte de connexion. */
+  --glass-bg: rgb(255 255 255 / 62%);
+  --glass-bg-strong: rgb(255 255 255 / 82%);
+  --glass-border: rgb(255 255 255 / 55%);
+  --glass-blur: 18px;
+  --glass-shadow: 0 24px 60px -34px rgb(11 18 16 / 38%);
+
+  /* Navigation en verre — barre du haut et panneau latéral. */
+  --nav-glass-bg: rgb(255 255 255 / 46%);
+  --nav-glass-bg-scrolled: rgb(255 255 255 / 60%);
+  --nav-glass-border: rgb(255 255 255 / 68%);
+  --nav-glass-shadow: 0 24px 60px -34px rgb(11 18 16 / 32%);
+  --nav-control-bg: rgb(255 255 255 / 34%);
+  --nav-control-hover: rgb(255 255 255 / 58%);
+
+  /* Bandeaux : photo assombrie + voile cramoisi + puces en verre. */
+  --hero-scrim: linear-gradient(180deg, rgb(8 8 10 / 16%) 0%, rgb(8 8 10 / 58%) 100%);
+  --hero-wash: linear-gradient(115deg, rgb(90 12 9 / 82%) 0%, rgb(143 27 21 / 48%) 52%, rgb(28 12 11 / 30%) 100%);
+  --hero-border: rgb(255 255 255 / 14%);
 
   /* Status */
   --color-danger: #b42318;
@@ -57,25 +84,52 @@
   color-scheme: dark;
 
   /* CADM brand */
-  --color-primary: #f0544a;
-  --color-primary-hover: #ff6f66;
-  --color-navy: #a9c4b8;
-  --color-green: #45b98a;
+  --color-primary: #ff5a4f;
+  --color-primary-hover: #ff7b70;
+  --color-navy: #d6d3d1;
+  --color-green: #4cc394;
 
-  /* Surfaces */
-  --color-background: #0c1411;
-  --color-surface: #141f1a;
-  --color-surface-muted: #1e2b25;
+  /* Brand (crimson) — distinct du rouge d'alerte critique */
+  --color-brand: #ff5a4f;
+  --color-brand-hover: #ff7b70;
+  --color-brand-soft: #2a1512;
+  --color-brand-glow: rgb(255 90 79 / 28%);
+  --color-alert: #ff3b30;
+
+  /* Surfaces — palette de la landing : quasi-noir neutre. */
+  --color-background: #08080a;
+  --color-surface: #111114;
+  --color-surface-muted: #1a1a1e;
 
   /* Text */
-  --color-text: #e7efeb;
-  --color-text-muted: #98ada2;
-  --color-text-inverse: #0c1411;
+  --color-text: #f5f3f1;
+  --color-text-muted: #a1a1aa;
+  --color-text-inverse: #08080a;
 
   /* Borders and shadows */
-  --color-border: #2f3e37;
-  --shadow-card: 0 1px 2px rgb(0 0 0 / 40%), 0 14px 30px -20px rgb(0 0 0 / 60%);
-  --shadow-raised: 0 26px 50px -26px rgb(0 0 0 / 70%);
+  --color-border: #26262b;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 50%), 0 18px 40px -22px rgb(0 0 0 / 75%);
+  --shadow-raised: 0 30px 60px -28px rgb(0 0 0 / 85%);
+
+  /* Glassmorphism — cartes en verre sur fond noir. */
+  --glass-bg: rgb(255 255 255 / 6%);
+  --glass-bg-strong: rgb(255 255 255 / 9%);
+  --glass-border: rgb(255 255 255 / 10%);
+  --glass-blur: 20px;
+  --glass-shadow: 0 30px 60px -34px rgb(0 0 0 / 80%);
+
+  /* Navigation en verre — barre du haut et panneau latéral. */
+  --nav-glass-bg: rgb(255 255 255 / 5%);
+  --nav-glass-bg-scrolled: rgb(255 255 255 / 8%);
+  --nav-glass-border: rgb(255 255 255 / 12%);
+  --nav-glass-shadow: 0 30px 60px -34px rgb(0 0 0 / 80%);
+  --nav-control-bg: rgb(255 255 255 / 4%);
+  --nav-control-hover: rgb(255 255 255 / 9%);
+
+  /* Bandeaux : photo assombrie + voile cramoisi + puces en verre. */
+  --hero-scrim: linear-gradient(180deg, rgb(0 0 0 / 28%) 0%, rgb(0 0 0 / 68%) 100%);
+  --hero-wash: linear-gradient(115deg, rgb(70 8 6 / 84%) 0%, rgb(120 20 16 / 52%) 52%, rgb(10 8 8 / 42%) 100%);
+  --hero-border: rgb(255 255 255 / 12%);
 
   /* Status */
   --color-danger: #ff7468;
@@ -116,10 +170,10 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  /* Halo vert très doux : évite l'aplat gris "template" et donne de la profondeur. */
+  /* Halo brand très doux : profondeur sans aplat "template". */
   background:
-    radial-gradient(1200px 560px at 8% -12%, color-mix(in srgb, var(--color-green) 10%, transparent), transparent 68%),
-    radial-gradient(1000px 520px at 98% 0%, color-mix(in srgb, var(--color-primary) 7%, transparent), transparent 70%),
+    radial-gradient(1200px 560px at 8% -12%, color-mix(in srgb, var(--color-brand) 8%, transparent), transparent 68%),
+    radial-gradient(1000px 520px at 98% 0%, color-mix(in srgb, var(--color-brand) 5%, transparent), transparent 70%),
     var(--color-background);
   color: var(--color-text);
   font-family: var(--font-body);
@@ -167,11 +221,11 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid var(--color-green);
+  outline: 2px solid var(--color-brand);
   outline-offset: 3px;
 }
 
 ::selection {
   color: #fff;
-  background: var(--color-green);
+  background: var(--color-brand);
 }

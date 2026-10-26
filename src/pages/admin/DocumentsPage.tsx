@@ -1,6 +1,5 @@
 import "./admin.css";
 import { useMemo, useState } from "react";
-import StatCard from "../../components/StatCard";
 import { useI18n } from "../../i18n";
 import { useAdmin } from "./adminStore";
 import {
@@ -400,7 +399,6 @@ function DocumentsPage() {
   );
   const drafts = state.documents.filter((doc) => doc.status === "draft");
   const published = state.documents.filter((doc) => doc.published);
-  const storage = state.documents.reduce((total, doc) => total + doc.sizeMb, 0);
   const tokens = state.documents.reduce(
     (total, doc) => total + doc.chunks * 120,
     0,
@@ -552,39 +550,6 @@ function DocumentsPage() {
       />
 
       {notice && <AdminToast message={notice} />}
-
-      <div className="ad-stat-grid">
-        <StatCard
-          tone="verified"
-          value={state.documents.length}
-          label={t("admin.doc.stats.docs")}
-          badge={t("admin.doc.stats.docsHint", {
-            count: published.length,
-          })}
-          badgeTone="info"
-        />
-        <StatCard
-          tone="ongoing"
-          value={indexed.length}
-          label={t("admin.doc.stats.indexed")}
-          badge={t("admin.doc.stats.indexedHint")}
-          badgeTone="success"
-        />
-        <StatCard
-          tone="upcoming"
-          value={processing.length}
-          label={t("admin.doc.stats.processing")}
-          badge={t("admin.doc.stats.processingHint")}
-          badgeTone="warning"
-        />
-        <StatCard
-          tone="crisis"
-          value={formatFileSize(storage, lang)}
-          label={t("admin.doc.stats.storage")}
-          badge={t("admin.doc.storageHint")}
-          badgeTone="neutral"
-        />
-      </div>
 
       <div className="ad-doc-layout">
         <section className="ad-card">

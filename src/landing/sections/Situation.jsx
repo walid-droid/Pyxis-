@@ -1,49 +1,19 @@
 import { useRef, useState } from "react";
-import { noop } from "../utils";
+import { Link } from "react-router";
+import { useLandingCopy } from "../landingCopy";
 
-const TABS = ["Avant", "Pendant", "Après"];
-
-const PANELS = [
-  {
-    title: "Se préparer",
-    text: "Connaître les risques de sa commune, préparer un kit d'urgence, repérer les itinéraires et les lieux de mise à l'abri.",
-    items: [
-      "Consulter les zones à risque de ma commune",
-      "Voir le plan d'évacuation de mon quartier",
-      "Consulter les consignes de sécurité",
-      "Signaler une personne vulnérable à protéger",
-      "Créer un compte pour recevoir les alertes",
-    ],
-  },
-  {
-    title: "Se protéger et signaler",
-    text: "Suivre les consignes des autorités, éviter les zones dangereuses et appeler les secours en cas d'urgence.",
-    items: [
-      "Signaler un incident avec une photo, ma position et une description",
-      "Trouver l'abri ou l'établissement de santé le plus proche",
-      "Consulter les alertes et communiqués officiels",
-      "Suivre l'état de mon signalement",
-    ],
-  },
-  {
-    title: "Agir avec prudence",
-    text: "Éviter les zones sinistrées, signaler les dangers persistants et suivre les consignes avant de rentrer chez soi.",
-    items: [
-      "Déclarer les dégâts de mon logement",
-      "Signaler une personne disparue ou rechercher un proche",
-      "Trouver un hébergement d'urgence",
-      "Devenir bénévole et consulter les missions disponibles",
-      "Faire un don",
-    ],
-  },
-];
-
-export default function Situation() {
+export default function Situation({ onRequestSubmit, onOpenTracking }) {
+  const copy = useLandingCopy();
+  const situation = copy.situation;
+  const TABS = situation.tabs;
+  const PANELS = situation.panels;
   const [active, setActive] = useState(0);
   const tabRefs = useRef([]);
 
   const onKeyDown = (e, i) => {
-    const n = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+    const rtl = document.documentElement.dir === "rtl";
+    const n =
+      e.key === "ArrowRight" ? (rtl ? -1 : 1) : e.key === "ArrowLeft" ? (rtl ? 1 : -1) : 0;
     if (!n) return;
     e.preventDefault();
     const j = (i + n + TABS.length) % TABS.length;
@@ -55,13 +25,16 @@ export default function Situation() {
     <section className="sit" id="sit">
       <div className="wrap">
         <div className="head">
-          <p className="eyebrow rv">Les bons gestes</p>
-          <h2 className="rv">Avant, pendant et après une catastrophe</h2>
-          <p className="rv">
-            Découvrez les gestes à adopter à chaque étape pour mieux vous protéger et protéger vos proches.
-          </p>
+          <p className="eyebrow rv">{situation.eyebrow}</p>
+          <h2 className="rv">{situation.title}</h2>
+          <p className="rv">{situation.lead}</p>
         </div>
-        <div className="tabs rv" data-a={active} role="tablist" aria-label="Avant, pendant, après">
+        <div
+          className="tabs rv"
+          data-a={active}
+          role="tablist"
+          aria-label={situation.tablistLabel}
+        >
           {TABS.map((label, i) => (
             <button
               key={label}
@@ -96,8 +69,22 @@ export default function Situation() {
             </div>
             <ul>
               {p.items.map((item, k) => (
-                <li key={item} style={{ "--k": k }}>
-                  <a href="#" onClick={noop}>{item}</a>
+                <li key={item.label} style={{ "--k": k }}>
+                  {item.tracking ? (
+                    <a
+                      href="#suivi"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        onOpenTracking();
+                      }}
+                    >
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link to={item.to} onClick={item.auth ? onRequestSubmit : undefined}>
+                      {item.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

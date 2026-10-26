@@ -1,6 +1,5 @@
 import { Link } from "react-router";
 import { DASHBOARD_PATH } from "../../config";
-import { noop } from "../utils";
 
 const GROUPS = [
   ["Secours et sécurité", ["Protection civile", "Police", "Gendarmerie nationale"]],
@@ -31,7 +30,7 @@ export default function Pro() {
               <div className="sg" key={title}>
                 <h3>{title}</h3>
                 {links.map((l) => (
-                  <a key={l} href="#" onClick={noop}>{l}</a>
+                  <Link key={l} to="/contacts">{l}</Link>
                 ))}
               </div>
             ))}

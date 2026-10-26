@@ -3,41 +3,96 @@
    ========================================================= */
 
 .auth-page {
-  display: grid;
-  grid-template-columns: 1.05fr 1fr;
-  min-height: 100vh;
-  background: var(--color-background);
-}
-
-/* ---------- Brand panel ---------- */
-
-.auth-aside {
   position: relative;
   isolation: isolate;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  padding: clamp(28px, 4vw, 56px);
-
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow-x: hidden;
   color: #fff;
-  background-color: #172b22;
-  background-image:
-    linear-gradient(150deg, rgba(18, 32, 25, 0.96) 0%, rgba(29, 68, 54, 0.88) 55%, rgba(28, 85, 64, 0.8) 100%),
-    url("/topographic.svg");
-  background-size: cover;
-  background-position: right center;
-  background-repeat: no-repeat;
+  background-color: #08080a;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+/* Fondu de sortie avant d'ouvrir le tableau de bord correspondant. */
+.auth-page--leaving {
+  opacity: 0;
+  transform: scale(0.99);
+  pointer-events: none;
+}
+
+/* Sur les écrans assez hauts, la page tient dans la fenêtre : aucun défilement. */
+@media (min-height: 720px) {
+  .auth-page {
+    height: 100vh;
+    overflow: hidden;
+  }
+}
+
+/* ---------- Vidéo d'arrière-plan (reprise de la page d'accueil) ---------- */
+
+.auth-media {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 120% at 15% 0%, #3a1512 0%, #170b0a 45%, #08080a 100%);
+}
+
+.auth-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  filter: brightness(0.72) saturate(1.05);
+  transition: opacity 1.4s ease, filter 1.4s ease;
+}
+
+.auth-page--video .auth-video {
+  opacity: 1;
+}
+
+.auth-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 8, 10, 0.82) 0%,
+    rgba(28, 12, 11, 0.55) 45%,
+    rgba(6, 6, 8, 0.88) 100%
+  );
+}
+
+/* ---------- Barre supérieure ---------- */
+
+.auth-topbar {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: clamp(16px, 2.4vw, 26px) clamp(20px, 4vw, 56px);
+}
+
+.auth-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .auth-brand {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  align-self: flex-start;
   color: #fff;
   font-family: var(--font-display);
-  font-size: 1.75rem;
+  font-size: 1.6rem;
   letter-spacing: -0.02em;
   line-height: 1;
 }
@@ -48,18 +103,19 @@
 
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
   .auth-brand span {
-    background: linear-gradient(100deg, #fff 10%, #9fe0c4 96%);
+    background: linear-gradient(100deg, #fff 10%, #ffb4ab 96%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
 }
 
-.auth-lang {
-  position: absolute;
-  top: clamp(20px, 3vw, 36px);
-  right: clamp(20px, 3vw, 36px);
-  z-index: 1;
+.auth-brand img {
+  display: block;
+  height: 38px;
+  width: auto;
+  border-radius: 14px;
+  box-shadow: 0 12px 24px -14px rgb(0 0 0 / 55%), 0 0 0 1px rgb(255 255 255 / 12%);
 }
 
 .auth-lang .app-lang-toggle {
@@ -73,142 +129,114 @@
   color: #fff;
 }
 
-[dir="rtl"] .auth-lang {
-  right: auto;
-  left: clamp(20px, 3vw, 36px);
-}
-
-.auth-brand img {
-  display: block;
-  height: 48px;
-  width: auto;
-  border-radius: 14px;
-  box-shadow: 0 12px 24px -14px rgb(0 0 0 / 55%), 0 0 0 1px rgb(255 255 255 / 12%);
-}
-
-.auth-aside-body {
-  margin-top: auto;
-  max-width: 480px;
-}
-
-.auth-aside-body h1 {
-  margin: 0 0 18px;
-  color: #fff;
-  font-family: var(--font-display);
-  font-size: clamp(2.4rem, 4vw, 3.6rem);
-  font-weight: 400;
-  line-height: 1.05;
-}
-
-.auth-aside-body p {
-  margin: 0;
-  color: #d7e4dc;
-  font-size: 1.02rem;
-  line-height: 1.7;
-}
-
-/* Étiquette « Accès restreint » (espace responsable). */
-.auth-aside-body .auth-eyebrow {
+.auth-back {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin: 0 0 16px;
-  padding: 6px 12px;
-  border: 1px solid rgb(240 180 41 / 35%);
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: var(--radius-pill);
-  background: rgb(240 180 41 / 12%);
-  color: #f6c65b;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  line-height: 1.4;
-  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.08);
+  color: #d7e4dc;
+  font-size: 0.85rem;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
 }
 
-.auth-eyebrow::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #f6c65b;
+.auth-back:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #fff;
 }
 
-.auth-points {
-  list-style: none;
-  margin: 32px 0 0;
-  padding: 0;
-  display: grid;
-  gap: 14px;
-}
-
-.auth-points li {
-  position: relative;
-  padding-inline-start: 34px;
-  color: #eaf3ee;
-  font-size: 0.95rem;
-}
-
-.auth-points li::before {
-  content: "✓";
-  position: absolute;
-  inset-inline-start: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: rgba(143, 211, 182, 0.18);
-  color: #8fd3b6;
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.auth-aside-foot {
-  margin: auto 0 0;
-  color: #9db3a8;
-  font-size: 0.78rem;
-}
-
-/* ---------- Form panel ---------- */
+/* ---------- Contenu centré ---------- */
 
 .auth-main {
+  position: relative;
+  z-index: 1;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 20px;
-  padding: clamp(24px, 4vw, 48px);
+  width: 100%;
+  /* Marge haute/basse identique : la carte tombe pile au centre de l'écran. */
+  padding: clamp(92px, 11vh, 112px) clamp(20px, 4vw, 56px);
 }
+
+.auth-foot {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 1;
+  margin: 0;
+  padding: 0 20px clamp(16px, 2.5vw, 24px);
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+/* ---------- Carte du formulaire ---------- */
 
 .auth-card {
-  width: min(430px, 100%);
-  padding: clamp(24px, 3.5vw, 40px);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 24px;
-  box-shadow: 0 26px 60px -28px rgb(17 25 22 / 34%);
+  width: min(400px, 100%);
+  margin-block: auto;
+  padding: clamp(18px, 2.4vh, 28px) clamp(20px, 2.6vw, 28px);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 20px;
+  color: #fff;
+  box-shadow:
+    0 34px 80px -32px rgb(0 0 0 / 70%),
+    inset 0 1px 0 rgb(255 255 255 / 18%);
+  -webkit-backdrop-filter: blur(26px) saturate(150%);
+  backdrop-filter: blur(26px) saturate(150%);
 }
 
-.auth-card-head h2 {
-  margin: 0 0 6px;
+/* Repli si le flou d'arrière-plan n'est pas disponible. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .auth-card {
+    background: rgba(10, 24, 18, 0.78);
+  }
+}
+
+/* Inscription : la carte est plus haute. On réserve de l'espace sous la carte
+   pour qu'elle ne colle pas au pied de page, et on laisse la page défiler
+   lorsqu'elle ne tient pas entièrement dans la fenêtre. */
+.auth-page--raised .auth-main {
+  padding-bottom: clamp(120px, 16vh, 160px);
+}
+
+@media (min-height: 720px) {
+  .auth-page--raised {
+    height: auto;
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow: visible;
+  }
+}
+
+.auth-card-head h1 {
+  margin: 0 0 4px;
+  color: #fff;
   font-family: var(--font-display);
-  font-size: 1.9rem;
+  font-size: 1.55rem;
   font-weight: 400;
+  line-height: 1.15;
 }
 
 .auth-card-head p {
   margin: 0;
-  color: var(--color-text-muted);
-  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.84rem;
+  line-height: 1.45;
 }
 
 .auth-kicker {
   display: inline-block;
-  margin-bottom: 8px;
-  color: var(--color-green);
-  font-size: 0.7rem;
+  margin-bottom: 6px;
+  color: #ffb4ab;
+  font-size: 0.64rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -218,19 +246,33 @@
 
 .auth-form {
   display: grid;
-  gap: 16px;
-  margin-top: 26px;
+  gap: clamp(9px, 1.4vh, 13px);
+  margin-top: clamp(12px, 1.8vh, 18px);
 }
 
 .auth-field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .auth-field label {
-  font-size: 0.9rem;
+  color: #eaf3ee;
+  font-size: 0.8rem;
   font-weight: 600;
+}
+
+/* Deux champs courts côte à côte pour garder la carte compacte. */
+.auth-field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 400px) {
+  .auth-field-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 .auth-form input[type="text"],
@@ -239,63 +281,70 @@
 .auth-form input[type="password"] {
   box-sizing: border-box;
   width: 100%;
-  padding: 13px 16px;
-  border: 1px solid var(--color-border);
+  padding: clamp(7px, 1.1vh, 10px) 12px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: var(--radius-input);
-  background: var(--color-surface);
-  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
   font: inherit;
-  font-size: 0.92rem;
-  transition: border-color 160ms ease, box-shadow 160ms ease;
+  font-size: 0.86rem;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
 }
 
 .auth-form input::placeholder {
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.64);
 }
 
 .auth-form input:hover {
-  border-color: #c4cec6;
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .auth-form input:focus {
   outline: none;
-  border-color: var(--color-green);
-  box-shadow: 0 0 0 3px rgba(22, 112, 74, 0.15);
+  border-color: #ff8a80;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(255, 138, 128, 0.24);
 }
 
 .auth-form input[aria-invalid="true"] {
-  border-color: var(--color-danger);
+  border-color: #fca5a5;
 }
 
 .auth-form input[aria-invalid="true"]:focus {
-  border-color: var(--color-danger);
-  box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.15);
+  border-color: #fca5a5;
+  box-shadow: 0 0 0 3px rgba(252, 165, 165, 0.2);
 }
 
 .auth-field-hint,
 .auth-field-error {
   margin: 0;
-  font-size: 0.8rem;
-  line-height: 1.45;
+  font-size: 0.72rem;
+  line-height: 1.35;
 }
 
 .auth-notice {
   margin: 2px 0 0;
-  padding: 10px 12px;
-  border: 1px solid var(--color-border);
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: var(--radius-input);
-  background: var(--color-surface-muted);
-  color: var(--color-text-muted);
-  font-size: 0.78rem;
-  line-height: 1.5;
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+.auth-notice--success {
+  border-color: rgba(143, 211, 182, 0.35);
+  background: rgba(143, 211, 182, 0.12);
+  color: #c9f0df;
 }
 
 .auth-field-hint {
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .auth-field-error {
-  color: var(--color-danger);
+  color: #fca5a5;
   font-weight: 600;
 }
 
@@ -310,26 +359,26 @@
 .auth-check {
   display: flex;
   align-items: flex-start;
-  gap: 9px;
-  color: var(--color-text-muted);
-  font-size: 0.85rem;
-  line-height: 1.5;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.78rem;
+  line-height: 1.45;
   cursor: pointer;
 }
 
 .auth-check input {
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  margin-top: 2px;
-  accent-color: var(--color-green);
+  width: 15px;
+  height: 15px;
+  margin-top: 1px;
+  accent-color: #ff8a80;
   cursor: pointer;
 }
 
 .auth-link {
   margin-block: -12px;
   padding-block: 12px;
-  color: var(--color-green);
+  color: #ffb4ab;
   font-weight: 600;
 }
 
@@ -339,13 +388,14 @@
 }
 
 .auth-submit {
-  min-height: 48px;
-  margin-top: 4px;
+  min-height: 42px;
+  margin-top: 2px;
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-button);
   background: var(--color-primary);
   color: #fff;
   font: inherit;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 16px 32px -16px rgba(217, 45, 32, 0.45);
@@ -359,17 +409,17 @@
 }
 
 .auth-switch {
-  margin: 22px 0 0;
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
+  margin: 12px 0 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.8rem;
   text-align: center;
 }
 
 .auth-switch a {
   display: inline-block;
-  margin: -12px -6px;
-  padding: 12px 6px;
-  color: var(--color-green);
+  margin: -10px -6px;
+  padding: 10px 6px;
+  color: #ffb4ab;
   font-weight: 600;
 }
 
@@ -378,67 +428,90 @@
   text-underline-offset: 3px;
 }
 
-/* Lien vers l'autre espace (citoyen ↔ responsable). */
-.auth-switch--resp {
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px dashed var(--color-border);
-  font-size: 0.82rem;
-}
-
-.auth-back {
-  display: inline-flex;
-  align-items: center;
-  align-self: flex-start;
-  min-height: 40px;
-  padding: 0 16px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.08);
-  color: #d7e4dc;
-  font-size: 0.85rem;
-  font-weight: 600;
-  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
-}
-
-.auth-back:hover {
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.28);
-  color: #fff;
-}
-
 /* ---------- Responsive ---------- */
 
 @media (max-width: 900px) {
-  .auth-page {
-    grid-template-columns: minmax(0, 1fr);
+  .auth-topbar {
+    padding: 16px 20px;
   }
 
-  .auth-aside {
-    gap: 20px;
-    padding: 28px;
+  .auth-brand {
+    font-size: 1.3rem;
   }
 
-  .auth-aside-body {
-    margin: 8px 0 0;
-  }
-
-  .auth-points,
-  .auth-aside-foot {
-    display: none;
-  }
-
-  .auth-aside-body h1 {
-    font-size: 2rem;
-  }
-
-  .auth-aside-body p {
-    font-size: 0.95rem;
+  .auth-brand img {
+    height: 34px;
   }
 
   .auth-main {
-    justify-content: flex-start;
-    padding: 28px 20px 48px;
+    padding: clamp(76px, 10vh, 96px) 20px;
+  }
+}
+
+@media (max-width: 560px) {
+  .auth-topbar {
+    padding: 14px;
+  }
+
+  .auth-brand {
+    gap: 8px;
+    font-size: 1.15rem;
+  }
+
+  .auth-brand img {
+    height: 30px;
+  }
+
+  .auth-actions {
+    gap: 8px;
+  }
+
+  .auth-back {
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 0.74rem;
+  }
+
+  .auth-lang .app-lang-toggle {
+    width: 34px;
+    height: 34px;
+  }
+
+  .auth-card {
+    padding: 16px 18px;
+    border-radius: 18px;
+  }
+
+  .auth-card-head h1 {
+    font-size: 1.45rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .auth-brand span {
+    display: none;
+  }
+}
+
+/* Écrans peu hauts : la carte reste sous la barre, sans défilement inutile. */
+@media (max-height: 719px) {
+  .auth-main {
+    padding-block: 92px 40px;
+  }
+}
+
+@media (max-width: 900px) and (max-height: 719px) {
+  .auth-main {
+    padding-block: 76px 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-page,
+  .auth-video,
+  .auth-back,
+  .auth-submit {
+    transition: none;
   }
 }
 
@@ -446,58 +519,62 @@
    Espace responsable de crise
    ========================================================= */
 
-.auth-page--resp .auth-aside {
-  background-image:
-    linear-gradient(150deg, rgba(10, 22, 18, 0.97) 0%, rgba(20, 52, 42, 0.92) 55%, rgba(16, 74, 54, 0.86) 100%),
-    url("/topographic.svg");
+.auth-page--resp .auth-media {
+  background: radial-gradient(120% 120% at 15% 0%, #3a1512 0%, #1a0c0b 45%, #08080a 100%);
+}
+
+.auth-page--resp .auth-scrim {
+  background: linear-gradient(
+    180deg,
+    rgba(8, 8, 10, 0.82) 0%,
+    rgba(32, 12, 11, 0.55) 45%,
+    rgba(6, 6, 8, 0.88) 100%
+  );
 }
 
 .auth-page--resp .auth-card {
-  border-top: 3px solid var(--color-green);
+  border-top: 3px solid var(--color-brand);
 }
 
 .auth-page--resp .auth-submit {
-  border-color: var(--color-green);
-  background: var(--color-green);
-  box-shadow: 0 16px 32px -16px rgb(22 112 74 / 45%);
+  border-color: var(--color-brand);
+  background: var(--color-brand);
+  box-shadow: 0 16px 32px -16px var(--color-brand-glow);
 }
 
 .auth-page--resp .auth-submit:hover {
-  border-color: color-mix(in srgb, var(--color-green) 85%, #000);
-  background: color-mix(in srgb, var(--color-green) 85%, #000);
+  border-color: var(--color-brand-hover);
+  background: var(--color-brand-hover);
 }
 
 /* =========================================================
    Espace administrateur système
    ========================================================= */
 
-.auth-page--admin .auth-aside {
-  background-image:
-    linear-gradient(150deg, rgba(11, 20, 17, 0.97) 0%, rgba(18, 43, 35, 0.93) 52%, rgba(20, 64, 50, 0.86) 100%),
-    url("/topographic.svg");
+.auth-page--admin .auth-media {
+  background: radial-gradient(120% 120% at 15% 0%, #26262b 0%, #121214 45%, #08080a 100%);
+}
+
+.auth-page--admin .auth-scrim {
+  background: linear-gradient(
+    180deg,
+    rgba(8, 8, 10, 0.84) 0%,
+    rgba(20, 20, 24, 0.58) 48%,
+    rgba(5, 5, 7, 0.9) 100%
+  );
 }
 
 .auth-page--admin .auth-card {
-  border-top: 3px solid #f0b429;
+  border-top: 3px solid var(--color-brand);
 }
 
 .auth-page--admin .auth-submit {
-  border-color: var(--color-green);
-  background: var(--color-green);
-  box-shadow: 0 16px 32px -16px rgb(22 112 74 / 45%);
+  border-color: var(--color-brand);
+  background: var(--color-brand);
+  box-shadow: 0 16px 32px -16px var(--color-brand-glow);
 }
 
 .auth-page--admin .auth-submit:hover {
-  border-color: color-mix(in srgb, var(--color-green) 85%, #000);
-  background: color-mix(in srgb, var(--color-green) 85%, #000);
-}
-
-.auth-page--admin .auth-aside-body .auth-eyebrow {
-  border-color: rgb(143 211 182 / 35%);
-  background: rgb(143 211 182 / 12%);
-  color: #8fd3b6;
-}
-
-.auth-page--admin .auth-eyebrow::before {
-  background: #8fd3b6;
+  border-color: var(--color-brand-hover);
+  background: var(--color-brand-hover);
 }

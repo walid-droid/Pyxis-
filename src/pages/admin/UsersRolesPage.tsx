@@ -1,7 +1,6 @@
 import "./admin.css";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
-import StatCard from "../../components/StatCard";
 import { useI18n } from "../../i18n";
 import { useAdmin } from "./adminStore";
 import {
@@ -1049,37 +1048,6 @@ function UsersRolesPage() {
 
       {tab === "accounts" ? (
         <>
-          <div className="ad-stat-grid">
-            <StatCard
-              tone="verified"
-              value={state.users.length}
-              label={t("admin.users.statsTotal")}
-              badge={t("admin.users.statsTotalHint")}
-              badgeTone="neutral"
-            />
-            <StatCard
-              tone="ongoing"
-              value={activeCount}
-              label={t("admin.users.status.active")}
-              badge={t("admin.users.activeHint", { count: activeCount })}
-              badgeTone="success"
-            />
-            <StatCard
-              tone="upcoming"
-              value={invitedCount}
-              label={t("admin.users.status.invited")}
-              badge={t("admin.users.statsInvitedHint")}
-              badgeTone="warning"
-            />
-            <StatCard
-              tone="crisis"
-              value={state.roles.length}
-              label={t("admin.users.tabRoles")}
-              badge={t("admin.users.statsRolesHint")}
-              badgeTone="info"
-            />
-          </div>
-
           <section className="ad-card">
             <div className="ad-toolbar">
               <AdminSearch

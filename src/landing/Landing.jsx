@@ -13,9 +13,10 @@ import Tracking from "./sections/Tracking";
 import Sources from "./sections/Sources";
 import Footer from "./sections/Footer";
 import RequireAuthModal from "./sections/RequireAuthModal";
+import TrackingModal from "./sections/TrackingModal";
+import PrivacyModal from "./sections/PrivacyModal";
 import { isAuthenticated } from "../lib/session";
-
-const TITLE = "CADM — L'information fiable, quand elle compte vraiment";
+import { useLandingCopy } from "./landingCopy";
 
 function ScrollProgress() {
   const ref = useRef(null);
@@ -29,7 +30,10 @@ function ScrollProgress() {
 export default function Landing() {
   const rootRef = useRef(null);
   const reducedMotion = useReducedMotion();
+  const copy = useLandingCopy();
   const [requireAuth, setRequireAuth] = useState(false);
+  const [trackingOpen, setTrackingOpen] = useState(false);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
 
   const requestSubmit = useCallback((event) => {
     // Le signalement est réservé aux membres connectés.
@@ -39,6 +43,10 @@ export default function Landing() {
   }, []);
 
   const closeRequireAuth = useCallback(() => setRequireAuth(false), []);
+  const openTracking = useCallback(() => setTrackingOpen(true), []);
+  const closeTracking = useCallback(() => setTrackingOpen(false), []);
+  const openPrivacy = useCallback(() => setPrivacyOpen(true), []);
+  const closePrivacy = useCallback(() => setPrivacyOpen(false), []);
 
   useLayoutEffect(() => {
     const style = document.createElement("style");
@@ -50,17 +58,17 @@ export default function Landing() {
 
   useEffect(() => {
     const previous = document.title;
-    document.title = TITLE;
+    document.title = copy.title;
     return () => {
       document.title = previous;
     };
-  }, []);
+  }, [copy.title]);
 
   useReveal(rootRef);
 
   return (
     <div ref={rootRef}>
-      <a className="skip" href="#top">Aller au contenu</a>
+      <a className="skip" href="#top">{copy.skip}</a>
       <div id="ld" aria-hidden="true">
         <img src={logo} alt="" />
       </div>
@@ -68,19 +76,21 @@ export default function Landing() {
       <Header onRequestSubmit={requestSubmit} />
       <main id="top" tabIndex={-1}>
         <Hero reducedMotion={reducedMotion} onRequestSubmit={requestSubmit} />
-        <Situation />
+        <Situation onRequestSubmit={requestSubmit} onOpenTracking={openTracking} />
         <Risks />
         <Alerts reducedMotion={reducedMotion} />
-        <Tracking onRequestSubmit={requestSubmit} />
+        <Tracking onRequestSubmit={requestSubmit} onOpenTracking={openTracking} />
         <Sources />
       </main>
-      <Footer />
+      <Footer onRequestSubmit={requestSubmit} onOpenPrivacy={openPrivacy} />
       {requireAuth && <RequireAuthModal onClose={closeRequireAuth} />}
+      {trackingOpen && <TrackingModal onClose={closeTracking} />}
+      {privacyOpen && <PrivacyModal onClose={closePrivacy} />}
       <a className="call" href="tel:14">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
           <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" />
         </svg>
-        Appeler le 14
+        {copy.call}
       </a>
     </div>
   );

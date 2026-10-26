@@ -1,36 +1,27 @@
-import { noop } from "../utils";
-
-const RISKS = [
-  "Séisme",
-  "Inondation",
-  "Incendie de forêt",
-  "Glissement de terrain",
-  "Canicule",
-  "Vents violents et tempêtes de sable",
-  "Vague de froid",
-  "Accident industriel",
-];
+import { Link } from "react-router";
+import { useLandingCopy } from "../landingCopy";
 
 export default function Risks() {
+  const copy = useLandingCopy();
+  const risks = copy.risks;
+
   return (
     <section className="risks" id="risques">
       <div className="wrap">
-        <p className="eyebrow rv">Consignes de sécurité</p>
-        <h2 className="rv">Que faire en cas de catastrophe ?</h2>
-        <p className="allp rv">
-          Séisme, inondation, incendie… Consultez les consignes à suivre pour savoir comment vous protéger et protéger vos proches.
-        </p>
+        <p className="eyebrow rv">{risks.eyebrow}</p>
+        <h2 className="rv">{risks.title}</h2>
+        <p className="allp rv">{risks.lead}</p>
         <div className="ridx" id="rl">
-          {RISKS.map((name, i) => (
-            <a key={name} href="#" onClick={noop}>
+          {risks.items.map((name, i) => (
+            <Link key={name} to="/consignes">
               <i>{String(i + 1).padStart(2, "0")}</i>
               <span>{name}</span>
-            </a>
+            </Link>
           ))}
-          <a href="#" className="all" onClick={noop}>
-            <i>Tous</i>
-            <span>Voir tous les risques et les consignes de sécurité</span>
-          </a>
+          <Link to="/consignes" className="all">
+            <i>{risks.allLabel}</i>
+            <span>{risks.allText}</span>
+          </Link>
         </div>
       </div>
     </section>

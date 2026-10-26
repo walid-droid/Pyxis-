@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-import { DASHBOARD_PATH, ADMIN_LOGIN_PATH, RESP_LOGIN_PATH } from "../../config";
+import { DASHBOARD_PATH, FORGOT_PASSWORD_PATH } from "../../config";
 import { useI18n } from "../../i18n";
 import { signIn } from "../../lib/session";
 import AuthLayout from "./AuthLayout";
@@ -11,23 +11,23 @@ function LoginPage() {
   const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [leaving, setLeaving] = useState(false);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (leaving) return;
     // Connect this to your authentication backend.
     signIn(email);
     // Redirige vers la page demandée (ex. /submit-alert) si elle a été bloquée.
     const from = (location.state as { from?: string } | null)?.from;
-    navigate(from ?? DASHBOARD_PATH);
+    setLeaving(true);
+    window.setTimeout(() => navigate(from ?? DASHBOARD_PATH), 220);
   }
 
   return (
-    <AuthLayout
-      farTitle={t("login.farTitle")}
-      farText={t("login.farText")}
-    >
+    <AuthLayout leaving={leaving}>
       <header className="auth-card-head">
-        <h2>{t("login.title")}</h2>
+        <h1>{t("login.title")}</h1>
         <p>{t("login.lead")}</p>
       </header>
 
@@ -64,9 +64,9 @@ function LoginPage() {
             <input type="checkbox" defaultChecked />
             <span>{t("login.remember")}</span>
           </label>
-          <a className="auth-link" href="#mdp">
+          <Link className="auth-link" to={FORGOT_PASSWORD_PATH}>
             {t("login.forgot")}
-          </a>
+          </Link>
         </div>
 
         <button type="submit" className="auth-submit">
@@ -76,16 +76,6 @@ function LoginPage() {
 
       <p className="auth-switch">
         {t("login.switch")} <Link to="/register">{t("login.create")}</Link>
-      </p>
-
-      <p className="auth-switch auth-switch--resp">
-        {t("login.respPrompt")}{" "}
-        <Link to={RESP_LOGIN_PATH}>{t("login.respLink")}</Link>
-      </p>
-
-      <p className="auth-switch auth-switch--resp">
-        {t("login.adminPrompt")}{" "}
-        <Link to={ADMIN_LOGIN_PATH}>{t("login.adminLink")}</Link>
       </p>
     </AuthLayout>
   );

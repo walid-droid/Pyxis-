@@ -25,8 +25,8 @@
 }
 
 .warning-card.is-active {
-  border-color: var(--color-green);
-  box-shadow: 0 0 0 2px var(--color-green), var(--shadow-raised);
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 2px var(--color-brand), var(--shadow-raised);
 }
 
 .warning-card.verified {
@@ -117,7 +117,7 @@
   align-items: center;
   gap: 4px;
   flex-shrink: 0;
-  color: var(--color-green);
+  color: var(--color-brand);
   font-size: 0.72rem;
   font-weight: 600;
 }

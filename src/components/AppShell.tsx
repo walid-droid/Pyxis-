@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router";
 import logo from "../assets/Logo CADM.png";
+import AssistantPage from "../pages/assistant/AssistantPage";
 import ConnectionStatus from "./ConnectionStatus";
 import LanguageToggle from "./LanguageToggle";
 import ThemeToggle from "./ThemeToggle";
@@ -39,9 +40,15 @@ function AppShell({
   onSignOut,
 }: AppShellProps) {
   const navRef = useRef<HTMLElement>(null);
+  const assistantTriggerRef = useRef<HTMLButtonElement>(null);
+  const assistantDialogRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
   const { t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [assistantOpen, setAssistantOpen] = useState(false);
+  const assistantLabel = assistantOpen
+    ? t("nav.closeAssistant")
+    : t("nav.assistant");
   const [scrolled, setScrolled] = useState(false);
   const [collapsed, setCollapsed] = useState(() => {
     try {
@@ -60,8 +67,77 @@ function AppShell({
     }
   };
 
+  /** Ouvre ou ferme la fenêtre de l'assistant. */
+  const toggleAssistant = () => {
+    setMenuOpen(false);
+    setAssistantOpen((open) => !open);
+  };
+
+  const closeAssistant = () => setAssistantOpen(false);
+
+  // Verrouille le défilement de la page et piège le focus dans la modale.
   useEffect(() => {
-    const closeOnHistory = () => setMenuOpen(false);
+    if (!assistantOpen) return;
+
+    const dialog = assistantDialogRef.current;
+    const trigger = assistantTriggerRef.current;
+    dialog?.focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setAssistantOpen(false);
+        return;
+      }
+
+      if (event.key !== "Tab" || !dialog) return;
+
+      const focusables = Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((element) => element.getClientRects().length > 0);
+      if (focusables.length === 0) return;
+
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+
+      if (!active || !dialog.contains(active)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      } else if (event.shiftKey && (active === first || active === dialog)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    const { body } = document;
+    const previousOverflow = body.style.overflow;
+    const previousPaddingRight = body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+    body.style.overflow = "hidden";
+    if (scrollbarWidth > 0) body.style.paddingRight = `${scrollbarWidth}px`;
+
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      body.style.overflow = previousOverflow;
+      body.style.paddingRight = previousPaddingRight;
+      trigger?.focus();
+    };
+  }, [assistantOpen]);
+
+  useEffect(() => {
+    const closeOnHistory = () => {
+      setMenuOpen(false);
+      setAssistantOpen(false);
+    };
     window.addEventListener("popstate", closeOnHistory);
     return () => window.removeEventListener("popstate", closeOnHistory);
   }, []);
@@ -136,6 +212,38 @@ function AppShell({
 
         <div className="app-topbar__end">
           <ConnectionStatus />
+
+          <button
+            type="button"
+            ref={assistantTriggerRef}
+            className={`app-assistant-link${assistantOpen ? " is-active" : ""}`}
+            aria-label={assistantLabel}
+            title={assistantLabel}
+            aria-haspopup="dialog"
+            aria-expanded={assistantOpen}
+            aria-controls="assistant-dialog"
+            onClick={toggleAssistant}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="5" y="7" width="14" height="11" rx="3" />
+              <path d="M12 7V4" />
+              <circle cx="12" cy="3" r="1" />
+              <path d="M3 12h2M19 12h2" />
+              <circle cx="9.5" cy="12" r="1.1" fill="currentColor" stroke="none" />
+              <circle cx="14.5" cy="12" r="1.1" fill="currentColor" stroke="none" />
+              <path d="M9 15h6" />
+            </svg>
+            <span className="app-control-label">{t("nav.assistantShort")}</span>
+          </button>
+
           <LanguageToggle />
           <ThemeToggle />
 
@@ -207,6 +315,27 @@ function AppShell({
 
       <div className="app-main">
         <Outlet />
+      </div>
+
+      {/* Assistant IA : fenêtre modale commune aux trois espaces. */}
+      <div
+        className="assistant-popup"
+        hidden={!assistantOpen}
+        onMouseDown={(event) => {
+          if (event.target === event.currentTarget) closeAssistant();
+        }}
+      >
+        <div
+          id="assistant-dialog"
+          className="assistant-popup__dialog"
+          role="dialog"
+          aria-modal="true"
+          aria-label={t("nav.assistant")}
+          ref={assistantDialogRef}
+          tabIndex={-1}
+        >
+          <AssistantPage onClose={closeAssistant} />
+        </div>
       </div>
     </div>
   );

@@ -2,7 +2,6 @@ import "./resp-crise.css";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router";
 import { useI18n } from "../../i18n";
-import StatCard from "../../components/StatCard";
 import { INITIAL_ASSIGNMENTS } from "../../mockdata/assignments";
 import { mockIncidents, type Incident } from "../../mockdata/incident";
 import {
@@ -350,19 +349,6 @@ function CrisisResources() {
       return teamDistance(a) - teamDistance(b);
     });
 
-  const deployed = scopeTeams.filter(
-    (team) => team.status === "Deployed",
-  ).length;
-  const enRoute = scopeTeams.filter(
-    (team) => team.status === "En route",
-  ).length;
-  const engagedAgents = scopeTeams
-    .filter((team) => team.status !== "Standby")
-    .reduce((total, team) => total + team.members, 0);
-  const availableAgents = scopeTeams
-    .filter((team) => team.status === "Standby")
-    .reduce((total, team) => total + team.members, 0);
-
   const saturatedCount = structures.filter(
     (structure) => structure.capacity > 0 && !structure.available,
   ).length;
@@ -557,29 +543,6 @@ function CrisisResources() {
           {notice}
         </p>
       )}
-
-      <div className="rc-grid rc-grid--stats">
-        <StatCard
-          tone="verified"
-          value={deployed}
-          label={t("resp.res.deployedTeams")}
-        />
-        <StatCard
-          tone="upcoming"
-          value={enRoute}
-          label={t("resp.res.enrouteTeams")}
-        />
-        <StatCard
-          tone="incident"
-          value={engagedAgents}
-          label={t("resp.res.totalAgents")}
-        />
-        <StatCard
-          tone="ongoing"
-          value={availableAgents}
-          label={t("resp.res.availableAgents")}
-        />
-      </div>
 
       <div className="rc-grid rc-grid--main">
         <div className="rc-stack">

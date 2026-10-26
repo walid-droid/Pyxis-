@@ -2,6 +2,8 @@ import "./HomePage.css";
 import type { ReactNode } from "react";
 import { Link, useNavigate } from "react-router";
 import { useI18n } from "../../i18n";
+import { Button } from "../../components/ui/Button";
+import { Chip } from "../../components/ui/Chip";
 
 const QUICK_LINKS: {
   key: string;
@@ -97,20 +99,19 @@ function HomePage() {
     <main className="page-container dashboard-page">
       <section className="dashboard-hero">
         <div className="dashboard-hero__text">
-          <span className="live-badge">
-            <i className="live-dot" /> {t("dashboard.live")}
-          </span>
+          <Chip tone="live" onMedia>
+            {t("dashboard.live")}
+          </Chip>
           <h1>{t("dashboard.title")}</h1>
           <p>{t("dashboard.lead")}</p>
           <div className="dashboard-hero__actions">
-            <button
-              type="button"
-              className="btn-primary"
-              onClick={() => navigate("/submit-alert")}
-            >
+            <Button onMedia onClick={() => navigate("/submit-alert")}>
               {t("dashboard.createAlert")}
-            </button>
-            <Link to="/alerts" className="btn-secondary">
+            </Button>
+            <Link
+              to="/alerts"
+              className="ui-btn ui-btn--secondary ui-btn--md ui-btn--onMedia"
+            >
               {t("dashboard.viewAlerts")}
             </Link>
           </div>

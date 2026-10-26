@@ -1,6 +1,5 @@
 import "./admin.css";
 import { Link } from "react-router";
-import StatCard from "../../components/StatCard";
 import {
   ADMIN_DOCUMENTS_PATH,
   ADMIN_JOURNAL_PATH,
@@ -11,7 +10,6 @@ import {
 } from "../../config";
 import { useI18n } from "../../i18n";
 import { useAdmin } from "./adminStore";
-import { ROLE_FAMILIES } from "./adminData";
 import { AdminHero, AdminIcon } from "./AdminUI";
 import type { IconName } from "./AdminUI";
 
@@ -64,16 +62,8 @@ function AdminDashboard() {
   const { t } = useI18n();
   const { state } = useAdmin();
 
-  const activeUsers = state.users.filter((user) => user.status === "active");
   const communes = state.wilayas.flatMap((wilaya) => wilaya.communes);
   const enabledModules = state.modules.filter((module) => module.enabled);
-  const publishedDocs = state.documents.filter((document) => document.published);
-  const indexedDocs = state.documents.filter(
-    (document) => document.status === "indexed",
-  );
-  const permissions = new Set(
-    state.roles.flatMap((role) => role.permissions),
-  ).size;
   const pendingOrgs = state.organisations.filter(
     (organisation) => organisation.status === "pending",
   );
@@ -130,42 +120,6 @@ function AdminDashboard() {
           </>
         }
       />
-
-      <div className="ad-stat-grid ad-stat-grid--home">
-        <StatCard
-          tone="verified"
-          value={state.users.length}
-          label={t("admin.dash.users")}
-          badge={t("admin.dash.usersHint", { count: activeUsers.length })}
-          badgeTone="success"
-        />
-        <StatCard
-          tone="ongoing"
-          value={state.roles.length}
-          label={t("admin.dash.roles")}
-          badge={t("admin.dash.rolesHint", {
-            count: permissions,
-            families: ROLE_FAMILIES.length,
-          })}
-          badgeTone="info"
-        />
-        <StatCard
-          tone="upcoming"
-          value={state.wilayas.length}
-          label={t("admin.dash.territories")}
-          badge={t("admin.dash.territoriesHint", {
-            count: communes.length,
-          })}
-          badgeTone="neutral"
-        />
-        <StatCard
-          tone="verified"
-          value={indexedDocs.length}
-          label={t("admin.dash.docs")}
-          badge={t("admin.dash.docsHint", { count: publishedDocs.length })}
-          badgeTone="success"
-        />
-      </div>
 
       <section className="ad-card">
         <div className="ad-card__head">

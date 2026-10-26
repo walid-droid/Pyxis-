@@ -57,6 +57,16 @@ export const CONTENT_AR: Record<string, string> = {
   "El Bouni": "البوني",
   "Es Sénia": "السانية",
   "Taher": "الطاهير",
+  "Grarem": "قرارم",
+  "Cité des Oliviers": "حي الزيتون",
+  "Rue des Frères Ali": "شارع الإخوة علي",
+  "Quartier El Hidhab": "حي الهضاب",
+  "Route de Tikjda": "طريق تيكجدة",
+
+  "Une équipe d'évaluation est sur place. Évitez le bâtiment jusqu'à la fin du contrôle.":
+    "فريق تقييم موجود في المكان. تجنب المبنى حتى انتهاء الفحص.",
+  "L'intervention est terminée : la chaussée a été dégagée.":
+    "انتهى التدخل: تم تنظيف الطريق.",
 
   "Office National de la Météorologie": "الديوان الوطني للأرصاد الجوية",
   "Protection Civile": "الحماية المدنية",
