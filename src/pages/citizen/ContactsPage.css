@@ -52,7 +52,6 @@
 
   border: 1px solid var(--hero-border);
   border-radius: var(--radius-hero);
-  border-inline-start: 5px solid var(--color-brand);
   box-shadow: 0 34px 64px -48px rgb(17 25 22 / 85%), inset 0 1px 0 rgb(255 255 255 / 10%);
 }
 
@@ -192,14 +191,9 @@
   padding: 22px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-top: 3px solid var(--color-brand);
   border-radius: 16px;
   box-shadow: var(--shadow-card);
   transition: transform 160ms ease, box-shadow 160ms ease;
-}
-
-.ct-card--urgent {
-  border-top-color: var(--color-primary);
 }
 
 .ct-card:hover {

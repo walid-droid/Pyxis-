@@ -63,7 +63,6 @@
   background-position: center;
   background-repeat: no-repeat;
   border: 1px solid var(--hero-border);
-  border-inline-start: 5px solid var(--color-brand);
   border-radius: var(--radius-hero);
   box-shadow: 0 34px 64px -48px rgb(17 25 22 / 85%), inset 0 1px 0 rgb(255 255 255 / 10%);
 }
@@ -2782,14 +2781,6 @@ a.rc-item:hover {
   background: var(--color-surface-muted);
 }
 
-.rc-alert--active {
-  border-inline-start: 4px solid var(--color-green);
-}
-
-.rc-alert--scheduled {
-  border-inline-start: 4px solid var(--color-warning);
-}
-
 .rc-alert--lifted {
   opacity: 0.66;
 }
@@ -3399,7 +3390,6 @@ a.rc-item:hover {
 }
 
 .rc-requests--active {
-  border-inline-start: 4px solid var(--color-danger);
   border-color: color-mix(in srgb, var(--color-danger) 26%, var(--color-border));
   box-shadow: 0 18px 44px -32px rgb(179 38 30 / 42%);
 }

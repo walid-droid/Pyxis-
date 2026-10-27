@@ -21,12 +21,6 @@
   background: color-mix(in srgb, var(--color-surface) 72%, transparent);
 }
 
-/* ---------- Dashboard ---------- */
-
-[data-theme="dark"] .dashboard-quick__card.assistant {
-  --tone: #5ed0c0;
-}
-
 /* ---------- Events ---------- */
 
 [data-theme="dark"] .events-page .event-status.st-upcoming {

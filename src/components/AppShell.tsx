@@ -24,6 +24,8 @@ type AppShellProps = {
   variant?: "citizen" | "crisis" | "admin";
   authenticated: boolean;
   onSignOut: () => void;
+  /** Ouvre la connexion pour un visiteur non authentifié. */
+  onSignIn?: () => void;
 };
 
 /**
@@ -38,6 +40,7 @@ function AppShell({
   variant = "citizen",
   authenticated,
   onSignOut,
+  onSignIn,
 }: AppShellProps) {
   const navRef = useRef<HTMLElement>(null);
   const assistantTriggerRef = useRef<HTMLButtonElement>(null);
@@ -291,17 +294,27 @@ function AppShell({
           ))}
         </nav>
 
-        <div className="app-sidebar__foot">
-          {authenticated && (
-            <button
-              type="button"
-              className="app-sidebar__logout"
-              onClick={onSignOut}
-            >
-              {t("nav.logout")}
-            </button>
-          )}
-        </div>
+        {(authenticated || onSignIn) && (
+          <div className="app-sidebar__foot">
+            {authenticated ? (
+              <button
+                type="button"
+                className="app-sidebar__logout"
+                onClick={onSignOut}
+              >
+                {t("nav.logout")}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="app-sidebar__login"
+                onClick={onSignIn}
+              >
+                {t("nav.login")}
+              </button>
+            )}
+          </div>
+        )}
       </aside>
 
       {menuOpen && (

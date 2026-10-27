@@ -35,7 +35,6 @@
 
   border: 1px solid var(--hero-border);
   border-radius: var(--radius-hero);
-  border-inline-start: 5px solid var(--color-brand);
   box-shadow: 0 34px 64px -48px rgb(17 25 22 / 85%), inset 0 1px 0 rgb(255 255 255 / 10%);
 }
 

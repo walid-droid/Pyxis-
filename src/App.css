@@ -346,19 +346,6 @@
   font-weight: 600;
 }
 
-/* Indicateur arrondi, plutôt qu'un filet carré. */
-.app-nav a.active::before {
-  content: "";
-  position: absolute;
-  inset-inline-start: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 22px;
-  border-radius: var(--radius-pill);
-  background: var(--color-brand);
-}
-
 /* Groupe « Responsable de crise » */
 .app-nav__title {
   margin: 14px 0 4px;
@@ -434,6 +421,28 @@
 .app-sidebar__logout:hover {
   background: color-mix(in srgb, var(--color-danger) 16%, var(--color-surface));
   color: var(--color-danger);
+}
+
+.app-sidebar__login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-brand);
+  color: #fff;
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-align: center;
+  transition: background-color 160ms ease;
+}
+
+.app-sidebar__login:hover {
+  background: var(--color-brand-hover);
+  color: #fff;
 }
 
 .app-sidebar__backdrop {

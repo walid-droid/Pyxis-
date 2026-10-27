@@ -9,9 +9,6 @@
   right: var(--app-topbar-x);
 }
 
-/* L'indicateur arrondi de l'onglet actif utilise inset-inline-start :
-   il se retourne automatiquement en RTL, pas de règle spécifique nécessaire. */
-
 [dir="rtl"] .app-sidebar-toggle svg {
   transform: scaleX(-1);
 }
@@ -21,25 +18,6 @@
 [dir="rtl"] .consignes-hero-link span[aria-hidden="true"],
 [dir="rtl"] .consigne-card__meta span[aria-hidden="true"] {
   transform: scaleX(-1);
-}
-
-[dir="rtl"] .dashboard-hero,
-[dir="rtl"] .alerts-hero,
-[dir="rtl"] .events-hero,
-[dir="rtl"] .res-hero,
-[dir="rtl"] .consignes-hero {
-  border-left: 0;
-  border-right: 5px solid var(--color-brand);
-}
-
-[dir="rtl"] .dashboard-emergency {
-  border-left: 0;
-  border-right: 4px solid var(--color-danger);
-}
-
-[dir="rtl"] .consignes-grid .consigne-card {
-  border-left: 0;
-  border-right: 4px solid var(--ct-accent);
 }
 
 [dir="rtl"] .assistant-sidebar {

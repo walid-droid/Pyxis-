@@ -36,7 +36,6 @@
 
   border: 1px solid var(--hero-border);
   border-radius: var(--radius-hero);
-  border-inline-start: 5px solid var(--color-brand);
   box-shadow: 0 34px 64px -48px rgb(17 25 22 / 85%), inset 0 1px 0 rgb(255 255 255 / 10%);
 }
 
@@ -117,7 +116,7 @@
 .dashboard-quick__card.resources { --tone: var(--color-brand); }
 .dashboard-quick__card.consignes { --tone: var(--color-navy); }
 .dashboard-quick__card.contacts  { --tone: var(--color-warning); }
-.dashboard-quick__card.assistant { --tone: #0f766e; }
+.dashboard-quick__card.reports   { --tone: var(--color-brand); }
 .dashboard-quick__card.events    { --tone: var(--color-navy); }
 
 .dashboard-quick__icon {
@@ -176,7 +175,6 @@
   padding: 18px 20px;
   background: var(--color-danger-bg);
   border: 1px solid color-mix(in srgb, var(--color-danger) 25%, transparent);
-  border-inline-start: 4px solid var(--color-danger);
   border-radius: var(--radius-card);
 }
 

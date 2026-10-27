@@ -91,6 +91,7 @@ const RESP_NAV: ShellNavItem[] = [
 /** Espace citoyen. */
 function CitizenLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <AppShell
@@ -102,6 +103,9 @@ function CitizenLayout() {
         signOut();
         navigate("/");
       }}
+      onSignIn={() =>
+        navigate(LOGIN_PATH, { state: { from: location.pathname } })
+      }
     />
   );
 }

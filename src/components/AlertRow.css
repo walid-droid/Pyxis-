@@ -37,7 +37,6 @@
 
 .alert-row.is-selected {
   background: color-mix(in srgb, var(--color-brand) 8%, var(--color-surface));
-  box-shadow: inset 3px 0 0 var(--color-brand);
 }
 
 .alert-row__dot {

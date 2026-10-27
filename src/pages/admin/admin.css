@@ -51,7 +51,6 @@
   background-position: center;
   background-repeat: no-repeat;
   border: 1px solid var(--hero-border);
-  border-inline-start: 5px solid var(--color-brand);
   border-radius: var(--radius-hero);
   box-shadow: 0 34px 64px -48px rgb(17 25 22 / 85%), inset 0 1px 0 rgb(255 255 255 / 10%);
 }
@@ -322,10 +321,6 @@
 
 .ad-card--flat {
   box-shadow: none;
-}
-
-.ad-card--accent {
-  border-top: 3px solid var(--color-brand);
 }
 
 .ad-card__head {
@@ -1305,14 +1300,12 @@
   gap: 14px 18px;
   padding: 20px clamp(18px, 2.4vw, 26px);
   border: 1px solid var(--color-border);
-  border-inline-start: 4px solid var(--color-brand);
   border-radius: var(--radius-card);
   background: var(--color-surface);
   box-shadow: var(--shadow-card);
 }
 
 .ad-todo--warn {
-  border-inline-start-color: var(--color-warning);
   background: color-mix(in srgb, var(--color-warning-bg) 55%, var(--color-surface));
 }
 
@@ -2803,10 +2796,6 @@
 }
 
 @media (max-width: 720px) {
-  .ad-hero {
-    border-inline-start-width: 4px;
-  }
-
   .ad-hero__aside {
     width: 100%;
     justify-content: flex-start;

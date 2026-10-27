@@ -532,10 +532,6 @@
   );
 }
 
-.auth-page--resp .auth-card {
-  border-top: 3px solid var(--color-brand);
-}
-
 .auth-page--resp .auth-submit {
   border-color: var(--color-brand);
   background: var(--color-brand);
@@ -562,10 +558,6 @@
     rgba(20, 20, 24, 0.58) 48%,
     rgba(5, 5, 7, 0.9) 100%
   );
-}
-
-.auth-page--admin .auth-card {
-  border-top: 3px solid var(--color-brand);
 }
 
 .auth-page--admin .auth-submit {

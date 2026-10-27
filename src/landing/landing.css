@@ -107,7 +107,6 @@ h1 .w i{display:inline-block;font-style:normal;transform:translateY(105%);animat
 .rlist a.all{font-weight:500;background:var(--ink);color:#fff;margin-top:24px;border:0}
 .rlist a.all:hover{padding-left:26px;background:#222}
 .pv{position:sticky;top:100px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:32px;min-height:440px;display:flex;flex-direction:column;overflow:hidden}
-.pv:before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:var(--red)}
 .pvh{display:flex;gap:10px;align-items:baseline;color:var(--grey);font-size:14px;font-weight:500}.pvh b{font:500 72px/1 var(--serif);color:var(--ink);letter-spacing:-.02em}
 .pv h3{font-size:40px;margin:28px 0;min-height:2.1em}
 .pv ul{list-style:none;margin-top:auto;border-top:1px solid var(--line)}
@@ -119,7 +118,7 @@ h1 .w i{display:inline-block;font-style:normal;transform:translateY(105%);animat
 .alert{padding:140px 0;background:var(--paper)}
 .agrid{display:grid;grid-template-columns:1fr 1fr;gap:80px;margin-top:64px;align-items:start}
 .acard{position:sticky;top:110px}
-.card{background:#fff;border:1px solid var(--line);border-left:6px solid var(--amber);border-radius:12px;padding:32px;position:relative}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:32px;position:relative}
 .card>*{transition:opacity .6s,transform .6s var(--ease)}
 .card .pt{opacity:.35;transform:translateY(10px)}
 .card .pt.on{opacity:1;transform:none}
@@ -236,7 +235,7 @@ main:focus{outline:0}
 .loc{min-height:44px}.fl a{padding:11px 0}
 .pn:before,.tl .fill{background:var(--red)}.st.done:before{background:var(--green);border-color:var(--green)}.st.cur:before{border-color:var(--red);box-shadow:0 0 0 5px rgba(217,45,32,.16)}
 .exp>div.on:before{color:var(--red)}.lvl+.lvlt{color:var(--grey)}
-.cols>div{border-top:2px solid var(--red)}.rlist a.all{background:var(--red)}.rlist a.all:hover{background:#b42318}
+.rlist a.all{background:var(--red)}.rlist a.all:hover{background:#b42318}
 .card .lk{border-color:var(--red);color:var(--red)}.eyebrow{color:var(--red)}.dark .eyebrow,.pro .eyebrow{color:#ffb4ab!important}
 @media(max-width:900px){
 .pv{display:none}
@@ -252,7 +251,7 @@ main:focus{outline:0}
 .ems b{min-width:0;color:var(--ink);font-weight:600;font-size:14px;display:flex;align-items:center}
 .ems b:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:10px;flex:none}
 .ems a.n span{font-size:26px}.ems .note{max-width:220px;font-size:12px}.ems .btn{height:44px;padding:0 20px;font-size:15px}
-.ridx{display:grid;grid-template-columns:1fr 1fr;column-gap:72px;margin-top:64px;border-top:2px solid var(--red)}
+.ridx{display:grid;grid-template-columns:1fr 1fr;column-gap:72px;margin-top:64px}
 .ridx a{display:flex;align-items:center;gap:20px;min-height:84px;border-bottom:1px solid var(--line);font:500 clamp(26px,2.8vw,36px)/1.1 var(--serif);transition:padding .4s var(--ease),color .3s}
 .ridx a i{font:500 14px var(--sans);color:var(--grey);min-width:24px;font-variant-numeric:tabular-nums}.ridx a span{flex:1}
 .ridx a:after{content:"\2192";font:400 22px var(--sans);transition:transform .3s var(--ease)}
@@ -354,7 +353,6 @@ main:focus{outline:0}
 [dir="rtl"] .rlist a.all:hover{padding-left:12px;padding-right:26px}
 [dir="rtl"] .ridx a:hover{padding-left:0;padding-right:12px}
 [dir="rtl"] .ridx a.all:hover{padding-left:0;padding-right:24px}
-[dir="rtl"] .card{border-left:1px solid var(--line);border-right:6px solid var(--amber)}
 [dir="rtl"] .card .tm{margin-left:0;margin-right:10px}
 [dir="rtl"] .card ol{padding-left:0;padding-right:22px}
 [dir="rtl"] .exp>div{padding:34px 64px 34px 0}

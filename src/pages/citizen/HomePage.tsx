@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router";
 import { useI18n } from "../../i18n";
 import { Button } from "../../components/ui/Button";
 import { Chip } from "../../components/ui/Chip";
+import { MY_REPORTS_PATH } from "../../config";
 
 const QUICK_LINKS: {
   key: string;
@@ -62,17 +63,15 @@ const QUICK_LINKS: {
     ),
   },
   {
-    key: "assistant",
-    labelKey: "dashboard.quick.assistant",
-    descKey: "dashboard.quick.assistantDesc",
-    to: "/assistant",
+    key: "reports",
+    labelKey: "dashboard.quick.reports",
+    descKey: "dashboard.quick.reportsDesc",
+    to: MY_REPORTS_PATH,
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <rect width="16" height="12" x="4" y="8" rx="2" />
-        <path d="M12 8V5" />
-        <path d="M8 4h8" />
-        <path d="M9 13h.01M15 13h.01" />
-        <path d="M9 16h6" />
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        <path d="M14 2v6h6" />
+        <path d="M8 13h8M8 17h8M8 9h2" />
       </svg>
     ),
   },

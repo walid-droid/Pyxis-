@@ -16,7 +16,6 @@
   text-align: start;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-top: 3px solid var(--color-brand);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
   transition: transform 160ms ease, box-shadow 160ms ease;
@@ -99,16 +98,6 @@ button.stat-card {
   font-size: 0.75rem;
   font-weight: 600;
 }
-
-/* Tone accents */
-.stat-card.verified   { border-top-color: var(--color-success); }
-.stat-card.unverified { border-top-color: var(--color-warning); }
-.stat-card.incident   { border-top-color: var(--color-primary); }
-.stat-card.high       { border-top-color: var(--color-danger); }
-.stat-card.crisis     { border-top-color: var(--color-navy); }
-.stat-card.upcoming   { border-top-color: #1d4ed8; }
-.stat-card.ongoing    { border-top-color: var(--color-success); }
-.stat-card.ended      { border-top-color: var(--color-border); }
 
 @media (max-width: 900px) {
   .stat-grid {

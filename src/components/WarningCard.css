@@ -9,7 +9,6 @@
   padding: 14px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-top: 3px solid var(--color-border);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
   transition: box-shadow 160ms ease, transform 160ms ease;
@@ -27,14 +26,6 @@
 .warning-card.is-active {
   border-color: var(--color-brand);
   box-shadow: 0 0 0 2px var(--color-brand), var(--shadow-raised);
-}
-
-.warning-card.verified {
-  border-top-color: var(--color-success);
-}
-
-.warning-card.unverified {
-  border-top-color: var(--color-warning);
 }
 
 .warning-card__top {
