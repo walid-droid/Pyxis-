@@ -1,17 +1,47 @@
-
 .warning-card {
+  /* Severity tone defaults to the green used by the reference card. */
+  --card-accent: var(--color-success);
+  --card-accent-soft: var(--color-success-bg);
+  --card-verify: var(--color-success);
+
   display: flex;
-  flex: 0 0 240px;
+  flex: 0 0 auto;
   flex-direction: column;
-  gap: 10px;
-  width: 240px;
+  width: 100%;
   min-width: 0;
-  padding: 14px;
+  padding: 22px;
+  color: var(--color-text);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
+  border-radius: 18px;
   box-shadow: var(--shadow-card);
-  transition: box-shadow 160ms ease, transform 160ms ease;
+  text-align: start;
+  transition: box-shadow 160ms ease, transform 160ms ease, border-color 160ms ease;
+}
+
+/* Incident icon and severity line follow the warning severity. */
+.warning-card--low {
+  --card-accent: var(--color-success);
+  --card-accent-soft: var(--color-success-bg);
+}
+
+.warning-card--medium {
+  --card-accent: var(--color-warning);
+  --card-accent-soft: var(--color-warning-bg);
+}
+
+.warning-card--high {
+  --card-accent: var(--color-danger);
+  --card-accent-soft: var(--color-danger-bg);
+}
+
+.warning-card--critical {
+  --card-accent: var(--color-brand);
+  --card-accent-soft: var(--color-brand-soft);
+}
+
+.warning-card.unverified {
+  --card-verify: var(--color-warning);
 }
 
 .warning-card:hover {
@@ -23,102 +53,325 @@
   cursor: pointer;
 }
 
+.warning-card.is-clickable:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 3px;
+}
+
 .warning-card.is-active {
   border-color: var(--color-brand);
   box-shadow: 0 0 0 2px var(--color-brand), var(--shadow-raised);
 }
 
+/* ---------- Header: incident icon + verification ---------- */
+
 .warning-card__top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 6px;
+  gap: 16px;
 }
 
-.warning-card__severity,
+.warning-card__incident-icon,
+.warning-card__media {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  overflow: hidden;
+  color: var(--card-accent);
+  background: var(--card-accent-soft);
+  border-radius: 12px;
+}
+
+.warning-card__incident-icon svg {
+  width: 21px;
+  height: 21px;
+  stroke-width: 1.9;
+}
+
+.warning-card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .warning-card__verification {
-  padding: 4px 10px;
-  border-radius: var(--radius-pill);
-  font-size: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--card-verify);
+  font-size: 0.85rem;
   font-weight: 600;
+  line-height: 1.25;
 }
 
-.warning-card__severity {
-  color: var(--color-warning);
-  background: var(--color-warning-bg);
+.warning-card__verification svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  stroke-width: 2;
 }
 
-.warning-card.verified .warning-card__verification {
-  color: var(--color-success);
-  background: var(--color-success-bg);
-}
+/* ---------- Title + severity ---------- */
 
-.warning-card.unverified .warning-card__verification {
-  color: var(--color-warning);
-  background: var(--color-warning-bg);
+.warning-card__title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  margin-top: 15px;
 }
 
 .warning-card h3 {
+  display: -webkit-box;
+  min-height: 2.6em;
   margin: 0;
+  overflow: hidden;
   color: var(--color-text);
-  font-size: 0.95rem;
+  font-size: clamp(1.08rem, 1.35vw, 1.3rem);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+  line-clamp: 2;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.warning-card__severity-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.83rem;
+  font-weight: 500;
   line-height: 1.4;
 }
 
-.warning-card p {
+.warning-card__severity-icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: var(--card-accent);
+  stroke-width: 2.1;
+}
+
+.warning-card__severity-label {
+  color: var(--card-accent);
+  font-weight: 700;
+}
+
+.warning-card__separator {
+  color: var(--color-text-muted);
+  opacity: 0.65;
+}
+
+.warning-card__impact {
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+/* ---------- Description ---------- */
+
+.warning-card__description {
   display: -webkit-box;
-  margin: 0;
+  min-height: 3.1em;
+  margin: 12px 0 0;
   overflow: hidden;
   color: var(--color-text-muted);
-  font-size: 0.82rem;
-  line-height: 1.5;
-  line-clamp: 3;
-  -webkit-line-clamp: 3;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  line-clamp: 2;
+  overflow-wrap: anywhere;
   -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
-.warning-card__footer {
+/* ---------- Meta + source ---------- */
+
+.warning-card__details {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border);
+}
+
+.warning-card__meta-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 12px;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.warning-card__meta-item {
+  display: inline-flex;
+  align-items: center;
   gap: 6px;
-  padding-top: 10px;
-  color: var(--color-text-muted);
-  border-top: 1px solid var(--color-border);
-  font-size: 0.72rem;
+  min-width: 0;
 }
 
-.warning-card small {
-  color: var(--color-text-muted);
-  font-size: 0.72rem;
+.warning-card__meta-item svg {
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+  opacity: 0.8;
+  stroke-width: 2;
 }
 
-.warning-card__meta {
+.warning-card__meta-time {
+  margin-inline-start: auto;
+  white-space: nowrap;
+}
+
+.warning-card__source {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 6px;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.warning-card__source-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-text-muted);
+  opacity: 0.75;
+}
+
+.warning-card__source-icon svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.9;
+}
+
+.warning-card__source-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.warning-card__source-label {
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.warning-card__source-name {
+  color: var(--color-text);
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Full-width map action ---------- */
+
+.warning-card__actions {
+  margin-top: auto;
+  padding-top: 16px;
 }
 
 .warning-card__cta {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-  color: var(--color-brand);
-  font-size: 0.72rem;
-  font-weight: 600;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 16px;
+  color: #fff;
+  background: #c9362b;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  box-shadow: 0 14px 26px -18px rgb(201 54 43 / 75%);
+  transition: background-color 160ms ease;
 }
 
 .warning-card__cta svg {
-  width: 12px;
-  height: 12px;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  stroke-width: 2;
 }
 
 .warning-card.is-clickable:hover .warning-card__cta {
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  background: #b12a21;
+}
+
+/* ---------- RTL / responsive ---------- */
+
+:root[lang="ar"] .warning-card__verification {
+  font-size: 0.8rem;
+}
+
+:root[lang="ar"] .warning-card__severity-line {
+  font-size: 0.8rem;
+}
+
+@supports (container-type: inline-size) {
+  .warning-card {
+    container-type: inline-size;
+  }
+
+  @container (min-width: 460px) {
+    .warning-card {
+      padding: 26px;
+    }
+
+    .warning-card__incident-icon,
+    .warning-card__media {
+      width: 48px;
+      height: 48px;
+    }
+
+    .warning-card__incident-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .warning-card h3 {
+      font-size: 1.3rem;
+    }
+
+    .warning-card__description {
+      font-size: 0.94rem;
+    }
+
+    .warning-card__verification,
+    .warning-card__severity-line {
+      font-size: 0.92rem;
+    }
+
+    .warning-card__source-name {
+      font-size: 0.94rem;
+    }
+
+    .warning-card__cta {
+      min-height: 50px;
+      font-size: 0.95rem;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .warning-card,
+  .warning-card__cta {
+    transition: none;
+  }
+
+  .warning-card:hover {
+    transform: none;
+  }
 }

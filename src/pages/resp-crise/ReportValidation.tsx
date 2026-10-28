@@ -4,8 +4,8 @@ import { Link } from "react-router";
 import { useI18n } from "../../i18n";
 import { mockIncidents } from "../../mockdata/incident";
 import { mockWarnings, type Warning } from "../../mockdata/warning";
+import WarningCard from "../../components/WarningCard";
 import ConfirmDialog from "./ConfirmDialog";
-import { tone } from "./utils";
 
 import photoAccident from "../../assets/svg/accident-route.svg";
 import photoHeat from "../../assets/svg/canicule.svg";
@@ -113,6 +113,68 @@ function sigRef(id: number): string {
 
 function incidentRef(id: number): string {
   return `INC-${String(id).padStart(3, "0")}`;
+}
+
+/** Statut de traitement du signalement, affiché comme la vérification citoyenne. */
+function StateIcon({ state }: { state: ReportState }) {
+  return (
+    <svg
+      className="rc-report__state-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      {state === "pending" && (
+        <>
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 7v5l3 2" />
+        </>
+      )}
+      {state === "info" && (
+        <>
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 8v4" />
+          <path d="M12 16h.01" />
+        </>
+      )}
+      {state === "accepted" && (
+        <>
+          <circle cx="12" cy="12" r="9" />
+          <path d="m8.5 12 2.5 2.5 4.5-5" />
+        </>
+      )}
+      {state === "rejected" && (
+        <>
+          <circle cx="12" cy="12" r="9" />
+          <path d="m9 9 6 6" />
+          <path d="m15 9-6 6" />
+        </>
+      )}
+    </svg>
+  );
+}
+
+function RefIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
+      <path d="M14 2v6h6" />
+    </svg>
+  );
 }
 
 /** Écran 4 — file de validation des signalements citoyens. */
@@ -281,147 +343,132 @@ function ReportValidation() {
             const duplicateOf = DUPLICATES[report.id];
 
             return (
-              <article
+              <WarningCard
                 key={report.id}
+                warning={report}
                 className={`rc-report rc-report--${report.state}`}
-              >
-                <div className="rc-report__top">
+                media={
                   <img
                     className="rc-report__photo"
                     src={reportPhoto(report.title)}
                     alt={t("resp.rep.photoAlt")}
                     loading="lazy"
                   />
-
-                  <div className="rc-report__intro">
-                    <div className="rc-report__head">
-                      <h3>{tc(report.title)}</h3>
-                      <span
-                        className={`rc-badge rc-badge--${tone(report.severity)}`}
-                      >
-                        {t(`severity.${tone(report.severity)}`)}
+                }
+                status={{
+                  label: t(`resp.rep.state.${report.state}`),
+                  className: `rc-report__state rc-report__state--${report.state}`,
+                  icon: <StateIcon state={report.state} />,
+                }}
+                metaExtra={
+                  <span className="warning-card__meta-item rc-report__ref">
+                    <RefIcon />
+                    {sigRef(report.id)}
+                  </span>
+                }
+                sourceLabelKey="resp.rep.sourceLabel"
+                extra={
+                  <div className="rc-report__signals">
+                    <div className={`rc-reliability rc-reliability--${level}`}>
+                      <span className="rc-reliability__label">
+                        <span>
+                          {t("resp.rep.reliability")} ·{" "}
+                          {t(`resp.rep.reliability.${level}`)}
+                        </span>
+                        <span>{signal.score}%</span>
                       </span>
-                    </div>
-
-                    <p>{tc(report.description)}</p>
-
-                    <div className="rc-report__meta">
-                      <span>{sigRef(report.id)}</span>
-                      <span>{tc(report.location)}</span>
-                      <span>{report.issuedAt}</span>
-                      <span>
-                        {t("resp.rep.sourceLabel")} · {tc(report.source)}
+                      <span className="rc-reliability__track">
+                        <span
+                          className="rc-reliability__fill"
+                          style={{ width: `${signal.score}%` }}
+                        />
                       </span>
-                    </div>
-
-                    <div className="rc-report__signals">
-                      <div
-                        className={`rc-reliability rc-reliability--${level}`}
-                      >
-                        <span className="rc-reliability__label">
-                          <span>
-                            {t("resp.rep.reliability")} ·{" "}
-                            {t(`resp.rep.reliability.${level}`)}
-                          </span>
-                          <span>{signal.score}%</span>
-                        </span>
-                        <span className="rc-reliability__track">
-                          <span
-                            className="rc-reliability__fill"
-                            style={{ width: `${signal.score}%` }}
-                          />
-                        </span>
-                        <span className="rc-reliability__label">
-                          <span>
-                            {t("resp.rep.corroborations", {
-                              count: signal.corroborations,
-                            })}
-                          </span>
-                        </span>
-                      </div>
-
-                      {duplicateOf && (
-                        <span className="rc-badge rc-badge--high">
-                          {t("resp.rep.duplicate", {
-                            ref: sigRef(duplicateOf),
+                      <span className="rc-reliability__label">
+                        <span>
+                          {t("resp.rep.corroborations", {
+                            count: signal.corroborations,
                           })}
                         </span>
-                      )}
+                      </span>
                     </div>
-                  </div>
-                </div>
 
-                {report.state === "info" && (
-                  <p className="rc-report__reason">
-                    {t("resp.rep.infoRequested")} · {report.infoMessage}
-                  </p>
-                )}
-
-                {(report.state === "pending" || report.state === "info") && (
-                  <div className="rc-report__actions">
-                    <button
-                      type="button"
-                      className="rc-btn rc-btn--green rc-btn--small"
-                      onClick={() => openAccept(report)}
-                    >
-                      {t("resp.rep.accept")}
-                    </button>
-                    <button
-                      type="button"
-                      className="rc-btn rc-btn--outline-danger rc-btn--small"
-                      onClick={() => openReject(report)}
-                    >
-                      {t("resp.rep.reject")}
-                    </button>
-                    <button
-                      type="button"
-                      className="rc-btn rc-btn--soft rc-btn--small"
-                      onClick={() => openAsk(report)}
-                    >
-                      {t("resp.rep.askInfo")}
-                    </button>
-                  </div>
-                )}
-
-                {report.state === "accepted" && (
-                  <div className="rc-report__actions">
-                    <span className="rc-badge rc-badge--active">
-                      {t("resp.rep.accepted")}
-                    </span>
-                    {report.linked && (
-                      <span className="rc-badge">
-                        {t("resp.rep.linkedTo", {
-                          ref: incidentRef(report.incidentId),
+                    {duplicateOf && (
+                      <span className="rc-badge rc-badge--high">
+                        {t("resp.rep.duplicate", {
+                          ref: sigRef(duplicateOf),
                         })}
                       </span>
                     )}
-                    <Link
-                      className="rc-btn rc-btn--soft rc-btn--small"
-                      to={`/responsable/incidents/${report.incidentId}`}
-                      state={{
-                        event: report.title,
-                        severity: report.severity,
-                        location: report.location,
-                      }}
-                    >
-                      {t("resp.rep.openIncident")}
-                    </Link>
                   </div>
-                )}
+                }
+                actions={
+                  <>
+                    {report.state === "info" && (
+                      <p className="rc-report__reason">
+                        {t("resp.rep.infoRequested")} · {report.infoMessage}
+                      </p>
+                    )}
 
-                {report.state === "rejected" && (
-                  <div className="rc-report__actions">
-                    <span className="rc-badge">{t("resp.rep.rejected")}</span>
-                    {report.reasonKey && (
-                      <span className="rc-report__reason">
+                    {(report.state === "pending" ||
+                      report.state === "info") && (
+                      <div className="rc-report__actions">
+                        <button
+                          type="button"
+                          className="rc-btn rc-btn--green rc-btn--small"
+                          onClick={() => openAccept(report)}
+                        >
+                          {t("resp.rep.accept")}
+                        </button>
+                        <button
+                          type="button"
+                          className="rc-btn rc-btn--outline-danger rc-btn--small"
+                          onClick={() => openReject(report)}
+                        >
+                          {t("resp.rep.reject")}
+                        </button>
+                        <button
+                          type="button"
+                          className="rc-btn rc-btn--soft rc-btn--small"
+                          onClick={() => openAsk(report)}
+                        >
+                          {t("resp.rep.askInfo")}
+                        </button>
+                      </div>
+                    )}
+
+                    {report.state === "accepted" && (
+                      <div className="rc-report__actions">
+                        {report.linked && (
+                          <span className="rc-badge">
+                            {t("resp.rep.linkedTo", {
+                              ref: incidentRef(report.incidentId),
+                            })}
+                          </span>
+                        )}
+                        <Link
+                          className="rc-btn rc-btn--soft rc-btn--small"
+                          to={`/responsable/incidents/${report.incidentId}`}
+                          state={{
+                            event: report.title,
+                            severity: report.severity,
+                            location: report.location,
+                          }}
+                        >
+                          {t("resp.rep.openIncident")}
+                        </Link>
+                      </div>
+                    )}
+
+                    {report.state === "rejected" && report.reasonKey && (
+                      <p className="rc-report__reason">
                         {t("resp.rep.rejectedReason", {
                           reason: t(`resp.rep.reason.${report.reasonKey}`),
                         })}
-                      </span>
+                      </p>
                     )}
-                  </div>
-                )}
-              </article>
+                  </>
+                }
+              />
             );
           })}
         </div>
