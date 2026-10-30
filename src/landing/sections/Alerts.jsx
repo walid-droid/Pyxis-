@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { useLandingCopy } from "../landingCopy";
 
+// Vert → jaune → orange → rouge, du niveau le plus faible au plus élevé.
+const LEVEL_COLORS = ["var(--green)", "var(--yellow)", "var(--amber)", "var(--red)"];
+
 export default function Alerts({ reducedMotion }) {
   const copy = useLandingCopy();
   const alerts = copy.alerts;
@@ -80,9 +83,12 @@ export default function Alerts({ reducedMotion }) {
                 {s.levels && (
                   <>
                     <div className="lvl">
-                      <i style={{ background: "var(--yellow)" }} />
-                      <i style={{ background: "var(--amber)" }} />
-                      <i style={{ background: "var(--red)" }} />
+                      {alerts.levels.map((level, index) => (
+                        <i
+                          key={level}
+                          style={{ background: LEVEL_COLORS[index % LEVEL_COLORS.length] }}
+                        />
+                      ))}
                     </div>
                     <div className="lvlt">
                       {alerts.levels.map((level) => (

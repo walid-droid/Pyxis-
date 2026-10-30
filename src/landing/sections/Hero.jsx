@@ -142,11 +142,17 @@ export default function Hero({ reducedMotion, onRequestSubmit }) {
           </button>
         </div>
         <div className="q3 rv" style={{ "--d": "1.3s" }}>
-          {hero.quick.map((item) => (
-            <a key={item.href} href={item.href}>
-              {item.label}
-            </a>
-          ))}
+          {hero.quick.map((item) =>
+            item.href.startsWith("#") ? (
+              <a key={item.href} href={item.href}>
+                {item.label}
+              </a>
+            ) : (
+              <Link key={item.href} to={item.href}>
+                {item.label}
+              </Link>
+            )
+          )}
         </div>
       </div>
       <div className="ems dark" id="signalement">

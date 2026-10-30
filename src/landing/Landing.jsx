@@ -7,10 +7,8 @@ import logo from "../assets/Logo CADM.png";
 import Header from "./sections/Header";
 import Hero from "./sections/Hero";
 import Situation from "./sections/Situation";
-import Risks from "./sections/Risks";
 import Alerts from "./sections/Alerts";
 import Tracking from "./sections/Tracking";
-import Sources from "./sections/Sources";
 import Footer from "./sections/Footer";
 import RequireAuthModal from "./sections/RequireAuthModal";
 import TrackingModal from "./sections/TrackingModal";
@@ -77,10 +75,8 @@ export default function Landing() {
       <main id="top" tabIndex={-1}>
         <Hero reducedMotion={reducedMotion} onRequestSubmit={requestSubmit} />
         <Situation onRequestSubmit={requestSubmit} onOpenTracking={openTracking} />
-        <Risks />
         <Alerts reducedMotion={reducedMotion} />
         <Tracking onRequestSubmit={requestSubmit} onOpenTracking={openTracking} />
-        <Sources />
       </main>
       <Footer onRequestSubmit={requestSubmit} onOpenPrivacy={openPrivacy} />
       {requireAuth && <RequireAuthModal onClose={closeRequireAuth} />}

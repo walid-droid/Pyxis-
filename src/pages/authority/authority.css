@@ -1,0 +1,88 @@
+/* =========================================================
+   Espace autorité — même gabarit que le PC de crise,
+   avec un voile institutionnel bleu nuit.
+   ========================================================= */
+
+.rc-page--authority .rc-hero {
+  --hero-photo: url("/heroes/manager.jpg");
+  --hero-wash: linear-gradient(
+    115deg,
+    rgb(9 28 54 / 86%) 0%,
+    rgb(23 42 37 / 62%) 52%,
+    rgb(10 14 20 / 38%) 100%
+  );
+}
+
+.rc-page--authority .rc-eyebrow {
+  color: #a8c8ff;
+}
+
+.rc-page--authority .rc-quick-card--plan {
+  --tone: #1d4ed8;
+}
+
+.rc-page--authority .rc-quick-card--situation {
+  --tone: #0f766e;
+}
+
+.rc-page--authority .rc-quick-card--decisions {
+  --tone: var(--color-navy);
+}
+
+.rc-page--authority .rc-quick-card--alerts {
+  --tone: #b45309;
+}
+
+.rc-page--authority .rc-quick-card--crisis {
+  --tone: #b91c1c;
+}
+
+/* Bandeau d'état du plan */
+
+.au-plan-state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  padding: 14px 16px;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-button);
+  background: var(--color-surface-muted);
+}
+
+.au-plan-state__label {
+  color: var(--color-text-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.au-plan-state__value {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+.au-plan-state__hint {
+  flex: 1 1 220px;
+  min-width: 0;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.au-note {
+  margin: 0;
+  padding: 12px 14px;
+  border-inline-start: 3px solid var(--color-brand);
+  border-radius: var(--radius-button);
+  background: var(--color-brand-soft);
+  color: var(--color-text);
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+
+:root[data-theme="dark"] .au-note {
+  background: rgb(179 38 30 / 16%);
+}

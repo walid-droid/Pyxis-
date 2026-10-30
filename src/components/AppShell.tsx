@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { NavLink, Outlet, useLocation } from "react-router";
 import logo from "../assets/Logo CADM.png";
 import AssistantPage from "../pages/assistant/AssistantPage";
@@ -19,18 +19,21 @@ type AppShellProps = {
   /** Clé de persistance de la réduction de la barre latérale. */
   storageKey: string;
   navItems: ShellNavItem[];
-  /** Titre affiché au-dessus des liens (espace responsable). */
+  /** Titre affiché au-dessus des liens (espaces dédiés). */
   navGroupKey?: string;
-  variant?: "citizen" | "crisis" | "admin";
+  variant?: "citizen" | "crisis" | "authority" | "site" | "admin" | "organisme";
   authenticated: boolean;
   onSignOut: () => void;
   /** Ouvre la connexion pour un visiteur non authentifié. */
   onSignIn?: () => void;
+  /** Contrôle additionnel affiché dans la barre supérieure (ex. sélecteur de rôle). */
+  topbarExtra?: ReactNode;
 };
 
 /**
- * Coque commune aux deux espaces (citoyen et responsable de crise) :
- * barre flottante, barre latérale escamotable et tiroir mobile.
+ * Coque commune aux espaces de l'application (citoyen, commandement,
+ * autorité, site sensible et administration) : barre flottante,
+ * barre latérale escamotable et tiroir mobile.
  */
 function AppShell({
   homePath,
@@ -41,6 +44,7 @@ function AppShell({
   authenticated,
   onSignOut,
   onSignIn,
+  topbarExtra,
 }: AppShellProps) {
   const navRef = useRef<HTMLElement>(null);
   const assistantTriggerRef = useRef<HTMLButtonElement>(null);
@@ -173,9 +177,15 @@ function AppShell({
       className={`app-layout${collapsed ? " is-collapsed" : ""}${
         variant === "crisis"
           ? " app-layout--resp"
-          : variant === "admin"
-            ? " app-layout--admin"
-            : ""
+          : variant === "authority"
+            ? " app-layout--authority"
+            : variant === "site"
+              ? " app-layout--site"
+              : variant === "admin"
+                ? " app-layout--admin"
+                : variant === "organisme"
+                  ? " app-layout--org"
+                  : ""
       }`}
     >
       <header className={`app-topbar${scrolled ? " is-scrolled" : ""}`}>
@@ -187,7 +197,17 @@ function AppShell({
 
           {variant !== "citizen" && (
             <span className="app-topbar__role">
-              {t(variant === "admin" ? "admin.topbarRole" : "resp.topbarRole")}
+              {t(
+                variant === "admin"
+                  ? "admin.topbarRole"
+                  : variant === "authority"
+                    ? "authority.topbarRole"
+                    : variant === "site"
+                      ? "site.topbarRole"
+                      : variant === "organisme"
+                        ? "org.topbarRole"
+                        : "resp.topbarRole"
+              )}
             </span>
           )}
 
@@ -214,6 +234,8 @@ function AppShell({
         </div>
 
         <div className="app-topbar__end">
+          {topbarExtra}
+
           <ConnectionStatus />
 
           <button

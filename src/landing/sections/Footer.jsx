@@ -6,10 +6,16 @@ import logo from "../../assets/Logo CADM.png";
 export default function Footer({ onRequestSubmit, onOpenPrivacy }) {
   const copy = useLandingCopy();
   const footer = copy.footer;
+  const sources = copy.sources;
 
   return (
-    <footer className="dark">
+    <footer className="dark" id="sources">
       <div className="wrap">
+        <div className="fsrc">
+          <p className="eyebrow">{sources.eyebrow}</p>
+          <h2>{sources.title}</h2>
+          <p>{sources.summary}</p>
+        </div>
         <div className="top">
           <div>
             <div className="logo" style={{ marginBottom: 28 }}>

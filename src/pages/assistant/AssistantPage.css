@@ -270,26 +270,6 @@
   text-align: center;
 }
 
-.assistant-orb {
-  width: 60px;
-  height: 60px;
-  display: grid;
-  place-items: center;
-  margin: 0 auto 20px;
-  border: 1px solid color-mix(in srgb, var(--color-brand) 22%, var(--color-border));
-  border-radius: 20px;
-  background: linear-gradient(145deg, #fdf3f2, #fbe4e1);
-  box-shadow: 0 16px 36px -22px var(--color-brand-glow);
-  transform: rotate(-4deg);
-}
-
-.assistant-orb span {
-  color: var(--color-brand);
-  font-size: 36px;
-  line-height: 1;
-  transform: rotate(4deg);
-}
-
 .assistant-eyebrow {
   color: var(--ai-accent);
   font-size: 12px;
@@ -335,18 +315,6 @@
   border-bottom: 1px solid var(--ai-line);
 }
 
-.assistant-mini-orb {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 14px;
-  background: var(--color-brand-soft);
-  color: var(--color-brand);
-  font-size: 22px;
-  line-height: 1;
-}
-
 .assistant-chat-heading strong {
   display: block;
   color: var(--ai-ink);
@@ -369,19 +337,6 @@
 
 .assistant-message-row.user {
   justify-content: flex-end;
-}
-
-.assistant-avatar {
-  flex: 0 0 32px;
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 14px;
-  background: var(--color-brand-soft);
-  color: var(--color-brand);
-  font-size: 20px;
-  line-height: 1;
 }
 
 .assistant-message {
@@ -551,10 +506,6 @@
 /* ---------- Écrans courts (portable) : on gagne de la place ---------- */
 
 @media (max-height: 600px) {
-  .assistant-orb {
-    display: none;
-  }
-
   .assistant-scroll {
     padding-top: 16px;
   }

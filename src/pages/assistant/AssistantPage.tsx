@@ -147,7 +147,6 @@ export default function AssistantPage({ onClose }: AssistantPageProps) {
         <div className="assistant-scroll" ref={scrollRef}>
           {messages.length === 0 ? (
             <div className="assistant-welcome">
-              <div className="assistant-orb" aria-hidden="true"><span>✳</span></div>
               <div className="assistant-eyebrow">{t("assistant.preventEyebrow")}</div>
               <h1>{t("assistant.hello")}<br /><em>{t("assistant.help")}</em></h1>
               <p className="assistant-intro">{t("assistant.intro")}</p>
@@ -155,7 +154,6 @@ export default function AssistantPage({ onClose }: AssistantPageProps) {
           ) : (
             <div className="assistant-chat" role="log" aria-live="polite" aria-label={t("assistant.conversationAria")}>
               <div className="assistant-chat-heading">
-                <span className="assistant-mini-orb" aria-hidden="true">✳</span>
                 <div>
                   <strong>{t("assistant.yourConversation")}</strong>
                   <small>{t("assistant.conversationSub")}</small>
@@ -163,7 +161,6 @@ export default function AssistantPage({ onClose }: AssistantPageProps) {
               </div>
               {messages.map((message, index) => (
                 <div className={`assistant-message-row ${message.role}`} key={`${index}-${message.role}`}>
-                  {message.role === "assistant" && <span className="assistant-avatar" aria-hidden="true">✳</span>}
                   <div className="assistant-message">
                     <div className="assistant-message-author">{message.role === "user" ? t("assistant.you") : t("assistant.bot")}</div>
                     <p>{message.text}</p>
@@ -172,7 +169,6 @@ export default function AssistantPage({ onClose }: AssistantPageProps) {
               ))}
               {loading && (
                 <div className="assistant-message-row assistant">
-                  <span className="assistant-avatar" aria-hidden="true">✳</span>
                   <div className="assistant-message assistant-typing" role="status">
                     <span className="assistant-dots" aria-hidden="true"><i /><i /><i /></span>
                     {t("assistant.typing")}

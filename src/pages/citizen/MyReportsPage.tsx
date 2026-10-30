@@ -32,7 +32,6 @@ function MyReportsPage() {
     return next;
   }, [reports]);
 
-  const activeCount = reports.filter((report) => report.status !== "closed").length;
   const visible =
     filter === "all" ? reports : reports.filter((report) => report.status === filter);
 
@@ -88,21 +87,6 @@ function MyReportsPage() {
           </button>
         </div>
       )}
-
-      <section className="reports-stats" aria-label={t("reports.summary")}>
-        <div className="reports-stat">
-          <span>{reports.length}</span>
-          <small>{t("reports.total")}</small>
-        </div>
-        <div className="reports-stat reports-stat--active">
-          <span>{activeCount}</span>
-          <small>{t("reports.active")}</small>
-        </div>
-        <div className="reports-stat reports-stat--closed">
-          <span>{counts.closed}</span>
-          <small>{t("reports.closed")}</small>
-        </div>
-      </section>
 
       <div className="reports-filters" role="group" aria-label={t("reports.filterAria")}>
         <button

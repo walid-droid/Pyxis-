@@ -1,0 +1,571 @@
+/* =========================================================
+   Plan ORSEC — frise, modules, formulaires et rapports.
+   Réutilisé par l'espace autorité et l'espace site.
+   ========================================================= */
+
+/* ---------- Frise du cycle de vie ---------- */
+
+.orsec-steps {
+  display: flex;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.orsec-step {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  padding-inline-end: 10px;
+}
+
+.orsec-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 15px;
+  inset-inline-start: 30px;
+  inset-inline-end: 0;
+  height: 2px;
+  background: var(--color-border);
+}
+
+.orsec-step.is-done:not(:last-child)::after {
+  background: color-mix(in srgb, var(--color-green) 55%, var(--color-border));
+}
+
+.orsec-step__dot {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.orsec-step__body {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  padding-top: 0;
+}
+
+.orsec-step__label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.orsec-step__hint {
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.orsec-step.is-current .orsec-step__dot {
+  border-color: var(--color-brand);
+  background: var(--color-brand);
+  color: var(--color-text-inverse);
+  box-shadow: 0 0 0 4px
+    color-mix(in srgb, var(--color-brand) 14%, transparent);
+}
+
+.orsec-step.is-current .orsec-step__label {
+  color: var(--color-brand);
+}
+
+.orsec-step.is-done .orsec-step__dot {
+  border-color: var(--color-green);
+  background: var(--color-green);
+  color: var(--color-text-inverse);
+}
+
+.orsec-step.is-skipped .orsec-step__dot {
+  border-style: dashed;
+}
+
+.orsec-step.is-skipped .orsec-step__label {
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 760px) {
+  .orsec-steps {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .orsec-step {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .orsec-step:not(:last-child)::after {
+    top: 32px;
+    inset-inline-start: 14px;
+    inset-inline-end: auto;
+    width: 2px;
+    height: calc(100% + 4px);
+  }
+}
+
+/* ---------- Sélecteur de niveau ---------- */
+
+.orsec-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+
+.orsec-toolbar__hint {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.orsec-levels {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  background: var(--color-surface-muted);
+}
+
+.orsec-levels__btn {
+  min-height: 36px;
+  padding: 6px 14px;
+  border: 0;
+  border-radius: calc(var(--radius-button) - 2px);
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.orsec-levels__btn:hover {
+  color: var(--color-text);
+}
+
+.orsec-levels__btn.is-active {
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 12%);
+}
+
+.orsec-levels__btn:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 1px;
+}
+
+/* ---------- Modules ---------- */
+
+.orsec-module {
+  flex-wrap: wrap;
+  gap: 10px 12px;
+}
+
+.orsec-module__index {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-navy) 10%, transparent);
+  color: var(--color-navy);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+:root[data-theme="dark"] .orsec-module__index {
+  background: color-mix(in srgb, var(--color-text) 12%, transparent);
+  color: var(--color-text);
+}
+
+.orsec-module__owner {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.orsec-module__owner.is-empty {
+  color: var(--color-warning);
+  font-style: italic;
+  font-weight: 500;
+}
+
+.orsec-module .rc-btn {
+  margin-inline-start: auto;
+}
+
+/* ---------- Faits et alertes ---------- */
+
+.orsec-facts {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+
+.orsec-facts > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 14px;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.orsec-facts > div:last-child {
+  border-bottom: 0;
+}
+
+.orsec-facts dt {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+}
+
+.orsec-facts dd {
+  margin: 0;
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-align: end;
+}
+
+.orsec-alert {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-inline-start: 3px solid var(--color-text-muted);
+  border-radius: var(--radius-button);
+  background: var(--color-surface-muted);
+  color: var(--color-text);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.orsec-alert--info {
+  border-inline-start-color: var(--color-brand);
+  background: var(--color-brand-soft);
+}
+
+.orsec-alert--warn {
+  border-inline-start-color: var(--color-warning);
+  background: var(--color-warning-bg);
+}
+
+.orsec-alert--danger {
+  border-inline-start-color: var(--color-danger);
+  background: var(--color-danger-bg);
+}
+
+.orsec-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.orsec-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+/* ---------- Formulaires ---------- */
+
+.orsec-form {
+  display: grid;
+  gap: 16px;
+}
+
+.orsec-form__lead {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.orsec-field {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.orsec-field legend,
+.orsec-field__label {
+  padding: 0;
+  color: var(--color-text);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.orsec-field legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin-bottom: 8px;
+}
+
+.orsec-field__count {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.orsec-field__hint {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.orsec-field input[type="text"],
+.orsec-field select,
+.orsec-field textarea {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.88rem;
+}
+
+.orsec-field select {
+  cursor: pointer;
+}
+
+.orsec-field input:focus-visible,
+.orsec-field select:focus-visible,
+.orsec-field textarea:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 1px;
+}
+
+.orsec-choices {
+  display: grid;
+  gap: 8px;
+}
+
+.orsec-checks {
+  display: grid;
+  gap: 8px;
+}
+
+.orsec-checks--grid {
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
+
+.orsec-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  background: var(--color-surface);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.orsec-check:has(input:checked) {
+  border-color: color-mix(in srgb, var(--color-brand) 55%, var(--color-border));
+  background: color-mix(in srgb, var(--color-brand-soft) 70%, var(--color-surface));
+}
+
+.orsec-check input {
+  margin: 2px 0 0;
+  accent-color: var(--color-brand);
+}
+
+.orsec-check > span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.orsec-check strong {
+  font-weight: 600;
+}
+
+.orsec-check small {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.orsec-dialog__foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+/* ---------- Désignation ---------- */
+
+.orsec-designate__module {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  background: var(--color-surface-muted);
+}
+
+.orsec-designate__module > span:last-child {
+  display: grid;
+  gap: 2px;
+}
+
+.orsec-designate__module small {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+}
+
+.orsec-history {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.orsec-history li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: var(--radius-button);
+  background: var(--color-surface-muted);
+  font-size: 0.78rem;
+}
+
+.orsec-history li span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.orsec-history li span:nth-child(2),
+.orsec-history li span:nth-child(3) {
+  color: var(--color-text-muted);
+}
+
+/* ---------- Rapports et journal ---------- */
+
+.orsec-reports {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.orsec-report {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  background: var(--color-surface);
+}
+
+.orsec-report__body {
+  display: grid;
+  flex: 1 1 180px;
+  gap: 2px;
+  min-width: 0;
+}
+
+.orsec-report__ref {
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.orsec-report__meta {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.orsec-log {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.orsec-log__item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px dashed var(--color-border);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.orsec-log__item:last-child {
+  border-bottom: 0;
+}
+
+.orsec-log__time {
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.orsec-log__subject {
+  color: var(--color-text-muted);
+}
+
+.orsec-empty {
+  margin: 0;
+  padding: 16px;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-button);
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.orsec-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

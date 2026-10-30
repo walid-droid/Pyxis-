@@ -1,0 +1,114 @@
+/* =========================================================
+   Espace site sensible — même gabarit que le PC de crise,
+   avec un voile vert profond (sûreté industrielle).
+   ========================================================= */
+
+.rc-page--site .rc-hero {
+  --hero-photo: url("/heroes/admin.jpg");
+  --hero-wash: linear-gradient(
+    115deg,
+    rgb(6 46 38 / 88%) 0%,
+    rgb(12 74 58 / 58%) 52%,
+    rgb(8 18 15 / 38%) 100%
+  );
+}
+
+.rc-page--site .rc-eyebrow {
+  color: #a7e8cf;
+}
+
+.rc-page--site .rc-quick-card--plan {
+  --tone: #0f766e;
+}
+
+.rc-page--site .rc-quick-card--simulations {
+  --tone: #b45309;
+}
+
+.rc-page--site .rc-quick-card--consignes {
+  --tone: var(--color-brand);
+}
+
+.site-plan-state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  padding: 14px 16px;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-button);
+  background: var(--color-surface-muted);
+}
+
+.site-plan-state__label {
+  color: var(--color-text-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.site-plan-state__value {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+.site-plan-state__hint {
+  flex: 1 1 220px;
+  min-width: 0;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.site-note {
+  margin: 0;
+  padding: 12px 14px;
+  border-inline-start: 3px solid var(--color-green);
+  border-radius: var(--radius-button);
+  background: var(--color-success-bg);
+  color: var(--color-text);
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+
+.site-point {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  background: var(--color-surface);
+}
+
+.site-point__index {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-green) 14%, transparent);
+  color: var(--color-green);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.site-point__body {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.site-point__body strong {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.site-point__body span {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}

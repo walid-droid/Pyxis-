@@ -222,22 +222,6 @@
   color: var(--ai-ink);
 }
 
-[data-theme="dark"] .assistant-orb {
-  border-color: color-mix(in srgb, var(--color-brand) 30%, var(--ai-line));
-  background: linear-gradient(145deg, #2a1512, #1a0f0e);
-  box-shadow: 0 8px 25px rgb(0 0 0 / 35%);
-}
-
-[data-theme="dark"] .assistant-orb span {
-  color: var(--ai-accent);
-}
-
-[data-theme="dark"] .assistant-mini-orb,
-[data-theme="dark"] .assistant-avatar {
-  background: var(--color-brand-soft);
-  color: var(--ai-accent);
-}
-
 [data-theme="dark"] .assistant-message,
 [data-theme="dark"] .assistant-composer {
   background: var(--color-surface);

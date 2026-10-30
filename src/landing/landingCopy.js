@@ -27,7 +27,7 @@ export const LANDING_COPY = {
       play: "Relancer l'animation",
       quick: [
         { label: "Que se passe-t-il ?", href: "#alerte" },
-        { label: "Suis-je concerné ?", href: "#risques" },
+        { label: "Suis-je concerné ?", href: "/alerts" },
         { label: "Que dois-je faire ?", href: "#sit" },
       ],
       emergency: {
@@ -97,23 +97,6 @@ export const LANDING_COPY = {
         },
       ],
     },
-    risks: {
-      eyebrow: "Consignes de sécurité",
-      title: "Que faire en cas de catastrophe ?",
-      lead: "Séisme, inondation, incendie… Consultez les consignes à suivre pour savoir comment vous protéger et protéger vos proches.",
-      items: [
-        "Séisme",
-        "Inondation",
-        "Incendie de forêt",
-        "Glissement de terrain",
-        "Canicule",
-        "Vents violents et tempêtes de sable",
-        "Vague de froid",
-        "Accident industriel",
-      ],
-      allLabel: "Tous",
-      allText: "Voir tous les risques et les consignes de sécurité",
-    },
     alerts: {
       eyebrow: "Comprendre les alertes",
       title: "Une alerte, des informations claires",
@@ -137,7 +120,7 @@ export const LANDING_COPY = {
         link: "Voir les abris ouverts et l'itinéraire d'évacuation",
         caption: "Exemple fictif présenté à titre d'illustration, sans valeur opérationnelle.",
       },
-      levels: ["Jaune", "Orange", "Rouge"],
+      levels: ["Vert", "Jaune", "Orange", "Rouge"],
       steps: [
         {
           title: "Niveau de vigilance",
@@ -179,31 +162,8 @@ export const LANDING_COPY = {
     sources: {
       eyebrow: "Sources et responsabilité",
       title: "Des informations claires, des décisions humaines",
-      columns: [
-        {
-          number: "01",
-          title: "Pourquoi CADM ?",
-          paragraphs: [
-            "L'Algérie est exposée à plusieurs risques naturels et technologiques. CADM facilite l'accès aux informations sur les risques et vise à améliorer la transmission des signalements entre les citoyens et les services concernés.",
-          ],
-        },
-        {
-          number: "02",
-          title: "Le cadre réglementaire",
-          paragraphs: [
-            "CADM est conçu en tenant compte de la réglementation algérienne relative à la prévention des risques de catastrophes et à la protection des données personnelles.",
-          ],
-        },
-        {
-          number: "03",
-          title: "Le rôle de l'intelligence artificielle",
-          paragraphs: [
-            "L'intelligence artificielle peut aider à analyser les signalements et à repérer les informations qui nécessitent une attention particulière.",
-            "Les informations importantes doivent être vérifiées par les personnes habilitées.",
-          ],
-        },
-      ],
-      quote: "Les décisions concernant les alertes et les interventions restent du ressort des services compétents.",
+      summary:
+        "CADM facilite l'accès aux informations sur les risques en Algérie. L'intelligence artificielle peut aider à analyser les signalements, mais les décisions concernant les alertes et les interventions restent du ressort des services compétents.",
     },
     footer: {
       tagline: "L'information fiable, quand elle compte vraiment.",
@@ -288,7 +248,7 @@ export const LANDING_COPY = {
       play: "إعادة تشغيل الحركة",
       quick: [
         { label: "ماذا يحدث؟", href: "#alerte" },
-        { label: "هل أنا معني؟", href: "#risques" },
+        { label: "هل أنا معني؟", href: "/alerts" },
         { label: "ماذا يجب أن أفعل؟", href: "#sit" },
       ],
       emergency: {
@@ -358,23 +318,6 @@ export const LANDING_COPY = {
         },
       ],
     },
-    risks: {
-      eyebrow: "تعليمات السلامة",
-      title: "ماذا تفعل في حالة كارثة؟",
-      lead: "زلزال، فيضان، حريق… اطّلع على التعليمات الواجب اتباعها لمعرفة كيفية حماية نفسك وأحبائك.",
-      items: [
-        "زلزال",
-        "فيضان",
-        "حريق غابة",
-        "انزلاق أرضي",
-        "موجة حر",
-        "رياح قوية وعواصف رملية",
-        "موجة برد",
-        "حادث صناعي",
-      ],
-      allLabel: "الكل",
-      allText: "عرض جميع المخاطر وتعليمات السلامة",
-    },
     alerts: {
       eyebrow: "فهم التنبيهات",
       title: "تنبيه واحد، معلومات واضحة",
@@ -398,7 +341,7 @@ export const LANDING_COPY = {
         link: "عرض الملاجئ المفتوحة ومسار الإخلاء",
         caption: "مثال افتراضي معروض للتوضيح فقط، دون قيمة عملياتية.",
       },
-      levels: ["أصفر", "برتقالي", "أحمر"],
+      levels: ["أخضر", "أصفر", "برتقالي", "أحمر"],
       steps: [
         {
           title: "مستوى اليقظة",
@@ -440,31 +383,8 @@ export const LANDING_COPY = {
     sources: {
       eyebrow: "المصادر والمسؤولية",
       title: "معلومات واضحة، قرارات بشرية",
-      columns: [
-        {
-          number: "01",
-          title: "لماذا CADM؟",
-          paragraphs: [
-            "الجزائر معرّضة لعدة مخاطر طبيعية وتكنولوجية. تسهّل CADM الوصول إلى معلومات المخاطر وتهدف إلى تحسين نقل البلاغات بين المواطنين والمصالح المعنية.",
-          ],
-        },
-        {
-          number: "02",
-          title: "الإطار التنظيمي",
-          paragraphs: [
-            "صُمّمت CADM مع مراعاة التشريع الجزائري المتعلق بالوقاية من مخاطر الكوارث وحماية المعطيات الشخصية.",
-          ],
-        },
-        {
-          number: "03",
-          title: "دور الذكاء الاصطناعي",
-          paragraphs: [
-            "يمكن للذكاء الاصطناعي المساعدة في تحليل البلاغات وتحديد المعلومات التي تتطلب اهتمامًا خاصًا.",
-            "يجب التحقق من المعلومات المهمة من قبل الأشخاص المخوّلين.",
-          ],
-        },
-      ],
-      quote: "تبقى القرارات المتعلقة بالتنبيهات والتدخلات من اختصاص المصالح المختصة.",
+      summary:
+        "تسهّل CADM الوصول إلى معلومات المخاطر في الجزائر. يمكن للذكاء الاصطناعي المساعدة في تحليل البلاغات، لكن القرارات المتعلقة بالتنبيهات والتدخلات تبقى من اختصاص المصالح المختصة.",
     },
     footer: {
       tagline: "المعلومات الموثوقة، عندما تكون في أمسّ الحاجة إليها.",
