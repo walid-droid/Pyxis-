@@ -736,3 +736,25 @@
     transform: none;
   }
 }
+.assistant-sources {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--ai-line);
+  font-size: 13px;
+  color: var(--ai-muted);
+}
+
+.assistant-sources strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ai-ink);
+}
+
+.assistant-sources ul {
+  margin: 0;
+  padding-inline-start: 18px;
+}
+
+.assistant-sources li {
+  margin: 2px 0;
+}

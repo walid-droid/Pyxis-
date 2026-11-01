@@ -9,6 +9,8 @@ type OrgHeroProps = {
   lead: string;
   chips?: ReactNode;
   aside?: ReactNode;
+  /** Compteurs affichés en bas du bandeau photo. */
+  stats?: ReactNode;
   backTo?: string;
 };
 
@@ -19,6 +21,7 @@ export default function OrgHero({
   lead,
   chips,
   aside,
+  stats,
   backTo = ORG_DASHBOARD_PATH,
 }: OrgHeroProps) {
   const { t } = useI18n();
@@ -37,6 +40,7 @@ export default function OrgHero({
           {chips ? <div className="rc-hero__meta">{chips}</div> : null}
         </div>
         {aside ? <div className="rc-hero__aside">{aside}</div> : null}
+        {stats}
       </section>
     </>
   );

@@ -1,8 +1,16 @@
-// Session utilisateur (démo) : l'application n'a pas encore de backend d'authentification.
-// On conserve un simple indicateur dans le localStorage pour savoir si le visiteur
-// est connecté, afin de pouvoir conditionner l'accès à certaines pages.
+// Adaptateur de compatibilité : toutes les connexions passent désormais par la
+// session unique de `auth/session.ts` (un compte = un rôle). Les anciennes
+// fonctions sont conservées pour les pages de connexion et la page d'accueil.
 
-const SESSION_KEY = "cadm-session";
+import {
+  ADMIN_DEMO_ACCOUNT,
+  sessionFromAccount,
+  type DemoAccount,
+} from "../auth/demoAccounts";
+import { ROLE_DEFS } from "../auth/roles";
+import { endSession, getAuthSession, startSession } from "../auth/session";
+
+/* ------------------------------ Citoyen ------------------------------ */
 
 export type Session = {
   email: string;
@@ -11,87 +19,54 @@ export type Session = {
 };
 
 export function getSession(): Session | null {
-  try {
-    const raw = localStorage.getItem(SESSION_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as Session;
-    return typeof parsed?.email === "string" ? parsed : null;
-  } catch {
-    return null;
-  }
+  const session = getAuthSession();
+  if (!session || ROLE_DEFS[session.role].space !== "citizen") return null;
+  return { email: session.email, phone: session.phone, createdAt: session.createdAt };
 }
 
 export function isAuthenticated(): boolean {
-  return getSession() !== null;
+  return getAuthSession() !== null;
 }
 
-export function signIn(email: string, phone?: string): void {
-  try {
-    const session: Session = { email, phone, createdAt: Date.now() };
-    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-  } catch {
-    // Ignore storage failures (private mode, etc.).
-  }
+/** Connexion ou inscription d'un citoyen (ou d'un agriculteur). */
+export function signIn(
+  email: string,
+  phone?: string,
+  role: "citizen" | "farmer" = "citizen",
+): void {
+  startSession({ email, phone, role });
 }
 
 export function signOut(): void {
-  try {
-    localStorage.removeItem(SESSION_KEY);
-  } catch {
-    // Ignore storage failures (private mode, etc.).
-  }
+  endSession();
 }
 
-/* ------------------------------------------------------------------
-   Espace responsable de crise — session indépendante de celle du
-   citoyen, avec sa propre page de connexion.
-   ------------------------------------------------------------------ */
-
-const RESP_SESSION_KEY = "cadm-resp-session";
+/* ------------------- Personnel (autorités, organismes) ------------------- */
 
 export type RespSession = {
   email: string;
-  role: "responsable";
+  role: string;
   createdAt: number;
 };
 
 export function getRespSession(): RespSession | null {
-  try {
-    const raw = localStorage.getItem(RESP_SESSION_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as RespSession;
-    return typeof parsed?.email === "string" ? parsed : null;
-  } catch {
-    return null;
-  }
+  const session = getAuthSession();
+  if (!session) return null;
+  const space = ROLE_DEFS[session.role].space;
+  if (space === "citizen" || space === "admin") return null;
+  return { email: session.email, role: session.role, createdAt: session.createdAt };
 }
 
-export function signInResp(email: string): void {
-  try {
-    const session: RespSession = {
-      email,
-      role: "responsable",
-      createdAt: Date.now(),
-    };
-    localStorage.setItem(RESP_SESSION_KEY, JSON.stringify(session));
-  } catch {
-    // Ignore storage failures (private mode, etc.).
-  }
+/** Connexion du personnel : le compte de démonstration fixe le rôle. */
+export function signInResp(email: string, account: DemoAccount): void {
+  startSession(sessionFromAccount(account, email));
 }
 
 export function signOutResp(): void {
-  try {
-    localStorage.removeItem(RESP_SESSION_KEY);
-  } catch {
-    // Ignore storage failures (private mode, etc.).
-  }
+  endSession();
 }
 
-/* ------------------------------------------------------------------
-   Espace administrateur système (S1) — session indépendante.
-   ------------------------------------------------------------------ */
-
-const ADMIN_SESSION_KEY = "cadm-admin-session";
+/* ------------------------- Administrateur système ------------------------- */
 
 export type AdminSession = {
   email: string;
@@ -100,33 +75,15 @@ export type AdminSession = {
 };
 
 export function getAdminSession(): AdminSession | null {
-  try {
-    const raw = localStorage.getItem(ADMIN_SESSION_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as AdminSession;
-    return typeof parsed?.email === "string" ? parsed : null;
-  } catch {
-    return null;
-  }
+  const session = getAuthSession();
+  if (!session || session.role !== "admin") return null;
+  return { email: session.email, role: "admin", createdAt: session.createdAt };
 }
 
 export function signInAdmin(email: string): void {
-  try {
-    const session: AdminSession = {
-      email,
-      role: "admin",
-      createdAt: Date.now(),
-    };
-    localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(session));
-  } catch {
-    // Ignore storage failures (private mode, etc.).
-  }
+  startSession(sessionFromAccount(ADMIN_DEMO_ACCOUNT, email));
 }
 
 export function signOutAdmin(): void {
-  try {
-    localStorage.removeItem(ADMIN_SESSION_KEY);
-  } catch {
-    // Ignore storage failures (private mode, etc.).
-  }
+  endSession();
 }

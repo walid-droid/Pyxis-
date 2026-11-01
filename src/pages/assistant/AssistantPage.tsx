@@ -3,12 +3,103 @@ import logo from "../../assets/Logo CADM.png";
 import { useI18n } from "../../i18n";
 import "./AssistantPage.css";
 
-type Message = { role: "assistant" | "user"; text: string };
+type Message = {
+  role: "assistant" | "user";
+  text: string;
+  sources?: string[];
+};
 
-// TODO : branchez ici votre API IA. Cette fonction doit renvoyer le texte de la réponse.
-// Tant qu'elle lève une erreur, le chat affiche le message d'erreur ci-dessous.
-async function askAssistant(_question: string): Promise<string> {
-  throw new Error("Assistant IA non connecté");
+type Translate = (key: string, vars?: Record<string, string | number>) => string;
+
+type Topic = {
+  keywords: string[];
+  answerKey: string;
+  sourceKeys: string[];
+};
+
+/**
+ * Base de connaissances locale de démonstration : aucune requête réseau.
+ * L'assistant cite ses sources et ne prend jamais de décision (RG09).
+ */
+const TOPICS: Topic[] = [
+  {
+    keywords: [
+      "crue", "inondation", "oued", "seuil", "vigilance",
+      "فيضان", "وادي", "سومام", "مستوى", "يقظة",
+    ],
+    answerKey: "assistant.answer.flood",
+    sourceKeys: ["assistant.source.bf26", "assistant.source.rg13"],
+  },
+  {
+    keywords: [
+      "renfort", "appui", "moyens", "unité", "unite",
+      "تعزيز", "دعم", "وسائل", "وحدة",
+    ],
+    answerKey: "assistant.answer.reinforcement",
+    sourceKeys: ["assistant.source.procedure", "assistant.source.rg04"],
+  },
+  {
+    keywords: [
+      "victime", "médical", "medical", "santé", "sante", "triage",
+      "ضحايا", "طبي", "صحة", "إسعاف", "فرز",
+    ],
+    answerKey: "assistant.answer.medical",
+    sourceKeys: ["assistant.source.bf10", "assistant.source.rg05"],
+  },
+  {
+    keywords: [
+      "évacuation", "evacuation", "centre", "accueil", "capacité", "capacite",
+      "إجلاء", "استقبال", "مركز", "طاقة", "إشغال",
+    ],
+    answerKey: "assistant.answer.evacuation",
+    sourceKeys: ["assistant.source.bf11", "assistant.source.rg10"],
+  },
+  {
+    keywords: [
+      "route", "pont", "circulation", "réouverture", "reouverture",
+      "طريق", "جسر", "مرور", "إعادة الفتح",
+    ],
+    answerKey: "assistant.answer.road",
+    sourceKeys: ["assistant.source.bf29", "assistant.source.rg14"],
+  },
+  {
+    keywords: [
+      "plan", "orséc", "orsec", "module", "phase", "activation",
+      "خطة", "أورسيك", "مرحلة", "تفعيل",
+    ],
+    answerKey: "assistant.answer.plan",
+    sourceKeys: ["assistant.source.decree", "assistant.source.bf17"],
+  },
+  {
+    keywords: [
+      "alerte", "diffusion", "population", "autorité", "autorite",
+      "إنذار", "بث", "سكان", "سلطة",
+    ],
+    answerKey: "assistant.answer.alert",
+    sourceKeys: ["assistant.source.rg13", "assistant.source.rg09"],
+  },
+];
+
+async function askAssistant(
+  question: string,
+  t: Translate,
+): Promise<{ text: string; sources: string[] }> {
+  const normalized = question.toLowerCase();
+  const topic = TOPICS.find((item) =>
+    item.keywords.some((keyword) => normalized.includes(keyword)),
+  );
+
+  if (!topic) {
+    return {
+      text: t("assistant.answer.generic"),
+      sources: [t("assistant.source.local")],
+    };
+  }
+
+  return {
+    text: t(topic.answerKey),
+    sources: topic.sourceKeys.map((key) => t(key)),
+  };
 }
 
 type AssistantPageProps = {
@@ -59,16 +150,19 @@ export default function AssistantPage({ onClose }: AssistantPageProps) {
     setQuestion("");
     setLoading(true);
 
-    let answer: string;
+    let answer: { text: string; sources: string[] };
     try {
-      answer = await askAssistant(value);
+      answer = await askAssistant(value, t);
     } catch {
-      answer = t("assistant.error");
+      answer = { text: t("assistant.error"), sources: [] };
     }
 
     // Nouvelle conversation ou page quittée pendant l'attente : on n'affiche rien.
     if (id !== requestRef.current) return;
-    setMessages((prev) => [...prev, { role: "assistant", text: answer }]);
+    setMessages((prev) => [
+      ...prev,
+      { role: "assistant", text: answer.text, sources: answer.sources },
+    ]);
     setLoading(false);
   }
 
@@ -164,6 +258,16 @@ export default function AssistantPage({ onClose }: AssistantPageProps) {
                   <div className="assistant-message">
                     <div className="assistant-message-author">{message.role === "user" ? t("assistant.you") : t("assistant.bot")}</div>
                     <p>{message.text}</p>
+                    {message.sources && message.sources.length > 0 ? (
+                      <div className="assistant-sources">
+                        <strong>{t("assistant.sources")}</strong>
+                        <ul>
+                          {message.sources.map((source) => (
+                            <li key={source}>{source}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               ))}

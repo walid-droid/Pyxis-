@@ -1,4 +1,4 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "./organisme.css";
 import { useState } from "react";
 import Modal from "../../components/Modal";
@@ -102,10 +102,12 @@ export default function VehiclePage() {
                   ? "available"
                   : vehicle.status === "engaged"
                     ? "engaged"
-                    : "standby"
+                    : vehicle.status === "out_of_service"
+                      ? "critical"
+                      : "standby"
               }`}
             >
-              {t(`org.vehicle.${vehicle.status}`)}
+              {t(`org.resources.status.${vehicle.status}`)}
             </span>
           </div>
 
@@ -154,7 +156,11 @@ export default function VehiclePage() {
               >
                 <option value="available">{t("org.vehicle.available")}</option>
                 <option value="engaged">{t("org.vehicle.engaged")}</option>
+                <option value="reserve">{t("org.resources.status.reserve")}</option>
                 <option value="maintenance">{t("org.vehicle.maintenance")}</option>
+                <option value="out_of_service">
+                  {t("org.resources.status.out_of_service")}
+                </option>
               </select>
             </div>
             <button

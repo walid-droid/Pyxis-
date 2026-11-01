@@ -1,4 +1,4 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "./authority.css";
 import { Link } from "react-router";
 import StatCard from "../../components/StatCard";
@@ -43,33 +43,33 @@ function AuthoritySituationPage() {
             </span>
           </div>
         </div>
-      </section>
 
-      <section className="stat-grid" aria-label={t("authority.situation.statsLabel")}>
-        <StatCard
-          value="26"
-          label={t("authority.situation.statIncidents")}
-          badge={t("authority.situation.statIncidentsBadge")}
-          badgeTone="danger"
-        />
-        <StatCard
-          value="42"
-          label={t("authority.situation.statTeams")}
-          badge={t("authority.situation.statTeamsBadge")}
-          badgeTone="info"
-        />
-        <StatCard
-          value="6"
-          label={t("authority.situation.statWilayas")}
-          badge={t("authority.situation.statWilayasBadge")}
-          badgeTone="success"
-        />
-        <StatCard
-          value="3"
-          label={t("authority.situation.statAlerts")}
-          badge={t("authority.situation.statAlertsBadge")}
-          badgeTone="warning"
-        />
+        <section className="stat-grid" aria-label={t("authority.situation.statsLabel")}>
+          <StatCard
+            value="26"
+            label={t("authority.situation.statIncidents")}
+            badge={t("authority.situation.statIncidentsBadge")}
+            badgeTone="danger"
+          />
+          <StatCard
+            value="42"
+            label={t("authority.situation.statTeams")}
+            badge={t("authority.situation.statTeamsBadge")}
+            badgeTone="info"
+          />
+          <StatCard
+            value="6"
+            label={t("authority.situation.statWilayas")}
+            badge={t("authority.situation.statWilayasBadge")}
+            badgeTone="success"
+          />
+          <StatCard
+            value="3"
+            label={t("authority.situation.statAlerts")}
+            badge={t("authority.situation.statAlertsBadge")}
+            badgeTone="warning"
+          />
+        </section>
       </section>
 
       <article className="rc-card">

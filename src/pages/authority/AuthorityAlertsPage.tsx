@@ -1,4 +1,4 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "../organisme/organisme.css";
 import "./authority.css";
 import { useState } from "react";
@@ -155,6 +155,33 @@ export default function AuthorityAlertsPage() {
             <span className="rc-chip">{t("authority.alerts.rule")}</span>
           </div>
         </div>
+
+        <section className="stat-grid" aria-label={t("authority.alerts.title")}>
+          <StatCard
+            value={String(proposed)}
+            label={t("authority.alerts.statProposed")}
+            badge={t("authority.alerts.statProposedBadge")}
+            badgeTone={proposed > 0 ? "warning" : "success"}
+          />
+          <StatCard
+            value={String(validated)}
+            label={t("authority.alerts.statValidated")}
+            badge={t("authority.alerts.statValidatedBadge")}
+            badgeTone="success"
+          />
+          <StatCard
+            value={String(delegated)}
+            label={t("authority.alerts.statDelegated")}
+            badge={t("authority.alerts.statDelegatedBadge")}
+            badgeTone="info"
+          />
+          <StatCard
+            value={String(alerts.length)}
+            label={t("authority.alerts.title")}
+            badge={t("authority.alerts.eyebrow")}
+            badgeTone="neutral"
+          />
+        </section>
       </div>
 
       {toast ? (
@@ -162,33 +189,6 @@ export default function AuthorityAlertsPage() {
           {toast}
         </p>
       ) : null}
-
-      <section className="stat-grid" aria-label={t("authority.alerts.title")}>
-        <StatCard
-          value={String(proposed)}
-          label={t("authority.alerts.statProposed")}
-          badge={t("authority.alerts.statProposedBadge")}
-          badgeTone={proposed > 0 ? "warning" : "success"}
-        />
-        <StatCard
-          value={String(validated)}
-          label={t("authority.alerts.statValidated")}
-          badge={t("authority.alerts.statValidatedBadge")}
-          badgeTone="success"
-        />
-        <StatCard
-          value={String(delegated)}
-          label={t("authority.alerts.statDelegated")}
-          badge={t("authority.alerts.statDelegatedBadge")}
-          badgeTone="info"
-        />
-        <StatCard
-          value={String(alerts.length)}
-          label={t("authority.alerts.title")}
-          badge={t("authority.alerts.eyebrow")}
-          badgeTone="neutral"
-        />
-      </section>
 
       <article className="rc-card">
         <div className="rc-card__head">

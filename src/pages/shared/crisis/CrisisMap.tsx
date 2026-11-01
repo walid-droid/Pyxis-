@@ -14,8 +14,8 @@ import {
   type Marker as LeafletMarker,
 } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useI18n } from "../../i18n";
-import type { Coords } from "../../mockdata/locations";
+import { useI18n } from "../../../i18n";
+import type { Coords } from "../../../mockdata/locations";
 
 export type MapPinTone =
   | "incident"

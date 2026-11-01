@@ -1,4 +1,4 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "./site.css";
 import { Link } from "react-router";
 import { SITE_DASHBOARD_PATH } from "../../config";

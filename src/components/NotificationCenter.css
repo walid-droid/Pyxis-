@@ -1,0 +1,229 @@
+/* =========================================================
+   Centre de notifications — cloche et panneau déroulant
+   ========================================================= */
+
+.notif {
+  position: relative;
+  display: inline-flex;
+}
+
+.notif__bell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--nav-glass-border);
+  border-radius: var(--radius-button);
+  background: var(--nav-control-bg);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.notif__bell:hover,
+.notif__bell.is-open {
+  background: var(--nav-control-hover);
+  color: var(--color-brand);
+}
+
+.notif__bell svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Compteur des notifications non lues. */
+.notif__count {
+  position: absolute;
+  inset-block-start: -5px;
+  inset-inline-end: -5px;
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-pill);
+  background: var(--color-danger);
+  color: #fff;
+  font-size: 0.63rem;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 0 0 2px var(--color-surface);
+}
+
+.notif__panel {
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block-start: calc(100% + 10px);
+  z-index: 220;
+  width: min(360px, calc(100vw - 32px));
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-raised);
+}
+
+.notif__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.notif__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  color: var(--color-text);
+}
+
+.notif__unread {
+  color: var(--color-danger);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.notif__list {
+  max-height: min(60vh, 420px);
+  margin: 0;
+  padding: 6px;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.notif__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 10px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition: background-color 140ms ease;
+}
+
+.notif__item:hover {
+  background: var(--color-surface-muted);
+}
+
+.notif__item.is-read {
+  opacity: 0.62;
+}
+
+.notif__dot {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--color-text-muted);
+}
+
+.notif__dot--alert {
+  background: var(--color-danger);
+}
+
+.notif__dot--mission {
+  background: #3b82f6;
+}
+
+.notif__dot--reinforcement {
+  background: var(--color-warning);
+}
+
+.notif__dot--plan {
+  background: var(--color-green);
+}
+
+.notif__body {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.notif__item-title {
+  color: var(--color-text);
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.notif__item-detail {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.notif__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  color: var(--color-text-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.notif__kind {
+  color: var(--color-brand);
+}
+
+.notif__empty {
+  margin: 0;
+  padding: 26px 18px;
+  color: var(--color-text-muted);
+  font-size: 0.84rem;
+  text-align: center;
+}
+
+.notif__foot {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 12px 12px;
+  border-top: 1px solid var(--color-border);
+}
+
+.notif__mark {
+  padding: 6px 10px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--color-brand);
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.notif__mark:hover:not(:disabled) {
+  background: var(--color-brand-soft);
+}
+
+.notif__mark:disabled {
+  color: var(--color-text-muted);
+  cursor: default;
+  opacity: 0.6;
+}
+
+@media (max-width: 560px) {
+  .notif__panel {
+    position: fixed;
+    inset-inline: 12px;
+    inset-block-start: 72px;
+    width: auto;
+  }
+}

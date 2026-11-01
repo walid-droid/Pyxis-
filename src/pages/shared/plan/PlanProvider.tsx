@@ -3,11 +3,13 @@ import {
   ORSEC_MODULES,
   PEOPLE,
   initialPlans,
+  isSituationTransitionAllowed,
   recipientsFor,
   type Activation,
   type OrsecPlan,
   type PlanLevel,
   type PlanReport,
+  type SituationTransition,
 } from "./orsecPlan";
 import { PlanContext, type PlanContextValue } from "./PlanContext";
 
@@ -30,6 +32,10 @@ function dateLabel(): string {
     month: "2-digit",
     year: "numeric",
   });
+}
+
+function dateTimeLabel(): string {
+  return `${dateLabel()} · ${timeLabel()}`;
 }
 
 let reportSequence = 0;
@@ -83,6 +89,7 @@ export function PlanProvider({ children }: { children: ReactNode }) {
         return {
           ...plan,
           status: "alert",
+          situation: "B",
           liftedAt: null,
           log: [
             {
@@ -119,6 +126,7 @@ export function PlanProvider({ children }: { children: ReactNode }) {
           ...plan,
           status: "active",
           phase: "urgence",
+          situation: "C",
           activation,
           liftedAt: null,
           log: [
@@ -174,8 +182,24 @@ export function PlanProvider({ children }: { children: ReactNode }) {
         return {
           ...plan,
           status: "approved",
-          phase: null,
+          phase: "evaluation",
+          situation: "E",
           liftedAt: at,
+          transitions: [
+            {
+              id: nextId("sit"),
+              from: plan.situation,
+              to: "E",
+              at: `${at} · ${timeLabel()}`,
+              by: "Autorité compétente",
+              assignmentId: "aff-autorite",
+              role: "wali",
+              justification: "Fin des opérations de secours, ouverture de l'évaluation.",
+              signatureHash: nextId("sig").slice(-8),
+              moduleIds: plan.activation?.moduleIds ?? [],
+            },
+            ...plan.transitions,
+          ],
           reports: [report, ...plan.reports],
           log: [
             {
@@ -190,6 +214,113 @@ export function PlanProvider({ children }: { children: ReactNode }) {
       });
     },
     [update],
+  );
+
+  const setSituation = useCallback<PlanContextValue["setSituation"]>(
+    (level, to, payload) => {
+      update(level, (plan) => {
+        if (plan.situation === to) return plan;
+        if (!isSituationTransitionAllowed(plan.situation, to)) return plan;
+        const at = dateTimeLabel();
+        const moduleIds =
+          payload.moduleIds ??
+          plan.activation?.moduleIds ??
+          ORSEC_MODULES.map((module) => module.id);
+        const transition: SituationTransition = {
+          id: nextId("sit"),
+          from: plan.situation,
+          to,
+          at,
+          by: payload.by,
+          role: payload.role,
+          assignmentId: payload.assignmentId,
+          justification: payload.justification,
+          signatureHash: payload.signatureHash,
+          source: payload.source,
+          moduleIds,
+          emergency: payload.emergency,
+        };
+
+        let status = plan.status;
+        let phase: OrsecPlan["phase"] = plan.phase;
+        let liftedAt = plan.liftedAt;
+        let activation = plan.activation;
+
+        if (to === "C") {
+          status = "active";
+          phase = "urgence";
+          liftedAt = null;
+          activation =
+            activation ??
+            {
+              id: nextId("act"),
+              at,
+              by: payload.by,
+              reason: "occurrence",
+              incidentIds: [1],
+              moduleIds,
+              phase: "urgence",
+              pcf: level === "commune" || level === "wilaya",
+              pco: level === "commune" || level === "wilaya",
+              recipients: recipientsFor(level),
+            };
+        } else if (to === "B") {
+          status = plan.status === "approved" ? "alert" : plan.status;
+          phase = null;
+          liftedAt = null;
+        } else if (to === "D") {
+          status = "active";
+          phase = "urgence";
+        } else if (to === "E") {
+          status = "approved";
+          phase = "evaluation";
+          liftedAt = plan.liftedAt ?? dateLabel();
+        } else if (to === "A") {
+          status = "approved";
+          phase = null;
+          liftedAt = plan.liftedAt ?? dateLabel();
+        }
+
+        return {
+          ...plan,
+          status,
+          phase,
+          situation: to,
+          liftedAt,
+          activation,
+          transitions: [transition, ...plan.transitions],
+          log: [
+            {
+              id: nextId("log"),
+              at,
+              actionKey: "orsec.log.situationChanged",
+              subject: `Situation ${to}`,
+              assignmentId: payload.assignmentId,
+              hash: transition.signatureHash,
+            },
+            ...plan.log,
+          ],
+        };
+      });
+    },
+    [update],
+  );
+
+  const closeRecovery = useCallback<PlanContextValue["closeRecovery"]>(
+    (level, by) => {
+      const plan = plans[level];
+      if (plan.situation !== "E") return;
+      setSituation(level, "A", {
+        by,
+        role: "authority",
+        assignmentId: "aff-autorite",
+        justification:
+          "Dossier 25-61 transmis, plan de décombres validé et RETEX clos.",
+        signatureHash: nextId("sig").slice(-8),
+        moduleIds: [],
+      });
+    },
+    [plans, setSituation],
   );
 
   const designate = useCallback<PlanContextValue["designate"]>(
@@ -264,6 +395,8 @@ export function PlanProvider({ children }: { children: ReactNode }) {
       setAlert,
       activate,
       setPhase,
+      setSituation,
+      closeRecovery,
       lift,
       designate,
       sendReport,
@@ -274,6 +407,8 @@ export function PlanProvider({ children }: { children: ReactNode }) {
       setAlert,
       activate,
       setPhase,
+      setSituation,
+      closeRecovery,
       lift,
       designate,
       sendReport,

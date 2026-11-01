@@ -12,6 +12,7 @@ export type ReportType =
   | "accident"
   | "storm"
   | "landslide"
+  | "agricultural"
   | "other";
 
 export type ReportSeverity = "low" | "medium" | "high" | "critical";

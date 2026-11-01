@@ -1,8 +1,10 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "./organisme.css";
 import { useState } from "react";
+import { Link } from "react-router";
 import Modal from "../../components/Modal";
 import StatCard from "../../components/StatCard";
+import { ORG_REINFORCEMENTS_PATH } from "../../config";
 import { useI18n } from "../../i18n";
 import OrgHero from "./OrgHero";
 import {
@@ -10,6 +12,7 @@ import {
   HEALTH_FACILITIES,
   VICTIMS,
   loc,
+  type HealthFacility,
   type Triage,
   type Victim,
   type VictimStatus,
@@ -41,6 +44,7 @@ function statusTone(status: VictimStatus): string {
 export default function VictimsPage() {
   const { t, lang } = useI18n();
   const [victims, setVictims] = useState<Victim[]>(VICTIMS);
+  const [facilities, setFacilities] = useState<HealthFacility[]>(HEALTH_FACILITIES);
   const [modal, setModal] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
@@ -60,6 +64,24 @@ export default function VictimsPage() {
   const updateVictim = (id: string, patch: Partial<Victim>) => {
     setVictims((current) =>
       current.map((victim) => (victim.id === id ? { ...victim, ...patch } : victim)),
+    );
+    setToast(t("org.victims.updated"));
+  };
+
+  const updateFacility = (id: string, patch: Partial<HealthFacility>) => {
+    setFacilities((current) =>
+      current.map((facility) =>
+        facility.id === id
+          ? {
+              ...facility,
+              ...patch,
+              occupied:
+                patch.occupied !== undefined
+                  ? Math.max(0, Math.min(facility.beds, patch.occupied))
+                  : facility.occupied,
+            }
+          : facility,
+      ),
     );
     setToast(t("org.victims.updated"));
   };
@@ -107,13 +129,12 @@ export default function VictimsPage() {
         }
         aside={
           <>
-            <button
-              type="button"
+            <Link
               className="rc-btn rc-btn--ghost"
-              onClick={() => setToast(t("org.victims.medicalRequested"))}
+              to={ORG_REINFORCEMENTS_PATH}
             >
               {t("org.victims.requestMedical")}
-            </button>
+            </Link>
             <button
               type="button"
               className="rc-btn rc-btn--primary"
@@ -123,6 +144,34 @@ export default function VictimsPage() {
             </button>
           </>
         }
+        stats={
+          <section className="stat-grid" aria-label={t("org.victims.title")}>
+            <StatCard
+              value={String(victims.length)}
+              label={t("org.victims.statTotal")}
+              badge={t("org.victims.eyebrow")}
+              badgeTone="info"
+            />
+            <StatCard
+              value={String(urgent)}
+              label={t("org.victims.statUrgent")}
+              badge={t("org.victims.triage.absolute")}
+              badgeTone={urgent > 0 ? "danger" : "success"}
+            />
+            <StatCard
+              value={String(hospitalized)}
+              label={t("org.victims.statHospital")}
+              badge={t("org.victims.status.evacuated")}
+              badgeTone="success"
+            />
+            <StatCard
+              value={String(freeAmbulances)}
+              label={t("org.victims.statAmbulances")}
+              badge={t("org.resources.status.available")}
+              badgeTone={freeAmbulances > 0 ? "success" : "warning"}
+            />
+          </section>
+        }
       />
 
       {toast ? (
@@ -131,32 +180,9 @@ export default function VictimsPage() {
         </p>
       ) : null}
 
-      <section className="stat-grid" aria-label={t("org.victims.title")}>
-        <StatCard
-          value={String(victims.length)}
-          label={t("org.victims.statTotal")}
-          badge={t("org.victims.eyebrow")}
-          badgeTone="info"
-        />
-        <StatCard
-          value={String(urgent)}
-          label={t("org.victims.statUrgent")}
-          badge={t("org.victims.triage.absolute")}
-          badgeTone={urgent > 0 ? "danger" : "success"}
-        />
-        <StatCard
-          value={String(hospitalized)}
-          label={t("org.victims.statHospital")}
-          badge={t("org.victims.status.evacuated")}
-          badgeTone="success"
-        />
-        <StatCard
-          value={String(freeAmbulances)}
-          label={t("org.victims.statAmbulances")}
-          badge={t("org.resources.status.available")}
-          badgeTone={freeAmbulances > 0 ? "success" : "warning"}
-        />
-      </section>
+      <p className="org-note" role="note">
+        {t("org.victims.confidentiality")}
+      </p>
 
       <article className="rc-card">
         <div className="rc-card__head">
@@ -300,7 +326,7 @@ export default function VictimsPage() {
           <span className="rc-card__hint">{t("org.victims.healthLead")}</span>
         </div>
         <ul className="org-zone-list">
-          {HEALTH_FACILITIES.map((facility) => {
+          {facilities.map((facility) => {
             const ratio = Math.round((facility.occupied / facility.beds) * 100);
             return (
               <li key={facility.id} className="org-zone">
@@ -331,10 +357,37 @@ export default function VictimsPage() {
                     />
                   </div>
                 </div>
-                <p className="org-meta">
-                  {t("org.victims.orientation")} :{" "}
-                  {loc(lang, facility.orientation)}
-                </p>
+                <div className="org-inline-field">
+                  <label htmlFor={`facility-occupied-${facility.id}`}>
+                    {t("org.victims.occupied")}
+                  </label>
+                  <input
+                    id={`facility-occupied-${facility.id}`}
+                    type="number"
+                    min={0}
+                    max={facility.beds}
+                    value={facility.occupied}
+                    onChange={(event) =>
+                      updateFacility(facility.id, {
+                        occupied: Number(event.target.value),
+                      })
+                    }
+                  />
+                </div>
+                <div className="org-inline-field">
+                  <label htmlFor={`facility-orientation-${facility.id}`}>
+                    {t("org.victims.orientation")}
+                  </label>
+                  <input
+                    id={`facility-orientation-${facility.id}`}
+                    value={loc(lang, facility.orientation)}
+                    onChange={(event) =>
+                      updateFacility(facility.id, {
+                        orientation: { fr: event.target.value, ar: event.target.value },
+                      })
+                    }
+                  />
+                </div>
               </li>
             );
           })}

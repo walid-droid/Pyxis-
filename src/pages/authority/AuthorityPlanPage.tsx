@@ -1,4 +1,4 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "./authority.css";
 import "../shared/plan/plan.css";
 import { useState } from "react";
@@ -28,9 +28,9 @@ import {
   type PlanStatus,
 } from "../shared/plan/orsecPlan";
 
-type AuthorityLevel = "commune" | "wilaya" | "national";
+import { useAuthorityLevel } from "../../auth/useAuthorityLevel";
 
-const LEVELS: AuthorityLevel[] = ["commune", "wilaya", "national"];
+type AuthorityLevel = "commune" | "wilaya" | "national";
 
 const ACTOR: Record<AuthorityLevel, string> = {
   commune: "Président de l'APC de Béjaïa",
@@ -145,7 +145,10 @@ const NATIONAL_WILAYAS: { name: string; state: WilayaState; at: string }[] = [
 function AuthorityPlanPage() {
   const { t } = useI18n();
   const { plans, sendReport } = useOrsecPlans();
-  const [level, setLevel] = useState<AuthorityLevel>("wilaya");
+  // Chaque autorité n'agit que sur son propre niveau de plan (RG-O01).
+  const ownLevel = useAuthorityLevel();
+  const LEVELS: AuthorityLevel[] = [ownLevel];
+  const [level, setLevel] = useState<AuthorityLevel>(ownLevel);
   const [dialog, setDialog] = useState<DialogState>(null);
   const [attachments, setAttachments] = useState<Attachment[]>(ATTACHMENTS);
   const [escalations, setEscalations] =
@@ -278,6 +281,55 @@ function AuthorityPlanPage() {
             </>
           ) : null}
         </div>
+
+        <section className="stat-grid" aria-label={t("authority.plan.statsLabel")}>
+          <StatCard
+            value={t(`orsec.statusShort.${plan.status}`)}
+            label={t("authority.plan.statState")}
+            badge={
+              plan.status === "active" && plan.phase
+                ? t(`orsec.phase.${plan.phase}`)
+                : t(`orsec.level.${level}`)
+            }
+            badgeTone={STAT_TONE[plan.status]}
+          />
+          <StatCard
+            value={
+              level === "national"
+                ? "—"
+                : `${designated}/${totalModules}`
+            }
+            label={t("authority.plan.statModules")}
+            badge={
+              level === "national"
+                ? t("orsec.status.notApplicable")
+                : missing > 0
+                  ? t("orsec.modules.missingShort", { count: missing })
+                  : t("orsec.modules.allDesignated")
+            }
+            badgeTone={
+              level === "national"
+                ? "neutral"
+                : missing > 0
+                  ? "warning"
+                  : "success"
+            }
+          />
+          <StatCard
+            value={String(drafts)}
+            label={t("authority.plan.statReports")}
+            badge={t(
+              drafts > 0 ? "orsec.report.statBadge" : "orsec.report.allSent",
+            )}
+            badgeTone={drafts > 0 ? "warning" : "success"}
+          />
+          <StatCard
+            value={plan.revisionDue}
+            label={t("authority.plan.statReview")}
+            badge={t("orsec.fact.revisionBadge")}
+            badgeTone="neutral"
+          />
+        </section>
       </section>
 
       <section className="orsec-toolbar">
@@ -316,55 +368,6 @@ function AuthorityPlanPage() {
           <span className="rc-card__hint">{t("orsec.lifecycle.lead")}</span>
         </div>
         <PlanStepper plan={plan} />
-      </section>
-
-      <section className="stat-grid" aria-label={t("authority.plan.statsLabel")}>
-        <StatCard
-          value={t(`orsec.statusShort.${plan.status}`)}
-          label={t("authority.plan.statState")}
-          badge={
-            plan.status === "active" && plan.phase
-              ? t(`orsec.phase.${plan.phase}`)
-              : t(`orsec.level.${level}`)
-          }
-          badgeTone={STAT_TONE[plan.status]}
-        />
-        <StatCard
-          value={
-            level === "national"
-              ? "—"
-              : `${designated}/${totalModules}`
-          }
-          label={t("authority.plan.statModules")}
-          badge={
-            level === "national"
-              ? t("orsec.status.notApplicable")
-              : missing > 0
-                ? t("orsec.modules.missingShort", { count: missing })
-                : t("orsec.modules.allDesignated")
-          }
-          badgeTone={
-            level === "national"
-              ? "neutral"
-              : missing > 0
-                ? "warning"
-                : "success"
-          }
-        />
-        <StatCard
-          value={String(drafts)}
-          label={t("authority.plan.statReports")}
-          badge={t(
-            drafts > 0 ? "orsec.report.statBadge" : "orsec.report.allSent",
-          )}
-          badgeTone={drafts > 0 ? "warning" : "success"}
-        />
-        <StatCard
-          value={plan.revisionDue}
-          label={t("authority.plan.statReview")}
-          badge={t("orsec.fact.revisionBadge")}
-          badgeTone="neutral"
-        />
       </section>
 
       <section className="rc-grid rc-grid--main">

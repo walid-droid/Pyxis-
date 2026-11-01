@@ -1,4 +1,4 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "./site.css";
 import type { ReactNode } from "react";
 import { Link } from "react-router";
@@ -131,33 +131,33 @@ function SiteDashboard() {
             {t("site.dash.openPlan")}
           </Link>
         </div>
-      </section>
 
-      <section className="stat-grid" aria-label={t("site.dash.statsLabel")}>
-        <StatCard
-          value={t("site.dash.statPlanValue")}
-          label={t("site.dash.statPlan")}
-          badge={t("site.dash.statPlanBadge")}
-          badgeTone="success"
-        />
-        <StatCard
-          value="2/4"
-          label={t("site.dash.statSimulations")}
-          badge={t("site.dash.statSimulationsBadge")}
-          badgeTone="warning"
-        />
-        <StatCard
-          value="1 240"
-          label={t("site.dash.statPeople")}
-          badge={t("site.dash.statPeopleBadge")}
-          badgeTone="info"
-        />
-        <StatCard
-          value={t("site.dash.statInspectionValue")}
-          label={t("site.dash.statInspection")}
-          badge={t("site.dash.statInspectionBadge")}
-          badgeTone="success"
-        />
+        <section className="stat-grid" aria-label={t("site.dash.statsLabel")}>
+          <StatCard
+            value={t("site.dash.statPlanValue")}
+            label={t("site.dash.statPlan")}
+            badge={t("site.dash.statPlanBadge")}
+            badgeTone="success"
+          />
+          <StatCard
+            value="2/4"
+            label={t("site.dash.statSimulations")}
+            badge={t("site.dash.statSimulationsBadge")}
+            badgeTone="warning"
+          />
+          <StatCard
+            value="1 240"
+            label={t("site.dash.statPeople")}
+            badge={t("site.dash.statPeopleBadge")}
+            badgeTone="info"
+          />
+          <StatCard
+            value={t("site.dash.statInspectionValue")}
+            label={t("site.dash.statInspection")}
+            badge={t("site.dash.statInspectionBadge")}
+            badgeTone="success"
+          />
+        </section>
       </section>
 
       <section className="rc-quick" aria-labelledby="site-quick-title">

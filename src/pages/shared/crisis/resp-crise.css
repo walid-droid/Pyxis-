@@ -155,6 +155,154 @@
   gap: 10px;
 }
 
+/* ---------- Compteurs en pastilles ovales dans le bandeau photo ----------
+   Une seule rangée : chaque compteur occupe une part égale de la largeur,
+   en pilule translucide (chiffre au-dessus, libellé et commentaire dessous). */
+
+.rc-hero > .stat-grid {
+  flex: 1 0 100%;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  align-items: stretch;
+  gap: 10px;
+  min-width: 0;
+  margin: 0;
+  padding-top: clamp(12px, 1.8vw, 18px);
+}
+
+.rc-hero > .stat-grid .stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 3px;
+  min-width: 0;
+  padding: clamp(7px, 1vw, 10px) clamp(12px, 1.4vw, 18px);
+  border: 1px solid rgb(255 255 255 / 24%);
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 10%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 12%), 0 10px 24px -18px rgb(0 0 0 / 70%);
+  color: #fff;
+}
+
+.rc-hero > .stat-grid .stat-card__value {
+  order: 1;
+  color: #fff;
+  font-size: clamp(1.05rem, 0.8rem + 0.5vw, 1.3rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 10px 24px rgb(0 0 0 / 40%);
+}
+
+.rc-hero > .stat-grid .stat-card__label {
+  order: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 1px 8px;
+  min-width: 0;
+  color: rgb(255 255 255 / 82%);
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+/* Le commentaire reste une légende discrète, précédée d'une pastille de
+   couleur : la pilule garde sa taille d'ovale. */
+.rc-hero > .stat-grid .stat-card .stat-card__badge {
+  display: inline;
+  max-width: 100%;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  color: rgb(255 255 255 / 66%);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  text-transform: none;
+  overflow-wrap: anywhere;
+}
+
+.rc-hero > .stat-grid .stat-card__badge::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-inline-end: 6px;
+  border-radius: 50%;
+  background: var(--hero-badge-dot, rgb(255 255 255 / 55%));
+  vertical-align: 1px;
+}
+
+.rc-hero > .stat-grid .stat-card__badge--danger {
+  --hero-badge-dot: #ff7468;
+}
+
+.rc-hero > .stat-grid .stat-card__badge--success {
+  --hero-badge-dot: #8fd3b6;
+}
+
+.rc-hero > .stat-grid .stat-card__badge--warning {
+  --hero-badge-dot: #ffb020;
+}
+
+.rc-hero > .stat-grid .stat-card__badge--info {
+  --hero-badge-dot: #93b4ff;
+}
+
+/* Commentaire trop long pour tenir dans un ovale : la phrase est déjà
+   reprise dans le corps de la page, on ne garde que chiffre + libellé. */
+.rc-hero > .stat-grid .stat-card .stat-card__badge--long {
+  display: none;
+}
+
+.rc-hero > .stat-grid .stat-card__hint {
+  order: 3;
+  color: #ffb4ab;
+  font-size: 0.68rem;
+}
+
+/* Pastilles cliquables : le contour s'éclaire au survol, sans déplacement. */
+.rc-hero > .stat-grid button.stat-card {
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.rc-hero > .stat-grid button.stat-card:hover {
+  transform: none;
+  border-color: rgb(255 255 255 / 45%);
+  background: rgb(255 255 255 / 16%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 14%);
+}
+
+.rc-hero > .stat-grid button.stat-card:hover .stat-card__value {
+  color: #ffdad5;
+}
+
+.rc-hero > .stat-grid button.stat-card:focus-visible {
+  outline: 2px solid #ffb4ab;
+  outline-offset: 3px;
+}
+
+@media (max-width: 560px) {
+  .rc-hero > .stat-grid {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .rc-hero > .stat-grid .stat-card {
+    padding: 7px 14px;
+  }
+
+  .rc-hero > .stat-grid .stat-card__label {
+    font-size: 0.7rem;
+  }
+}
+
 /* ---------- Boutons (même forme que le tableau de bord) ---------- */
 
 .rc-btn {

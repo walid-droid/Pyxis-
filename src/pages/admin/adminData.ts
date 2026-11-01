@@ -3,9 +3,13 @@
  * Aucune de ces données n'est reliée à un backend : elles alimentent
  * uniquement l'interface et les interactions du prototype.
  *
- * Le catalogue de rôles suit le changement OC-02 : 18 rôles répartis en
- * quatre familles, un compte portant un seul rôle.
+ * Le catalogue de rôles est généré depuis auth/roles.ts (22 rôles, quatre
+ * familles, un compte portant un seul rôle) et suit le document
+ * « Organisation des acteurs selon le plan ORSEC ».
  */
+
+import { ROLE_PERMISSIONS, type Permission as OpPermission } from "../../auth/permissions";
+import { ROLES, ROLE_DEFS, type Role } from "../../auth/roles";
 
 export type BadgeTone =
   | "neutral"
@@ -121,12 +125,89 @@ export const PERMISSION_GROUPS: PermissionGroup[] = [
       { id: "audit.view", labelKey: "admin.perm.auditView" },
       { id: "audit.export", labelKey: "admin.perm.auditExport" },
     ],
+  },  {
+    id: "orsecAdmin",
+    labelKey: "admin.perm.group.orsecAdmin",
+    permissions: [
+      { id: "CREER_COMPTE", labelKey: "admin.perm.op.CREER_COMPTE" },
+      { id: "ATTRIBUER_ROLE", labelKey: "admin.perm.op.ATTRIBUER_ROLE" },
+      { id: "GERER_TERRITOIRES", labelKey: "admin.perm.op.GERER_TERRITOIRES" },
+      { id: "GERER_ORGANISMES", labelKey: "admin.perm.op.GERER_ORGANISMES" },
+      { id: "RATTACHER_COMPTE", labelKey: "admin.perm.op.RATTACHER_COMPTE" },
+      { id: "PARAMETRER_MODULES", labelKey: "admin.perm.op.PARAMETRER_MODULES" },
+      { id: "GERER_PERMISSIONS", labelKey: "admin.perm.op.GERER_PERMISSIONS" },
+    ],
+  },
+  {
+    id: "orsecReports",
+    labelKey: "admin.perm.group.orsecReports",
+    permissions: [
+      { id: "CREER_SIGNALEMENT", labelKey: "admin.perm.op.CREER_SIGNALEMENT" },
+      { id: "CONSULTER_SIGNALEMENT", labelKey: "admin.perm.op.CONSULTER_SIGNALEMENT" },
+      { id: "VALIDER_SIGNALEMENT", labelKey: "admin.perm.op.VALIDER_SIGNALEMENT" },
+      { id: "MODIFIER_GRAVITE", labelKey: "admin.perm.op.MODIFIER_GRAVITE" },
+      { id: "CONSULTER_INCIDENTS_TERRITOIRE", labelKey: "admin.perm.op.CONSULTER_INCIDENTS_TERRITOIRE" },
+      { id: "SURVEILLER_RISQUES", labelKey: "admin.perm.op.SURVEILLER_RISQUES" },
+      { id: "SAISIR_NIVEAUX_EAU", labelKey: "admin.perm.op.SAISIR_NIVEAUX_EAU" },
+      { id: "SURVEILLER_MARITIME", labelKey: "admin.perm.op.SURVEILLER_MARITIME" },
+      { id: "VALIDER_ALERTE", labelKey: "admin.perm.op.VALIDER_ALERTE" },
+    ],
+  },
+  {
+    id: "orsecField",
+    labelKey: "admin.perm.group.orsecField",
+    permissions: [
+      { id: "GERER_EQUIPES", labelKey: "admin.perm.op.GERER_EQUIPES" },
+      { id: "RECENSER_MOYENS", labelKey: "admin.perm.op.RECENSER_MOYENS" },
+      { id: "CREER_MISSION", labelKey: "admin.perm.op.CREER_MISSION" },
+      { id: "EXECUTER_MISSION", labelKey: "admin.perm.op.EXECUTER_MISSION" },
+      { id: "SUIVRE_VEHICULE", labelKey: "admin.perm.op.SUIVRE_VEHICULE" },
+      { id: "SECURISER_ZONES", labelKey: "admin.perm.op.SECURISER_ZONES" },
+      { id: "CONFIRMER_REOUVERTURE_ROUTE", labelKey: "admin.perm.op.CONFIRMER_REOUVERTURE_ROUTE" },
+      { id: "SUIVRE_VICTIMES", labelKey: "admin.perm.op.SUIVRE_VICTIMES" },
+      { id: "GERER_EVACUATIONS", labelKey: "admin.perm.op.GERER_EVACUATIONS" },
+    ],
+  },
+  {
+    id: "orsecPlan",
+    labelKey: "admin.perm.group.orsecPlan",
+    permissions: [
+      { id: "SAISIR_PLAN", labelKey: "admin.perm.op.SAISIR_PLAN" },
+      { id: "APPROUVER_PLAN", labelKey: "admin.perm.op.APPROUVER_PLAN" },
+      { id: "METTRE_EN_ALERTE_PLAN", labelKey: "admin.perm.op.METTRE_EN_ALERTE_PLAN" },
+      { id: "DECLENCHER_PLAN", labelKey: "admin.perm.op.DECLENCHER_PLAN" },
+      { id: "LEVER_PLAN", labelKey: "admin.perm.op.LEVER_PLAN" },
+      { id: "DEMANDER_DECLENCHEMENT", labelKey: "admin.perm.op.DEMANDER_DECLENCHEMENT" },
+      { id: "DEMANDER_APPUI_LIMITROPHE", labelKey: "admin.perm.op.DEMANDER_APPUI_LIMITROPHE" },
+      { id: "DESIGNER_FONCTION", labelKey: "admin.perm.op.DESIGNER_FONCTION" },
+      { id: "HABILITER_PERSONNE", labelKey: "admin.perm.op.HABILITER_PERSONNE" },
+      { id: "PROGRAMMER_SIMULATION", labelKey: "admin.perm.op.PROGRAMMER_SIMULATION" },
+      { id: "ETABLIR_RAPPORT", labelKey: "admin.perm.op.ETABLIR_RAPPORT" },
+    ],
+  },
+  {
+    id: "orsecCommand",
+    labelKey: "admin.perm.group.orsecCommand",
+    permissions: [
+      { id: "VOIR_PCF", labelKey: "admin.perm.op.VOIR_PCF" },
+      { id: "CONSOLE_PCO", labelKey: "admin.perm.op.CONSOLE_PCO" },
+      { id: "CHANGER_PHASE", labelKey: "admin.perm.op.CHANGER_PHASE" },
+      { id: "DEMANDER_RENFORT", labelKey: "admin.perm.op.DEMANDER_RENFORT" },
+      { id: "TRANSMETTRE_RENFORT", labelKey: "admin.perm.op.TRANSMETTRE_RENFORT" },
+      { id: "TRAITER_RENFORT", labelKey: "admin.perm.op.TRAITER_RENFORT" },
+      { id: "CONSULTER_HISTORIQUE", labelKey: "admin.perm.op.CONSULTER_HISTORIQUE" },
+    ],
   },
 ];
 
 export const ALL_PERMISSIONS: string[] = PERMISSION_GROUPS.flatMap((group) =>
   group.permissions.map((permission) => permission.id),
 );
+
+/** Permissions propres à l'administration du système (hors fonctions ORSEC). */
+export const ADMIN_SYSTEM_PERMISSIONS: string[] = PERMISSION_GROUPS.filter(
+  (group) => !group.id.startsWith("orsec"),
+).flatMap((group) => group.permissions.map((permission) => permission.id));
 
 export function permissionLabelKey(id: string): string {
   for (const group of PERMISSION_GROUPS) {
@@ -137,7 +218,7 @@ export function permissionLabelKey(id: string): string {
 }
 
 /* ------------------------------------------------------------------ */
-/* Rôles — catalogue OC-02 (18 rôles, 4 familles)                      */
+/* Rôles — catalogue unique (22 rôles, 4 familles)                     */
 /* ------------------------------------------------------------------ */
 
 export type RoleFamily = "population" | "gestion" | "autorites" | "terrain";
@@ -166,321 +247,33 @@ export type AdminRole = {
   locked?: boolean;
 };
 
-export const INITIAL_ROLES: AdminRole[] = [
-  /* ---------- Population ---------- */
-  {
-    id: "citizen",
-    name: "Citoyen",
-    nameAr: "مواطن",
-    description:
-      "Consulte les alertes, les consignes et les abris, et adresse un signalement à sa commune.",
-    descriptionAr:
-      "يطّلع على التنبيهات والإرشادات والمآوي، ويرسل تبليغًا إلى بلديته.",
-    tone: "green",
-    family: "population",
-    territoryScope: "none",
-    permissions: ["docs.view"],
-  },
-  {
-    id: "farmer",
-    name: "Agriculteur",
-    nameAr: "فلاح",
-    description:
-      "Suit les vigilances météo et les consignes agricoles, et signale les dégâts sur ses parcelles.",
-    descriptionAr:
-      "يتابع يقظة الأرصاد وإرشادات الفلاحة، ويبلّغ عن الأضرار في مستثمرته.",
-    tone: "green",
-    family: "population",
-    territoryScope: "commune",
-    permissions: ["docs.view", "ops.reports"],
-  },
-  {
-    id: "breeder",
-    name: "Éleveur",
-    nameAr: "مربّي مواشي",
-    description:
-      "Reçoit les consignes de protection animale et signale les pertes liées à un événement.",
-    descriptionAr:
-      "يتلقى إرشادات حماية الثروة الحيوانية ويبلّغ عن الخسائر المرتبطة بحدث.",
-    tone: "green",
-    family: "population",
-    territoryScope: "commune",
-    permissions: ["docs.view", "ops.reports"],
-  },
-  {
-    id: "resident",
-    name: "Riverain d'une zone à risque",
-    nameAr: "ساكن منطقة معرّضة",
-    description:
-      "Reçoit les consignes d'évacuation et les informations propres à sa zone.",
-    descriptionAr:
-      "يتلقى إرشادات الإخلاء والمعلومات الخاصة بمنطقته.",
-    tone: "slate",
-    family: "population",
-    territoryScope: "commune",
-    permissions: ["docs.view", "ops.reports"],
-  },
+/** Permissions « système » communes, selon le rôle (consultation des documents, audit). */
+function systemPermissions(role: Role): string[] {
+  if (role === "admin") return ADMIN_SYSTEM_PERMISSIONS;
+  const base = ["docs.view"];
+  if (role === "wali" || role === "apc_president" || role === "minister") {
+    base.push("audit.view");
+  }
+  if (role === "org_director" || role === "pc_lead") base.push("orgs.view");
+  return base;
+}
 
-  /* ---------- Gestion ---------- */
-  {
-    id: "super-admin",
-    name: "Administrateur système",
-    nameAr: "مسؤول النظام",
-    description:
-      "Administre les comptes, les rôles, les territoires, les organisations et la configuration de la plateforme.",
-    descriptionAr:
-      "يدير الحسابات والأدوار والأقاليم والمنظمات وإعدادات المنصة.",
-    tone: "violet",
-    family: "gestion",
-    territoryScope: "none",
-    permissions: ALL_PERMISSIONS,
-    locked: true,
-  },
-  {
-    id: "crisis-manager",
-    name: "Gestionnaire de crise",
-    nameAr: "مسيّر الأزمات",
-    description:
-      "Pilote les incidents de sa wilaya, propose les canaux d'alerte et suit les moyens engagés.",
-    descriptionAr:
-      "يقود الحوادث في ولايته ويقترح قنوات التنبيه ويتابع الوسائل المعبأة.",
-    tone: "amber",
-    family: "gestion",
-    territoryScope: "wilaya",
-    permissions: [
-      "users.view",
-      "territories.view",
-      "orgs.view",
-      "docs.view",
-      "ops.incidents",
-      "ops.reports",
-      "ops.alerts",
-      "audit.view",
-      "audit.export",
-    ],
-  },
-  {
-    id: "org-manager",
-    name: "Responsable d'organisation",
-    nameAr: "مسؤول منظمة",
-    description:
-      "Suit les comptes et les moyens de son organisation, rattachée à un module ORSEC.",
-    descriptionAr:
-      "يتابع حسابات ووسائل منظمته المرتبطة بوحدة ORSEC.",
-    tone: "blue",
-    family: "gestion",
-    territoryScope: "none",
-    permissions: [
-      "users.view",
-      "orgs.view",
-      "orgs.link",
-      "docs.view",
-      "ops.reports",
-    ],
-  },
-  {
-    id: "analyst",
-    name: "Analyste & documentation",
-    nameAr: "محلّل وتوثيق",
-    description:
-      "Prépare les documents de l'assistant IA, contrôle leur publication et exploite le journal.",
-    descriptionAr:
-      "يُعدّ وثائق المساعد الذكي ويراقب نشرها ويستغل السجل.",
-    tone: "violet",
-    family: "gestion",
-    territoryScope: "none",
-    permissions: [
-      "territories.view",
-      "orgs.view",
-      "settings.view",
-      "docs.view",
-      "docs.manage",
-      "docs.publish",
-      "audit.view",
-    ],
-  },
-  {
-    id: "protection-agent",
-    name: "Agent de protection civile",
-    nameAr: "عون الحماية المدنية",
-    description:
-      "Traite les signalements et les incidents de son territoire d'affectation.",
-    descriptionAr:
-      "يعالج التبليغات والحوادث في إقليم تعيينه.",
-    tone: "green",
-    family: "gestion",
-    territoryScope: "commune",
-    permissions: [
-      "territories.view",
-      "orgs.view",
-      "docs.view",
-      "ops.incidents",
-      "ops.reports",
-      "ops.alerts",
-    ],
-  },
-
-  /* ---------- Autorités ---------- */
-  {
-    id: "wali",
-    name: "Wali",
-    nameAr: "والي",
-    description:
-      "Autorise les alertes de sa wilaya, valide les plans ORSEC et suit les communes.",
-    descriptionAr:
-      "يأذن بتنبيهات ولايته ويصادق على مخططات ORSEC ويتابع البلديات.",
-    tone: "blue",
-    family: "autorites",
-    territoryScope: "wilaya",
-    permissions: [
-      "users.view",
-      "territories.view",
-      "territories.manage",
-      "orgs.view",
-      "settings.view",
-      "docs.view",
-      "ops.incidents",
-      "ops.reports",
-      "ops.alerts",
-      "audit.view",
-    ],
-  },
-  {
-    id: "apc-president",
-    name: "Président de l'APC",
-    nameAr: "رئيس المجلس الشعبي البلدي",
-    description:
-      "Représente la commune, valide les consignes locales et désigne les points de rassemblement.",
-    descriptionAr:
-      "يمثّل البلدية ويصادق على الإرشادات المحلية ويحدد نقاط التجمع.",
-    tone: "green",
-    family: "autorites",
-    territoryScope: "commune",
-    permissions: [
-      "territories.view",
-      "orgs.view",
-      "docs.view",
-      "ops.reports",
-      "ops.alerts",
-    ],
-  },
-  {
-    id: "daira-chief",
-    name: "Chef de daïra",
-    nameAr: "رئيس الدائرة",
-    description:
-      "Coordonne les communes de sa daïra et remonte les besoins au wali.",
-    descriptionAr:
-      "ينسّق بلديات دائرته ويرفع الاحتياجات إلى الوالي.",
-    tone: "blue",
-    family: "autorites",
-    territoryScope: "wilaya",
-    permissions: [
-      "territories.view",
-      "orgs.view",
-      "docs.view",
-      "ops.reports",
-      "ops.alerts",
-    ],
-  },
-  {
-    id: "wilaya-sg",
-    name: "Secrétaire général de wilaya",
-    nameAr: "الأمين العام للولاية",
-    description:
-      "Tient à jour le référentiel territorial et le secrétariat des cellules de crise.",
-    descriptionAr:
-      "يحدّث المرجعية الإقليمية وأمانة خلايا الأزمات.",
-    tone: "slate",
-    family: "autorites",
-    territoryScope: "wilaya",
-    permissions: [
-      "users.view",
-      "territories.view",
-      "orgs.view",
-      "settings.view",
-      "docs.view",
-      "audit.view",
-    ],
-  },
-  {
-    id: "local-elected",
-    name: "Élu local",
-    nameAr: "منتخب محلي",
-    description:
-      "Suit les alertes et les besoins de la population de sa commune.",
-    descriptionAr:
-      "يتابع التنبيهات واحتياجات سكان بلديته.",
-    tone: "green",
-    family: "autorites",
-    territoryScope: "commune",
-    permissions: ["territories.view", "docs.view", "ops.reports"],
-  },
-
-  /* ---------- Terrain ---------- */
-  {
-    id: "field-agent",
-    name: "Agent de terrain",
-    nameAr: "عون ميداني",
-    description:
-      "Remonte les observations de terrain et consulte les consignes opérationnelles.",
-    descriptionAr:
-      "يرفع الملاحظات الميدانية ويطّلع على الإرشادات العملياتية.",
-    tone: "green",
-    family: "terrain",
-    territoryScope: "commune",
-    permissions: ["docs.view", "ops.incidents", "ops.reports"],
-  },
-  {
-    id: "team-lead",
-    name: "Chef d'équipe d'intervention",
-    nameAr: "قائد فريق التدخل",
-    description:
-      "Encadre une équipe, met à jour les moyens engagés et signale les besoins.",
-    descriptionAr:
-      "يشرف على فريق ويحدّث الوسائل المعبأة ويبلّغ عن الاحتياجات.",
-    tone: "green",
-    family: "terrain",
-    territoryScope: "commune",
-    permissions: [
-      "docs.view",
-      "ops.incidents",
-      "ops.reports",
-      "ops.alerts",
-    ],
-  },
-  {
-    id: "meteorologist",
-    name: "Météorologue de veille",
-    nameAr: "متنبئ جوي",
-    description:
-      "Diffuse les vigilances météo et qualifie les événements climatiques.",
-    descriptionAr:
-      "ينشر يقظة الأرصاد ويصنّف الأحداث المناخية.",
-    tone: "blue",
-    family: "terrain",
-    territoryScope: "none",
-    permissions: ["docs.view", "ops.reports", "ops.alerts"],
-  },
-  {
-    id: "observer",
-    name: "Observateur",
-    nameAr: "مراقب",
-    description:
-      "Consultation seule des référentiels territoriaux, des organisations et des documents validés.",
-    descriptionAr:
-      "اطلاع فقط على المرجعيات الإقليمية والمنظمات والوثائق المعتمدة.",
-    tone: "slate",
-    family: "terrain",
-    territoryScope: "none",
-    permissions: [
-      "territories.view",
-      "orgs.view",
-      "docs.view",
-      "audit.view",
-    ],
-  },
-];
+export const INITIAL_ROLES: AdminRole[] = ROLES.map((id): AdminRole => {
+  const def = ROLE_DEFS[id];
+  const operational: OpPermission[] = [...ROLE_PERMISSIONS[id]];
+  return {
+    id,
+    name: def.name.fr,
+    nameAr: def.name.ar,
+    description: def.description.fr,
+    descriptionAr: def.description.ar,
+    tone: def.tone,
+    family: def.adminFamily,
+    territoryScope: def.territoryScope === "site" ? "commune" : def.territoryScope,
+    permissions: [...systemPermissions(id), ...operational],
+    locked: id === "admin" ? true : undefined,
+  };
+});
 
 /* ------------------------------------------------------------------ */
 /* Comptes                                                             */
@@ -509,7 +302,7 @@ export const INITIAL_USERS: AdminUser[] = [
     name: "Amine Bensalem",
     email: "amine.bensalem@cadm.dz",
     phone: "0770 12 34 56",
-    roleId: "super-admin",
+    roleId: "admin",
     permissions: [],
     organisationId: "org-cadm",
     wilaya: "Alger",
@@ -539,7 +332,7 @@ export const INITIAL_USERS: AdminUser[] = [
     name: "Karim Ziani",
     email: "k.ziani@apc-bejaia.dz",
     phone: "0555 78 90 12",
-    roleId: "apc-president",
+    roleId: "apc_president",
     permissions: [],
     organisationId: null,
     wilaya: "Béjaïa",
@@ -554,7 +347,7 @@ export const INITIAL_USERS: AdminUser[] = [
     name: "Nadia Cherif",
     email: "n.cherif@cadm.dz",
     phone: "0771 22 33 44",
-    roleId: "crisis-manager",
+    roleId: "pc_lead",
     permissions: [],
     organisationId: "org-cadm",
     wilaya: "Alger",
@@ -569,7 +362,7 @@ export const INITIAL_USERS: AdminUser[] = [
     name: "Sofiane Kaci",
     email: "s.kaci@meteo.dz",
     phone: "0699 10 20 30",
-    roleId: "meteorologist",
+    roleId: "forecaster",
     permissions: [],
     organisationId: "org-meteo",
     wilaya: "Oran",
@@ -584,7 +377,7 @@ export const INITIAL_USERS: AdminUser[] = [
     name: "Yacine Meziane",
     email: "y.meziane@gendarmerie.dz",
     phone: "0660 55 44 33",
-    roleId: "observer",
+    roleId: "gendarmerie",
     permissions: [],
     organisationId: "org-gendarmerie",
     wilaya: "Constantine",
@@ -599,7 +392,7 @@ export const INITIAL_USERS: AdminUser[] = [
     name: "Meriem Belkacem",
     email: "m.belkacem@cadm.dz",
     phone: "0550 98 76 54",
-    roleId: "org-manager",
+    roleId: "org_director",
     permissions: [],
     organisationId: "org-cadm",
     wilaya: "Skikda",
@@ -614,7 +407,7 @@ export const INITIAL_USERS: AdminUser[] = [
     name: "Rachid Amrani",
     email: "r.amrani@protection-civile.dz",
     phone: "0772 11 22 33",
-    roleId: "team-lead",
+    roleId: "unit_lead",
     permissions: ["ops.alerts"],
     organisationId: "org-protection",
     wilaya: "Tizi Ouzou",
@@ -629,7 +422,7 @@ export const INITIAL_USERS: AdminUser[] = [
     name: "Samira Ould Ali",
     email: "s.ouldali@dsp.dz",
     phone: "0663 77 88 99",
-    roleId: "protection-agent",
+    roleId: "pc_agent",
     permissions: [],
     organisationId: "org-sante",
     wilaya: "Jijel",
@@ -659,7 +452,7 @@ export const INITIAL_USERS: AdminUser[] = [
     name: "Souhila Benmansour",
     email: "s.benmansour@apc-akbou.dz",
     phone: "0773 65 43 21",
-    roleId: "local-elected",
+    roleId: "apc_president",
     permissions: [],
     organisationId: null,
     wilaya: "Béjaïa",
@@ -674,7 +467,7 @@ export const INITIAL_USERS: AdminUser[] = [
     name: "Djamel Ould Kaci",
     email: "d.ouldkaci@wilaya-skikda.dz",
     phone: "0664 12 90 45",
-    roleId: "daira-chief",
+    roleId: "org_director",
     permissions: [],
     organisationId: null,
     wilaya: "Skikda",
@@ -1038,9 +831,9 @@ export const INITIAL_SEVERITIES: SeverityLevel[] = [
     channels: ["push", "sms", "radio"],
     active: true,
     description:
-      "Canaux push, SMS et radio proposés à la validation du gestionnaire de crise.",
+      "Canaux push, SMS et radio proposés à la validation de l'autorité compétente.",
     descriptionAr:
-      "تُقترح قنوات الإشعار والرسالة النصية والإذاعة لمصادقة مسيّر الأزمات.",
+      "تُقترح قنوات الإشعار والرسالة النصية والإذاعة لمصادقة السلطة المختصة.",
   },
   {
     id: "critical",
@@ -1446,7 +1239,7 @@ export const INITIAL_ACTIVITY: ActivityEntry[] = [
   {
     id: "act-11",
     actionKey: "admin.act.roleUpdated",
-    target: "Gestionnaire de crise",
+    target: "Responsable de la Protection civile",
     author: CURRENT_ADMIN,
     category: "roles",
     tone: "violet",

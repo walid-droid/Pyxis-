@@ -1,4 +1,4 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "./site.css";
 import "../shared/plan/plan.css";
 import { useState } from "react";
@@ -9,6 +9,7 @@ import { useI18n } from "../../i18n";
 import { useOrsecPlans } from "../shared/plan/PlanContext";
 import PlanStepper from "../shared/plan/PlanStepper";
 import PlanModuleList from "../shared/plan/PlanModuleList";
+import SiteBasculementPanel from "./SiteBasculementPanel";
 import {
   ActivationDialog,
   DesignationDialog,
@@ -124,6 +125,43 @@ function SitePlanPage() {
             </>
           ) : null}
         </div>
+
+        <section className="stat-grid" aria-label={t("site.plan.statsLabel")}>
+          <StatCard
+            value={t(`orsec.statusShort.${plan.status}`)}
+            label={t("site.plan.statState")}
+            badge={
+              plan.status === "active" && plan.phase
+                ? t(`orsec.phase.${plan.phase}`)
+                : t("orsec.level.site")
+            }
+            badgeTone={STAT_TONE[plan.status]}
+          />
+          <StatCard
+            value={`${designated}/${totalModules}`}
+            label={t("site.plan.statModules")}
+            badge={
+              missing > 0
+                ? t("orsec.modules.missingShort", { count: missing })
+                : t("orsec.modules.allDesignated")
+            }
+            badgeTone={missing > 0 ? "warning" : "success"}
+          />
+          <StatCard
+            value={String(drafts)}
+            label={t("site.plan.statReports")}
+            badge={t(
+              drafts > 0 ? "orsec.report.statBadge" : "orsec.report.allSent",
+            )}
+            badgeTone={drafts > 0 ? "warning" : "success"}
+          />
+          <StatCard
+            value={t("site.plan.statSimulationsValue")}
+            label={t("site.plan.statSimulations")}
+            badge={t("site.plan.statSimulationsBadge")}
+            badgeTone="info"
+          />
+        </section>
       </section>
 
       <section className="rc-card">
@@ -134,42 +172,7 @@ function SitePlanPage() {
         <PlanStepper plan={plan} />
       </section>
 
-      <section className="stat-grid" aria-label={t("site.plan.statsLabel")}>
-        <StatCard
-          value={t(`orsec.statusShort.${plan.status}`)}
-          label={t("site.plan.statState")}
-          badge={
-            plan.status === "active" && plan.phase
-              ? t(`orsec.phase.${plan.phase}`)
-              : t("orsec.level.site")
-          }
-          badgeTone={STAT_TONE[plan.status]}
-        />
-        <StatCard
-          value={`${designated}/${totalModules}`}
-          label={t("site.plan.statModules")}
-          badge={
-            missing > 0
-              ? t("orsec.modules.missingShort", { count: missing })
-              : t("orsec.modules.allDesignated")
-          }
-          badgeTone={missing > 0 ? "warning" : "success"}
-        />
-        <StatCard
-          value={String(drafts)}
-          label={t("site.plan.statReports")}
-          badge={t(
-            drafts > 0 ? "orsec.report.statBadge" : "orsec.report.allSent",
-          )}
-          badgeTone={drafts > 0 ? "warning" : "success"}
-        />
-        <StatCard
-          value={t("site.plan.statSimulationsValue")}
-          label={t("site.plan.statSimulations")}
-          badge={t("site.plan.statSimulationsBadge")}
-          badgeTone="info"
-        />
-      </section>
+      <SiteBasculementPanel />
 
       <section className="rc-grid rc-grid--main">
         <article className="rc-card">

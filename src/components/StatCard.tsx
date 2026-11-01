@@ -11,6 +11,10 @@ type StatCardProps = {
   onClick?: () => void;
 };
 
+/** Au-delà de cette longueur, le commentaire est une phrase : il est masqué
+ *  quand le compteur est affiché en pastille compacte (bandeau photo). */
+const BADGE_COMPACT_MAX = 28;
+
 function StatCard({
   value,
   label,
@@ -21,14 +25,17 @@ function StatCard({
 }: StatCardProps) {
   const { t } = useI18n();
   const className = `stat-card ${tone}`.trim();
+  const badgeClassName = [
+    "stat-card__badge",
+    `stat-card__badge--${badgeTone}`,
+    badge && badge.length > BADGE_COMPACT_MAX ? "stat-card__badge--long" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
   const labelContent = (
     <span className="stat-card__label">
       {label}
-      {badge && (
-        <span className={`stat-card__badge stat-card__badge--${badgeTone}`}>
-          {badge}
-        </span>
-      )}
+      {badge && <span className={badgeClassName}>{badge}</span>}
     </span>
   );
 

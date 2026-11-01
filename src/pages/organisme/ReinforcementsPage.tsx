@@ -1,8 +1,9 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "./organisme.css";
 import { useState } from "react";
 import Modal from "../../components/Modal";
 import { useI18n } from "../../i18n";
+import { useAuth } from "../../auth/AuthContext";
 import { useOrganisme } from "./orgContext";
 import OrgHero from "./OrgHero";
 import {
@@ -26,11 +27,15 @@ const STATUS_KEY = "org.reinforcements.status";
 export default function ReinforcementsPage() {
   const { t, lang } = useI18n();
   const { persona } = useOrganisme();
+  const { can } = useAuth();
   const [requests, setRequests] = useState<Reinforcement[]>(REINFORCEMENTS);
   const [modal, setModal] = useState(false);
+  const [refuseId, setRefuseId] = useState<string | null>(null);
+  const [refusalReason, setRefusalReason] = useState("");
   const [toast, setToast] = useState<string | null>(null);
 
   const [type, setType] = useState("");
+  const [requestedTo, setRequestedTo] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [urgency, setUrgency] = useState<Reinforcement["urgency"]>("medium");
   const [mission, setMission] = useState("");
@@ -49,6 +54,10 @@ export default function ReinforcementsPage() {
       id: `ren-${Date.now()}`,
       ref: `REN-2026-${89 + requests.length}`,
       from: { fr: loc(lang, persona.org), ar: loc(lang, persona.org) },
+      requestedTo: {
+        fr: requestedTo || "Direction de la Protection civile · Béjaïa",
+        ar: requestedTo || "مديرية الحماية المدنية · بجاية",
+      },
       type: { fr: type, ar: type },
       quantity,
       urgency,
@@ -59,11 +68,31 @@ export default function ReinforcementsPage() {
     };
     setRequests((current) => [created, ...current]);
     setModal(false);
+    setRequestedTo("");
     setToast(t("org.reinforcements.created"));
   };
 
-  const canDirector = persona.id === "directeur";
-  const canPc = persona.id === "pc";
+  const refuseRequest = () => {
+    if (!refuseId || refusalReason.trim().length < 8) return;
+    setRequests((current) =>
+      current.map((request) =>
+        request.id === refuseId
+          ? {
+              ...request,
+              status: "refused",
+              refusalReason: { fr: refusalReason, ar: refusalReason },
+            }
+          : request,
+      ),
+    );
+    setRefuseId(null);
+    setRefusalReason("");
+    setToast(t("org.reinforcements.refused"));
+  };
+
+  // Transmettre / traiter un renfort : directeurs d'organisme (au PCF) et responsable de la Protection civile.
+  const canDirector = can("TRANSMETTRE_RENFORT") && persona.accountRole === "org_director";
+  const canPc = can("TRANSMETTRE_RENFORT") && persona.accountRole === "pc_lead";
 
   return (
     <main className="rc-page rc-page--org">
@@ -129,10 +158,20 @@ export default function ReinforcementsPage() {
                   </h3>
                   <p className="org-request__meta">
                     <span>{loc(lang, request.from)}</span>
+                    <span>
+                      {t("org.reinforcements.requestedTo")} :{" "}
+                      {loc(lang, request.requestedTo)}
+                    </span>
                     <span>{loc(lang, request.mission)}</span>
                     <span>{request.at}</span>
                   </p>
                   <p className="org-request__note">{loc(lang, request.note)}</p>
+                  {request.refusalReason ? (
+                    <p className="org-request__note">
+                      <strong>{t("org.common.reason")} :</strong>{" "}
+                      {loc(lang, request.refusalReason)}
+                    </p>
+                  ) : null}
                 </div>
 
                 <div className="org-request__actions">
@@ -190,9 +229,10 @@ export default function ReinforcementsPage() {
                     <button
                       type="button"
                       className="rc-btn rc-btn--ghost-danger rc-btn--small"
-                      onClick={() =>
-                        update(request.id, "refused", t("org.reinforcements.refused"))
-                      }
+                      onClick={() => {
+                        setRefuseId(request.id);
+                        setRefusalReason("");
+                      }}
                     >
                       {t("org.common.refuse")}
                     </button>
@@ -237,6 +277,15 @@ export default function ReinforcementsPage() {
                 />
               </div>
             </div>
+            <div className="rc-field">
+              <label htmlFor="ren-to">{t("org.reinforcements.requestedTo")}</label>
+              <input
+                id="ren-to"
+                value={requestedTo}
+                placeholder={t("org.reinforcements.requestedToPlaceholder")}
+                onChange={(event) => setRequestedTo(event.target.value)}
+              />
+            </div>
             <div className="rc-form__row">
               <div className="rc-field">
                 <label htmlFor="ren-urgency">{t("org.common.urgency")}</label>
@@ -276,6 +325,54 @@ export default function ReinforcementsPage() {
               </button>
               <button type="submit" className="rc-btn rc-btn--primary" disabled={type.trim().length < 3}>
                 {t("org.common.send")}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      ) : null}
+
+      {refuseId ? (
+        <Modal
+          title={t("org.reinforcements.refuseTitle")}
+          onClose={() => setRefuseId(null)}
+        >
+          <form
+            className="rc-form"
+            onSubmit={(event) => {
+              event.preventDefault();
+              refuseRequest();
+            }}
+          >
+            <p className="org-muted">{t("org.reinforcements.refuseLead")}</p>
+            <div className="rc-field">
+              <label htmlFor="ren-refusal">{t("org.common.reason")} *</label>
+              <textarea
+                id="ren-refusal"
+                value={refusalReason}
+                onChange={(event) => setRefusalReason(event.target.value)}
+                required
+                minLength={8}
+              />
+              <span className="org-field-hint">
+                {refusalReason.trim().length < 8
+                  ? t("org.common.required")
+                  : "✓"}
+              </span>
+            </div>
+            <div className="org-modal-actions">
+              <button
+                type="button"
+                className="rc-btn rc-btn--ghost"
+                onClick={() => setRefuseId(null)}
+              >
+                {t("org.common.cancel")}
+              </button>
+              <button
+                type="submit"
+                className="rc-btn rc-btn--danger"
+                disabled={refusalReason.trim().length < 8}
+              >
+                {t("org.common.refuse")}
               </button>
             </div>
           </form>

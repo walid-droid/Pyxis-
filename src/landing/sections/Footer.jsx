@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { LOGIN_PATH, REGISTER_PATH, RESP_LOGIN_PATH } from "../../config";
+import { LOGIN_PATH, REGISTER_PATH, STAFF_LOGIN_PATH } from "../../config";
 import { useLandingCopy } from "../landingCopy";
 import logo from "../../assets/Logo CADM.png";
 
@@ -47,7 +47,7 @@ export default function Footer({ onRequestSubmit, onOpenPrivacy }) {
               <h4>{footer.account}</h4>
               <Link to={LOGIN_PATH}>{footer.login}</Link>
               <Link to={REGISTER_PATH}>{footer.register}</Link>
-              <Link to={RESP_LOGIN_PATH}>{footer.resp}</Link>
+              <Link to={STAFF_LOGIN_PATH}>{footer.resp}</Link>
             </div>
             <div>
               <h4>{footer.info}</h4>

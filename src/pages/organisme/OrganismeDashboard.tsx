@@ -1,22 +1,28 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "./organisme.css";
+import "../shared/plan/plan.css";
 import { Link } from "react-router";
 import StatCard from "../../components/StatCard";
 import {
+  DEMO_MODE,
   ORG_DASHBOARD_PATH,
   ORG_EVACUATION_PATH,
   ORG_HISTORY_PATH,
+  ORG_MARITIME_PATH,
   ORG_MISSIONS_PATH,
   ORG_PCF_PATH,
   ORG_PCO_PATH,
   ORG_REINFORCEMENTS_PATH,
   ORG_REPORTS_PATH,
   ORG_RESOURCES_PATH,
+  ORG_ROADS_PATH,
   ORG_VEHICLE_PATH,
   ORG_VICTIMS_PATH,
   ORG_WATCH_PATH,
 } from "../../config";
 import { useI18n } from "../../i18n";
+import { useOrsecPlans } from "../shared/plan/PlanContext";
+import { ORSEC_MODULES } from "../shared/plan/orsecPlan";
 import { useOrganisme } from "./orgContext";
 import {
   FOREST_SIGNALS,
@@ -93,6 +99,22 @@ const PAGE_META: Record<OrgPage, PageMeta> = {
     desc: {
       fr: "Itinéraires, zones de rassemblement et déplacements.",
       ar: "المسارات ونقاط التجمع والتنقلات.",
+    },
+  },
+  roads: {
+    path: ORG_ROADS_PATH,
+    labelKey: "org.nav.roads",
+    desc: {
+      fr: "Routes coupées, déviations et confirmation de réouverture.",
+      ar: "الطرق المغلقة والتحويلات وتأكيد إعادة الفتح.",
+    },
+  },
+  maritime: {
+    path: ORG_MARITIME_PATH,
+    labelKey: "org.nav.maritime",
+    desc: {
+      fr: "Zones de baignade, moyens nautiques, météo et sauvetage en mer.",
+      ar: "مناطق السباحة والوسائل البحرية والطقس والإنقاذ البحري.",
     },
   },
   pco: {
@@ -224,6 +246,21 @@ function Glyph({ page }: { page: OrgPage }) {
           <circle cx="16.5" cy="18.5" r="1.5" />
         </svg>
       );
+    case "roads":
+      return (
+        <svg {...common}>
+          <path d="M4 21 9 3M20 21 15 3" />
+          <path d="M12 5v3M12 12v3M12 19v2" />
+        </svg>
+      );
+    case "maritime":
+      return (
+        <svg {...common}>
+          <path d="M3 16c2 1.4 4 1.4 6 0s4-1.4 6 0 4 1.4 6 0" />
+          <path d="M5 16 7 8h10l2 8" />
+          <path d="M12 8V3" />
+        </svg>
+      );
   }
 }
 
@@ -231,6 +268,15 @@ function Glyph({ page }: { page: OrgPage }) {
 export default function OrganismeDashboard() {
   const { t, lang } = useI18n();
   const { persona, setPersonaId } = useOrganisme();
+  const { plans } = useOrsecPlans();
+  const plan = plans.wilaya;
+
+  const designation = plan.designations.find(
+    (item) => item.personName === loc(lang, persona.name),
+  );
+  const designatedModule = designation
+    ? ORSEC_MODULES.find((module) => module.id === designation.moduleId)
+    : undefined;
 
   const openReports = REPORTS.filter((report) => report.status === "received").length;
   const activeMissions = MISSIONS.filter((mission) => mission.status === "active").length;
@@ -269,34 +315,45 @@ export default function OrganismeDashboard() {
             </Link>
           </div>
         ) : null}
+
+        <section className="stat-grid" aria-label={t("org.dash.quickTitle")}>
+          <StatCard
+            value={String(openReports)}
+            label={t("org.dash.statReports")}
+            badge={t("org.dash.statReportsBadge", { count: openReports })}
+            badgeTone={openReports > 0 ? "warning" : "success"}
+          />
+          <StatCard
+            value={String(activeMissions)}
+            label={t("org.dash.statMissions")}
+            badge={t("org.dash.statMissionsBadge", { count: activeMissions })}
+            badgeTone="danger"
+          />
+          <StatCard
+            value={String(TEAMS.length - engagedTeams)}
+            label={t("org.dash.statMeans")}
+            badge={t("org.dash.statMeansBadge", { count: engagedTeams })}
+            badgeTone="info"
+          />
+          <StatCard
+            value={String(alerts)}
+            label={t("org.dash.statAlerts")}
+            badge={t("org.dash.statAlertsBadge", { count: alerts })}
+            badgeTone={alerts > 0 ? "warning" : "success"}
+          />
+        </section>
       </section>
 
-      <section className="stat-grid" aria-label={t("org.dash.quickTitle")}>
-        <StatCard
-          value={String(openReports)}
-          label={t("org.dash.statReports")}
-          badge={t("org.dash.statReportsBadge", { count: openReports })}
-          badgeTone={openReports > 0 ? "warning" : "success"}
-        />
-        <StatCard
-          value={String(activeMissions)}
-          label={t("org.dash.statMissions")}
-          badge={t("org.dash.statMissionsBadge", { count: activeMissions })}
-          badgeTone="danger"
-        />
-        <StatCard
-          value={String(TEAMS.length - engagedTeams)}
-          label={t("org.dash.statMeans")}
-          badge={t("org.dash.statMeansBadge", { count: engagedTeams })}
-          badgeTone="info"
-        />
-        <StatCard
-          value={String(alerts)}
-          label={t("org.dash.statAlerts")}
-          badge={t("org.dash.statAlertsBadge", { count: alerts })}
-          badgeTone={alerts > 0 ? "warning" : "success"}
-        />
-      </section>
+      {designatedModule ? (
+        <p className="orsec-alert orsec-alert--info" role="status">
+          <strong>
+            {t("org.pcf.moduleBanner", {
+              module: t(designatedModule.nameKey),
+            })}
+          </strong>
+          <span>{t("org.pcf.moduleBannerHint")}</span>
+        </p>
+      ) : null}
 
       <section className="rc-quick" aria-labelledby="org-quick-title">
         <div className="rc-quick__head">
@@ -424,39 +481,43 @@ export default function OrganismeDashboard() {
           </ul>
         </article>
 
-        <article className="rc-card">
-          <div className="rc-card__head">
-            <h2 className="rc-card__title">{t("org.dash.personaTitle")}</h2>
-            <span className="rc-card__hint">{t("org.role.label")}</span>
-          </div>
-          <p className="rc-card__lead">{t("org.dash.personaLead")}</p>
+        {DEMO_MODE ? (
+          <article className="rc-card">
+            <div className="rc-card__head">
+              <h2 className="rc-card__title">{t("org.dash.personaTitle")}</h2>
+              <span className="rc-card__hint">{t("org.role.label")}</span>
+            </div>
+            <p className="rc-card__lead">{t("org.dash.personaLead")}</p>
 
-          <div className="org-persona-grid">
-            {PERSONAS.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={`org-persona-card${
-                  item.id === persona.id ? " is-active" : ""
-                }`}
-                aria-pressed={item.id === persona.id}
-                onClick={() => setPersonaId(item.id)}
-              >
-                <span className="org-persona-card__role">
-                  {loc(lang, item.role)}
-                </span>
-                <span className="org-persona-card__name">
-                  {loc(lang, item.name)}
-                </span>
-              </button>
-            ))}
-          </div>
-        </article>
+            <div className="org-persona-grid">
+              {PERSONAS.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={`org-persona-card${
+                    item.id === persona.id ? " is-active" : ""
+                  }`}
+                  aria-pressed={item.id === persona.id}
+                  onClick={() => setPersonaId(item.id)}
+                >
+                  <span className="org-persona-card__role">
+                    {loc(lang, item.role)}
+                  </span>
+                  <span className="org-persona-card__name">
+                    {loc(lang, item.name)}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </article>
+        ) : null}
       </section>
 
-      <p className="org-demo-note" role="note">
-        {t("org.demo")} · {ORG_DASHBOARD_PATH}
-      </p>
+      {DEMO_MODE ? (
+        <p className="org-demo-note" role="note">
+          {t("org.demo")} · {ORG_DASHBOARD_PATH}
+        </p>
+      ) : null}
     </main>
   );
 }

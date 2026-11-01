@@ -4,7 +4,10 @@ import logo from "../assets/Logo CADM.png";
 import AssistantPage from "../pages/assistant/AssistantPage";
 import ConnectionStatus from "./ConnectionStatus";
 import LanguageToggle from "./LanguageToggle";
+import NotificationCenter from "./NotificationCenter";
+import OfflineBanner from "./OfflineBanner";
 import ThemeToggle from "./ThemeToggle";
+import OpsBanners from "../pages/shared/ops/OpsBanners";
 import { useI18n } from "../i18n";
 
 export type ShellNavItem = {
@@ -238,6 +241,8 @@ function AppShell({
 
           <ConnectionStatus />
 
+          <NotificationCenter />
+
           <button
             type="button"
             ref={assistantTriggerRef}
@@ -349,6 +354,8 @@ function AppShell({
       )}
 
       <div className="app-main">
+        <OfflineBanner />
+        <OpsBanners />
         <Outlet />
       </div>
 

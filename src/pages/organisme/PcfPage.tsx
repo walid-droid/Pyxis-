@@ -1,13 +1,19 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "./organisme.css";
+import "../shared/plan/plan.css";
+import "../shared/ops/ops.css";
 import { useState } from "react";
+import { Link } from "react-router";
 import Modal from "../../components/Modal";
+import { ORG_MODULES_PATH } from "../../config";
 import { useI18n } from "../../i18n";
+import { useOrganisme } from "./orgContext";
 import { useOrsecPlans } from "../shared/plan/PlanContext";
 import {
+  ORSEC_MODULES,
+  SITUATION_KEYS,
   modulesForLevel,
   responsibleFor,
-  type PlanPhase,
 } from "../shared/plan/orsecPlan";
 import OrgHero from "./OrgHero";
 import { loc, type Localized } from "./organismeData";
@@ -17,8 +23,9 @@ type Incoming = {
   ref: string;
   from: Localized;
   means: Localized;
-  status: "pending" | "assigned";
+  status: "pending" | "assigned" | "refused";
   unit?: string;
+  reason?: Localized;
 };
 
 type Outgoing = {
@@ -52,11 +59,9 @@ const OUTGOING: Outgoing[] = [
     ref: "REN-2026-091",
     to: { fr: "Wilaya de Sétif", ar: "ولاية سطيف" },
     means: { fr: "1 groupe électrogène", ar: "مولد كهربائي واحد" },
-    status: "transmitted",
+    status: "pending",
   },
 ];
-
-const PHASES: PlanPhase[] = ["urgence", "evaluation", "rehabilitation"];
 
 const UNIT_LEADS = [
   "Capitaine S. Haddad",
@@ -67,12 +72,15 @@ const UNIT_LEADS = [
 /** S8 : console du directeur du PCF. */
 export default function PcfPage() {
   const { t, lang } = useI18n();
-  const { plans, setPhase } = useOrsecPlans();
+  const { persona } = useOrganisme();
+  const { plans } = useOrsecPlans();
   const plan = plans.wilaya;
 
   const [incoming, setIncoming] = useState<Incoming[]>(INCOMING);
-  const [outgoing] = useState<Outgoing[]>(OUTGOING);
+  const [outgoing, setOutgoing] = useState<Outgoing[]>(OUTGOING);
   const [modal, setModal] = useState(false);
+  const [refuseId, setRefuseId] = useState<string | null>(null);
+  const [refusalReason, setRefusalReason] = useState("");
   const [person, setPerson] = useState("");
   const [role, setRole] = useState("");
   const [habilitated, setHabilitated] = useState<
@@ -94,6 +102,13 @@ export default function PcfPage() {
     moduleIds.includes(module.id),
   );
 
+  const designation = plan.designations.find(
+    (item) => item.personName === loc(lang, persona.name),
+  );
+  const designatedModule = designation
+    ? ORSEC_MODULES.find((module) => module.id === designation.moduleId)
+    : undefined;
+
   const assign = (request: Incoming, unit: string) => {
     setIncoming((current) =>
       current.map((item) =>
@@ -101,6 +116,33 @@ export default function PcfPage() {
       ),
     );
     setToast(t("org.pcf.assigned"));
+  };
+
+  const refuse = (id: string) => {
+    if (refusalReason.trim().length < 8) return;
+    setIncoming((current) =>
+      current.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              status: "refused",
+              reason: { fr: refusalReason, ar: refusalReason },
+            }
+          : item,
+      ),
+    );
+    setRefuseId(null);
+    setRefusalReason("");
+    setToast(t("org.pcf.refused"));
+  };
+
+  const transmit = (id: string) => {
+    setOutgoing((current) =>
+      current.map((item) =>
+        item.id === id ? { ...item, status: "transmitted" } : item,
+      ),
+    );
+    setToast(t("org.pcf.transmitted"));
   };
 
   const habilitate = () => {
@@ -133,13 +175,18 @@ export default function PcfPage() {
           </>
         }
         aside={
-          <button
-            type="button"
-            className="rc-btn rc-btn--primary"
-            onClick={() => setModal(true)}
-          >
-            {t("org.pcf.habilitate")}
-          </button>
+          <>
+            <Link className="rc-btn rc-btn--ghost" to={ORG_MODULES_PATH}>
+              {t("ops.modules.viewAll")}
+            </Link>
+            <button
+              type="button"
+              className="rc-btn rc-btn--primary"
+              onClick={() => setModal(true)}
+            >
+              {t("org.pcf.habilitate")}
+            </button>
+          </>
         }
       />
 
@@ -149,26 +196,36 @@ export default function PcfPage() {
         </p>
       ) : null}
 
-      <section className="rc-card">
-        <div className="rc-card__head">
-          <h2 className="rc-card__title">{t("org.pcf.phase")}</h2>
-          <span className="rc-card__hint">{t("org.pcf.phaseHint")}</span>
+      {designatedModule ? (
+        <p className="orsec-alert orsec-alert--info" role="status">
+          <strong>
+            {t("org.pcf.moduleBanner", {
+              module: t(designatedModule.nameKey),
+            })}
+          </strong>
+          <span>{t("org.pcf.moduleBannerHint")}</span>
+        </p>
+      ) : null}
+
+      <section className="ops-situation ops-situation--recovery">
+        <div className="ops-card__head">
+          <h2 className="ops-card__title">{t("ops.pcf.situation")}</h2>
+          <span className="ops-badge ops-badge--info">{t("ops.pcf.readonly")}</span>
         </div>
-        <div className="orsec-levels" role="group" aria-label={t("org.pcf.phase")}>
-          {PHASES.map((value) => (
-            <button
-              key={value}
-              type="button"
-              className={`orsec-levels__btn${phase === value ? " is-active" : ""}`}
-              aria-pressed={phase === value}
-              onClick={() => {
-                setPhase(plan.id, value);
-                setToast(t(`org.pcf.phase.${value}`));
-              }}
-            >
-              {t(`org.pcf.phase.${value}`)}
-            </button>
-          ))}
+        <p className="ops-card__lead">{t("ops.pcf.readonlyHint")}</p>
+        <div className="ops-situation__row">
+          <span className="ops-situation__code" aria-hidden="true">
+            {plan.situation}
+          </span>
+          <div className="ops-situation__body">
+            <span className="ops-situation__name">
+              {t(SITUATION_KEYS[plan.situation].nameKey)}
+            </span>
+            <span className="ops-situation__meta">
+              {t(`org.pcf.phase.${phase}`)} ·{" "}
+              {plan.transitions[0]?.at ?? t("ops.pcf.noTransition")}
+            </span>
+          </div>
         </div>
       </section>
 
@@ -246,13 +303,19 @@ export default function PcfPage() {
                       <span className="org-cell__ref">{request.ref}</span>
                       <span
                         className={`rc-badge rc-badge--${
-                          request.status === "pending" ? "medium" : "low"
+                          request.status === "pending"
+                            ? "medium"
+                            : request.status === "refused"
+                              ? "critical"
+                              : "low"
                         }`}
                       >
                         {t(
                           request.status === "pending"
                             ? "authority.crisis.requestPending"
-                            : "authority.crisis.requestAccepted",
+                            : request.status === "refused"
+                              ? "org.pcf.requestRefused"
+                              : "authority.crisis.requestAccepted",
                         )}
                       </span>
                     </div>
@@ -264,25 +327,42 @@ export default function PcfPage() {
                         {t("org.pcf.assign")} : {request.unit}
                       </p>
                     ) : null}
+                    {request.reason ? (
+                      <p className="org-request__meta">
+                        {t("org.common.reason")} : {loc(lang, request.reason)}
+                      </p>
+                    ) : null}
                   </div>
                   {request.status === "pending" ? (
-                    <select
-                      className="org-select"
-                      aria-label={t("org.pcf.assign")}
-                      defaultValue=""
-                      onChange={(event) => {
-                        if (event.target.value) {
-                          assign(request, event.target.value);
-                        }
-                      }}
-                    >
-                      <option value="">{t("org.pcf.assign")}</option>
-                      {UNIT_LEADS.map((lead) => (
-                        <option key={lead} value={lead}>
-                          {lead}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="org-actions">
+                      <select
+                        className="org-select"
+                        aria-label={t("org.pcf.assign")}
+                        defaultValue=""
+                        onChange={(event) => {
+                          if (event.target.value) {
+                            assign(request, event.target.value);
+                          }
+                        }}
+                      >
+                        <option value="">{t("org.pcf.assign")}</option>
+                        {UNIT_LEADS.map((lead) => (
+                          <option key={lead} value={lead}>
+                            {lead}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        className="rc-btn rc-btn--ghost-danger rc-btn--small"
+                        onClick={() => {
+                          setRefuseId(request.id);
+                          setRefusalReason("");
+                        }}
+                      >
+                        {t("org.common.refuse")}
+                      </button>
+                    </div>
                   ) : null}
                 </li>
               ))}
@@ -301,14 +381,31 @@ export default function PcfPage() {
                 <div className="org-request__main">
                   <div className="org-request__head">
                     <span className="org-cell__ref">{request.ref}</span>
-                    <span className="rc-badge rc-badge--low">
-                      {t("authority.crisis.reportSent")}
+                    <span
+                      className={`rc-badge rc-badge--${
+                        request.status === "transmitted" ? "low" : "medium"
+                      }`}
+                    >
+                      {t(
+                        request.status === "transmitted"
+                          ? "authority.crisis.reportSent"
+                          : "authority.crisis.requestPending",
+                      )}
                     </span>
                   </div>
                   <p className="org-request__title">
                     {loc(lang, request.to)} · {loc(lang, request.means)}
                   </p>
                 </div>
+                {request.status === "pending" ? (
+                  <button
+                    type="button"
+                    className="rc-btn rc-btn--primary rc-btn--small"
+                    onClick={() => transmit(request.id)}
+                  >
+                    {t("org.common.transmit")}
+                  </button>
+                ) : null}
               </li>
             ))}
           </ul>
@@ -359,6 +456,51 @@ export default function PcfPage() {
                 disabled={person.trim().length < 3 || role.trim().length < 3}
               >
                 {t("org.pcf.habilitateAdd")}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      ) : null}
+
+      {refuseId ? (
+        <Modal title={t("org.pcf.refuseTitle")} onClose={() => setRefuseId(null)}>
+          <form
+            className="rc-form"
+            onSubmit={(event) => {
+              event.preventDefault();
+              refuse(refuseId);
+            }}
+          >
+            <p className="org-muted">{t("org.pcf.refuseLead")}</p>
+            <div className="rc-field">
+              <label htmlFor="pcf-refusal">{t("org.common.reason")} *</label>
+              <textarea
+                id="pcf-refusal"
+                value={refusalReason}
+                onChange={(event) => setRefusalReason(event.target.value)}
+                required
+                minLength={8}
+              />
+              <span className="org-field-hint">
+                {refusalReason.trim().length < 8
+                  ? t("org.common.required")
+                  : "✓"}
+              </span>
+            </div>
+            <div className="org-modal-actions">
+              <button
+                type="button"
+                className="rc-btn rc-btn--ghost"
+                onClick={() => setRefuseId(null)}
+              >
+                {t("org.common.cancel")}
+              </button>
+              <button
+                type="submit"
+                className="rc-btn rc-btn--danger"
+                disabled={refusalReason.trim().length < 8}
+              >
+                {t("org.common.refuse")}
               </button>
             </div>
           </form>

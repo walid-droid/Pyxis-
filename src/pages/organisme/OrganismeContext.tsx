@@ -1,42 +1,37 @@
-import {
-  useCallback,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { useCallback, useMemo, type ReactNode } from "react";
+import { useAuth } from "../../auth/AuthContext";
+import { switchSessionProfile } from "../../auth/session";
+import { DEMO_MODE } from "../../config";
 import { useI18n } from "../../i18n";
 import { PERSONAS, loc, type Persona, type PersonaId } from "./organismeData";
+import { ORG_PAGE_PERMISSIONS, ORG_PAGES, personaForSession } from "./orgAccess";
 import { OrganismeContext, useOrganisme, type OrganismeContextValue } from "./orgContext";
 
-const STORAGE_KEY = "cadm-org-persona";
-
-function readPersona(): Persona {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    const found = PERSONAS.find((item) => item.id === stored);
-    if (found) return found;
-  } catch {
-    // Ignore storage failures.
-  }
-  return PERSONAS[0];
-}
-
+/**
+ * Fournit la persona de l'utilisateur connecté : elle vient de sa session
+ * (rôle + désignations), et ses pages sont déduites de ses permissions.
+ */
 export function OrganismeProvider({ children }: { children: ReactNode }) {
-  const [personaId, setPersonaIdState] = useState<PersonaId>(() => readPersona().id);
+  const { session, canAny } = useAuth();
 
+  const persona = useMemo<Persona>(() => {
+    const profile = personaForSession(session);
+    return {
+      ...profile,
+      pages: ORG_PAGES.filter((page) => canAny(ORG_PAGE_PERMISSIONS[page])),
+    };
+  }, [session, canAny]);
+
+  /** Réservé au mode démo : rejoue la session avec le rôle de la persona choisie. */
   const setPersonaId = useCallback((id: PersonaId) => {
-    setPersonaIdState(id);
-    try {
-      localStorage.setItem(STORAGE_KEY, id);
-    } catch {
-      // Ignore storage failures.
-    }
+    if (!DEMO_MODE) return;
+    const target = PERSONAS.find((item) => item.id === id);
+    if (!target) return;
+    switchSessionProfile({
+      role: target.accountRole,
+      designations: target.designations,
+    });
   }, []);
-
-  const persona = useMemo(
-    () => PERSONAS.find((item) => item.id === personaId) ?? PERSONAS[0],
-    [personaId],
-  );
 
   const value = useMemo<OrganismeContextValue>(
     () => ({
@@ -52,10 +47,12 @@ export function OrganismeProvider({ children }: { children: ReactNode }) {
   );
 }
 
-/** Sélecteur de rôle affiché dans la barre supérieure. */
+/** Sélecteur de rôle de la barre supérieure : visible uniquement en mode démo. */
 export function PersonaSwitcher() {
   const { t, lang } = useI18n();
   const { persona, setPersonaId } = useOrganisme();
+
+  if (!DEMO_MODE) return null;
 
   return (
     <label className="org-role-switch" title={t("org.role.hint")}>

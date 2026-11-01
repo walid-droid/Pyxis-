@@ -1,4 +1,4 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "./organisme.css";
 import { useState } from "react";
 import { useI18n } from "../../i18n";

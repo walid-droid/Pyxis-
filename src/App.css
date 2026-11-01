@@ -589,3 +589,39 @@
     animation-duration: 0.01ms !important;
   }
 }
+
+/* ---------- Bandeau hors connexion ---------- */
+.app-offline {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 auto 16px;
+  padding: 10px 14px;
+  border: 1px solid color-mix(in srgb, var(--color-warning) 45%, var(--color-border));
+  border-radius: var(--radius-button);
+  background: var(--color-warning-bg);
+  color: var(--color-text);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.app-offline__dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  margin-top: 5px;
+  border-radius: 50%;
+  background: var(--color-warning);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-warning) 22%, transparent);
+}
+
+.app-offline strong {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.app-offline span {
+  color: var(--color-text-muted);
+}

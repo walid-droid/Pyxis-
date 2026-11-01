@@ -1,4 +1,4 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "../organisme/organisme.css";
 import "./authority.css";
 import { useState } from "react";
@@ -20,9 +20,9 @@ import {
   type Simulation,
 } from "../organisme/organismeData";
 
-type Scope = "commune" | "wilaya" | "national";
+import { useAuthorityLevel } from "../../auth/useAuthorityLevel";
 
-const SCOPES: Scope[] = ["commune", "wilaya", "national"];
+type Scope = "commune" | "wilaya" | "national";
 
 const ACTOR: Record<Scope, string> = {
   commune: "Président de l'APC de Béjaïa",
@@ -169,7 +169,10 @@ const NOTIFICATIONS = [
 export default function AuthorityCrisisPage() {
   const { t, lang } = useI18n();
   const { plans } = useOrsecPlans();
-  const [scope, setScope] = useState<Scope>("wilaya");
+  // Chaque autorité n'agit que sur son propre niveau de plan (RG-O01).
+  const ownLevel = useAuthorityLevel();
+  const SCOPES: Scope[] = [ownLevel];
+  const [scope, setScope] = useState<Scope>(ownLevel);
   const [reinforcements, setReinforcements] =
     useState<ReinforcementRequest[]>(REINFORCEMENTS);
   const [pcRequests, setPcRequests] = useState<PcRequest[]>(PC_REQUESTS);
@@ -292,6 +295,37 @@ export default function AuthorityCrisisPage() {
             {t("authority.crisis.managePlan")}
           </Link>
         </div>
+
+        <section className="stat-grid" aria-label={t("authority.crisis.title")}>
+          <StatCard
+            value={t(`orsec.statusShort.${plan.status}`)}
+            label={t("authority.crisis.statPlan")}
+            badge={plan.phase ? t(`orsec.phase.${plan.phase}`) : t(`orsec.level.${scope}`)}
+            badgeTone={plan.status === "active" ? "danger" : "info"}
+          />
+          <StatCard
+            value={`${designated}/${planModules.length}`}
+            label={t("authority.crisis.statModules")}
+            badge={t("authority.crisis.modulesLead")}
+            badgeTone={designated > 0 ? "success" : "warning"}
+          />
+          <StatCard
+            value={String(
+              reinforcements.filter((request) => request.status === "pending").length,
+            )}
+            label={t("authority.crisis.statReinforcements")}
+            badge={t("authority.crisis.reinforcementsLead")}
+            badgeTone="warning"
+          />
+          <StatCard
+            value={String(
+              pcRequests.filter((request) => request.status === "pending").length,
+            )}
+            label={t("authority.crisis.statRequests")}
+            badge={t("authority.crisis.pcRequestsLead")}
+            badgeTone="danger"
+          />
+        </section>
       </div>
 
       {toast ? (
@@ -315,37 +349,6 @@ export default function AuthorityCrisisPage() {
           ))}
         </div>
         <p className="orsec-toolbar__hint">{t("authority.crisis.scope")}</p>
-      </section>
-
-      <section className="stat-grid" aria-label={t("authority.crisis.title")}>
-        <StatCard
-          value={t(`orsec.statusShort.${plan.status}`)}
-          label={t("authority.crisis.statPlan")}
-          badge={plan.phase ? t(`orsec.phase.${plan.phase}`) : t(`orsec.level.${scope}`)}
-          badgeTone={plan.status === "active" ? "danger" : "info"}
-        />
-        <StatCard
-          value={`${designated}/${planModules.length}`}
-          label={t("authority.crisis.statModules")}
-          badge={t("authority.crisis.modulesLead")}
-          badgeTone={designated > 0 ? "success" : "warning"}
-        />
-        <StatCard
-          value={String(
-            reinforcements.filter((request) => request.status === "pending").length,
-          )}
-          label={t("authority.crisis.statReinforcements")}
-          badge={t("authority.crisis.reinforcementsLead")}
-          badgeTone="warning"
-        />
-        <StatCard
-          value={String(
-            pcRequests.filter((request) => request.status === "pending").length,
-          )}
-          label={t("authority.crisis.statRequests")}
-          badge={t("authority.crisis.pcRequestsLead")}
-          badgeTone="danger"
-        />
       </section>
 
       <section className="rc-grid rc-grid--split">

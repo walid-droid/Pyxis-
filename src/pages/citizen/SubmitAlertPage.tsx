@@ -6,7 +6,9 @@ import {
   type FormEvent,
 } from "react";
 import { useNavigate } from "react-router";
+import { useAuth } from "../../auth/AuthContext";
 import { useI18n } from "../../i18n";
+import { useNotifications } from "../../lib/notificationsContext";
 import { createReport, saveReport } from "../../lib/reports";
 import type { ReportSeverity, ReportType } from "../../mockdata/report";
 import "./SubmitAlertPage.css";
@@ -21,6 +23,9 @@ const SEVERITIES = [
 export default function SubmitAlertPage() {
   const navigate = useNavigate();
   const { t } = useI18n();
+  const { push } = useNotifications();
+  const { role } = useAuth();
+  const farmer = role === "farmer";
 
   const [form, setForm] = useState({
     title: "",
@@ -32,6 +37,9 @@ export default function SubmitAlertPage() {
     longitude: "",
     description: "",
     severity: "medium",
+    crop: "",
+    area: "",
+    parcel: "",
   });
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -98,10 +106,23 @@ export default function SubmitAlertPage() {
     const latitude = form.latitude.trim() === "" ? undefined : Number(form.latitude);
     const longitude = form.longitude.trim() === "" ? undefined : Number(form.longitude);
 
+    const description = farmer
+      ? [
+          t("submit.farm.summary", {
+            crop: form.crop.trim() || "—",
+            area: form.area.trim() || "—",
+            parcel: form.parcel.trim() || "—",
+          }),
+          form.description.trim(),
+        ]
+          .filter(Boolean)
+          .join(" — ")
+      : form.description.trim();
+
     const report = createReport({
       title: form.title.trim(),
-      description: form.description.trim(),
-      type: (form.type || "other") as ReportType,
+      description,
+      type: (form.type || (farmer ? "agricultural" : "other")) as ReportType,
       severity: form.severity as ReportSeverity,
       wilaya: form.wilaya.trim(),
       commune: form.commune.trim(),
@@ -111,6 +132,11 @@ export default function SubmitAlertPage() {
     });
 
     saveReport(report);
+    push({
+      kind: "mission",
+      titleKey: "notif.report.title",
+      detailKey: "notif.report.detail",
+    });
     // Le suivi du signalement se poursuit dans l'espace « Mes signalements ».
     navigate("/my-reports", { state: { submitted: report.id } });
   }
@@ -172,6 +198,7 @@ export default function SubmitAlertPage() {
                 <option value="accident">{t("submit.type.accident")}</option>
                 <option value="storm">{t("submit.type.storm")}</option>
                 <option value="landslide">{t("submit.type.landslide")}</option>
+                <option value="agricultural">{t("submit.type.agricultural")}</option>
                 <option value="other">{t("submit.type.other")}</option>
               </select>
             </div>
@@ -200,6 +227,45 @@ export default function SubmitAlertPage() {
               </div>
             </div>
           </div>
+
+          {farmer ? (
+            <div className="submit-alert-farm">
+              <h3>{t("submit.farm.title")}</h3>
+              <p>{t("submit.farm.lead")}</p>
+              <div className="submit-alert-grid">
+                <div className="submit-alert-field">
+                  <label htmlFor="farm-crop">{t("submit.farm.crop")}</label>
+                  <input
+                    id="farm-crop"
+                    placeholder={t("submit.farm.cropPlaceholder")}
+                    value={form.crop}
+                    onChange={(e) => update("crop", e.target.value)}
+                  />
+                </div>
+                <div className="submit-alert-field">
+                  <label htmlFor="farm-area">{t("submit.farm.area")}</label>
+                  <input
+                    id="farm-area"
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    placeholder="0.0"
+                    value={form.area}
+                    onChange={(e) => update("area", e.target.value)}
+                  />
+                </div>
+                <div className="submit-alert-field">
+                  <label htmlFor="farm-parcel">{t("submit.farm.parcel")}</label>
+                  <input
+                    id="farm-parcel"
+                    placeholder={t("submit.farm.parcelPlaceholder")}
+                    value={form.parcel}
+                    onChange={(e) => update("parcel", e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+          ) : null}
         </section>
 
         <section className="submit-alert-section">

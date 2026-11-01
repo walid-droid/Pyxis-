@@ -3,7 +3,10 @@
  * Aucun backend : les écrans illustrent les rôles et parcours du cahier des charges.
  */
 
+import type { DesignationFn } from "../../auth/permissions";
+import type { Role } from "../../auth/roles";
 import type { Lang } from "../../i18n";
+import type { Coords } from "../../mockdata/locations";
 
 export type Localized = { fr: string; ar: string };
 
@@ -22,7 +25,9 @@ export type PersonaId =
   | "forestier"
   | "agent"
   | "engin"
-  | "security"
+  | "police"
+  | "gendarmerie"
+  | "travaux"
   | "cotedan"
   | "urgentiste"
   | "pcf";
@@ -35,29 +40,39 @@ export type OrgPage =
   | "watch"
   | "victims"
   | "evacuation"
+  | "roads"
+  | "maritime"
   | "pco"
   | "vehicle"
   | "pcf"
   | "history";
 
-export type Persona = {
+/** Profil de démonstration : le rôle de compte et les désignations viennent de auth/. */
+export type PersonaProfile = {
   id: PersonaId;
+  /** Rôle de compte (un seul par compte). */
+  accountRole: Role;
+  /** Fonctions ORSEC confiées en plus du rôle. */
+  designations: DesignationFn[];
   name: Localized;
   role: Localized;
   org: Localized;
   scope: Localized;
-  pages: OrgPage[];
   duties: Localized[];
 };
 
-export const PERSONAS: Persona[] = [
+/** Profil + pages accessibles, déduites des permissions (voir orgAccess.ts). */
+export type Persona = PersonaProfile & { pages: OrgPage[] };
+
+export const PERSONAS: PersonaProfile[] = [
   {
     id: "organisme",
+    accountRole: "organism",
+    designations: [],
     name: LocalizedValue("Compte organisme", "حساب الهيئة"),
     role: LocalizedValue("Organisme (S1)", "هيئة (S1)"),
     org: LocalizedValue("Protection civile · Béjaïa", "الحماية المدنية · بجاية"),
     scope: LocalizedValue("Wilaya de Béjaïa", "ولاية بجاية"),
-    pages: ["reports", "missions", "resources"],
     duties: [
       LocalizedValue(
         "Recevoir et traiter les signalements de l'organisme.",
@@ -75,11 +90,12 @@ export const PERSONAS: Persona[] = [
   },
   {
     id: "directeur",
+    accountRole: "org_director",
+    designations: [],
     name: LocalizedValue("Colonel A. Mansouri", "العقيد أ. منصوري"),
     role: LocalizedValue("Directeur d'organisme", "مدير الهيئة"),
     org: LocalizedValue("Protection civile · Béjaïa", "الحماية المدنية · بجاية"),
     scope: LocalizedValue("Wilaya de Béjaïa", "ولاية بجاية"),
-    pages: ["reports", "missions", "resources", "reinforcements", "history"],
     duties: [
       LocalizedValue(
         "Gérer les équipes et les moyens de l'organisme.",
@@ -101,11 +117,12 @@ export const PERSONAS: Persona[] = [
   },
   {
     id: "unite",
+    accountRole: "unit_lead",
+    designations: [],
     name: LocalizedValue("Capitaine S. Haddad", "النقيب س. حداد"),
     role: LocalizedValue("Responsable d'unité", "مسؤول الوحدة"),
     org: LocalizedValue("Unité d'intervention n° 3", "وحدة التدخل رقم 3"),
     scope: LocalizedValue("Commune de Béjaïa", "بلدية بجاية"),
-    pages: ["missions", "resources", "reinforcements"],
     duties: [
       LocalizedValue(
         "Créer et affecter les missions de l'unité.",
@@ -123,11 +140,12 @@ export const PERSONAS: Persona[] = [
   },
   {
     id: "pc",
+    accountRole: "pc_lead",
+    designations: [],
     name: LocalizedValue("Commandant R. Amrani", "الرائد ر. عمراني"),
     role: LocalizedValue("Responsable de la Protection civile", "مسؤول الحماية المدنية"),
     org: LocalizedValue("PCO · Protection civile", "مركز القيادة · الحماية المدنية"),
     scope: LocalizedValue("Wilaya de Béjaïa", "ولاية بجاية"),
-    pages: ["missions", "resources", "reinforcements", "victims", "evacuation", "pco", "history"],
     duties: [
       LocalizedValue(
         "Créer les missions et diriger le PCO.",
@@ -149,11 +167,12 @@ export const PERSONAS: Persona[] = [
   },
   {
     id: "medical",
+    accountRole: "medical_lead",
+    designations: [],
     name: LocalizedValue("Dr L. Meziane", "الدكتور ل. مزيان"),
     role: LocalizedValue("Responsable médical", "المسؤول الطبي"),
     org: LocalizedValue("Direction de la santé · Béjaïa", "مديرية الصحة · بجاية"),
     scope: LocalizedValue("Wilaya de Béjaïa", "ولاية بجاية"),
-    pages: ["missions", "resources", "victims"],
     duties: [
       LocalizedValue(
         "Suivre le bilan des victimes et leur état clinique.",
@@ -171,11 +190,12 @@ export const PERSONAS: Persona[] = [
   },
   {
     id: "evacuation",
+    accountRole: "evac_lead",
+    designations: [],
     name: LocalizedValue("Cne N. Cherif", "النقيب ن. شريف"),
     role: LocalizedValue("Responsable des évacuations", "مسؤول الإخلاء"),
     org: LocalizedValue("Protection civile · Béjaïa", "الحماية المدنية · بجاية"),
     scope: LocalizedValue("Wilaya de Béjaïa", "ولاية بجاية"),
-    pages: ["missions", "resources", "evacuation"],
     duties: [
       LocalizedValue(
         "Gérer les itinéraires et les déviations.",
@@ -193,11 +213,12 @@ export const PERSONAS: Persona[] = [
   },
   {
     id: "previsionniste",
+    accountRole: "forecaster",
+    designations: [],
     name: LocalizedValue("Mme H. Taleb", "السيدة ح. طالب"),
     role: LocalizedValue("Prévisionniste", "المتنبئ"),
     org: LocalizedValue("Cellule de veille · ANRH", "خلية اليقظة · الوكالة الوطنية للموارد المائية"),
     scope: LocalizedValue("Bassins de la Soummam", "أحواض سومام"),
-    pages: ["watch"],
     duties: [
       LocalizedValue(
         "Saisir les barrages, oueds et niveaux d'eau.",
@@ -215,11 +236,12 @@ export const PERSONAS: Persona[] = [
   },
   {
     id: "forestier",
+    accountRole: "forestry_agent",
+    designations: [],
     name: LocalizedValue("M. K. Zidane", "السيد ك. زيدان"),
     role: LocalizedValue("Agent forestier", "العون الغابي"),
     org: LocalizedValue("Conservation des forêts · Béjaïa", "محافظة الغابات · بجاية"),
     scope: LocalizedValue("Massifs de Béjaïa", "غابات بجاية"),
-    pages: ["watch", "resources"],
     duties: [
       LocalizedValue(
         "Signaler les risques forestiers.",
@@ -237,11 +259,12 @@ export const PERSONAS: Persona[] = [
   },
   {
     id: "agent",
+    accountRole: "pc_agent",
+    designations: [],
     name: LocalizedValue("Agent Y. Meziane", "العون ي. مزيان"),
     role: LocalizedValue("Agent de terrain", "عون ميداني"),
     org: LocalizedValue("Unité d'intervention n° 3", "وحدة التدخل رقم 3"),
     scope: LocalizedValue("Commune de Béjaïa", "بلدية بجاية"),
-    pages: ["missions", "resources"],
     duties: [
       LocalizedValue(
         "Voir et exécuter ses missions.",
@@ -259,11 +282,12 @@ export const PERSONAS: Persona[] = [
   },
   {
     id: "engin",
+    accountRole: "engine_chief",
+    designations: [],
     name: LocalizedValue("Sgt B. Saidi", "الرقيب ب. سعيدي"),
     role: LocalizedValue("Chef d'engin", "قائد العربة"),
     org: LocalizedValue("Parc engins · Protection civile", "حظيرة العربات · الحماية المدنية"),
     scope: LocalizedValue("Wilaya de Béjaïa", "ولاية بجاية"),
-    pages: ["missions", "vehicle"],
     duties: [
       LocalizedValue(
         "Suivre son véhicule et ses équipements.",
@@ -280,12 +304,13 @@ export const PERSONAS: Persona[] = [
     ],
   },
   {
-    id: "security",
+    id: "police",
+    accountRole: "police",
+    designations: [],
     name: LocalizedValue("Commissaire T. Saidi", "المفوض ط. سعيدي"),
-    role: LocalizedValue("Police / Gendarmerie / Travaux publics", "الشرطة / الدرك / الأشغال العمومية"),
+    role: LocalizedValue("Police", "الشرطة"),
     org: LocalizedValue("Sécurité publique · Béjaïa", "الأمن العمومي · بجاية"),
     scope: LocalizedValue("Wilaya de Béjaïa", "ولاية بجاية"),
-    pages: ["missions", "evacuation"],
     duties: [
       LocalizedValue(
         "Sécuriser les zones sinistrées.",
@@ -302,12 +327,59 @@ export const PERSONAS: Persona[] = [
     ],
   },
   {
+    id: "gendarmerie",
+    accountRole: "gendarmerie",
+    designations: [],
+    name: LocalizedValue("Commandant K. Benali", "القائد ك. بن علي"),
+    role: LocalizedValue("Gendarmerie", "الدرك الوطني"),
+    org: LocalizedValue("Groupement territorial · Béjaïa", "المجموعة الإقليمية · بجاية"),
+    scope: LocalizedValue("Wilaya de Béjaïa", "ولاية بجاية"),
+    duties: [
+      LocalizedValue(
+        "Sécuriser les zones et gérer les accès.",
+        "تأمين المناطق وتنظيم المداخل.",
+      ),
+      LocalizedValue(
+        "Signaler les routes bloquées.",
+        "الإبلاغ عن الطرق المقطوعة.",
+      ),
+      LocalizedValue(
+        "Confirmer la réouverture d'une route.",
+        "تأكيد إعادة فتح الطريق.",
+      ),
+    ],
+  },
+  {
+    id: "travaux",
+    accountRole: "org_agent",
+    designations: [],
+    name: LocalizedValue("Ing. N. Hamidi", "المهندس ن. حميدي"),
+    role: LocalizedValue("Agent d'organisme · Travaux publics", "عون هيئة · الأشغال العمومية"),
+    org: LocalizedValue("Direction des travaux publics · Béjaïa", "مديرية الأشغال العمومية · بجاية"),
+    scope: LocalizedValue("Wilaya de Béjaïa", "ولاية بجاية"),
+    duties: [
+      LocalizedValue(
+        "Exécuter les missions confiées par son responsable d'unité.",
+        "تنفيذ المهام التي يكلفه بها مسؤول وحدته.",
+      ),
+      LocalizedValue(
+        "Recenser les moyens de son organisme (engins, matériels).",
+        "إحصاء وسائل هيئته (آليات ومعدات).",
+      ),
+      LocalizedValue(
+        "Confirmer la réouverture d'une route après déblaiement.",
+        "تأكيد إعادة فتح الطريق بعد إزالة الأتربة.",
+      ),
+    ],
+  },
+  {
     id: "cotedan",
+    accountRole: "coast_guard",
+    designations: [],
     name: LocalizedValue("Major A. Bouzid", "الرئيس أ. بوزيد"),
     role: LocalizedValue("Garde-côtes", "حرس السواحل"),
     org: LocalizedValue("Garde-côtes · Béjaïa", "حرس السواحل · بجاية"),
     scope: LocalizedValue("Littoral de Béjaïa", "ساحل بجاية"),
-    pages: ["missions", "resources"],
     duties: [
       LocalizedValue(
         "Intervenir en mer et sur le littoral.",
@@ -325,11 +397,12 @@ export const PERSONAS: Persona[] = [
   },
   {
     id: "pcf",
+    accountRole: "org_director",
+    designations: ["PCF_DIRECTOR"],
     name: LocalizedValue("Général M. Larbi", "اللواء م. العربي"),
     role: LocalizedValue("Directeur du PCF", "مدير مركز القيادة الجهوي"),
     org: LocalizedValue("PCF · Protection civile", "مركز القيادة · الحماية المدنية"),
     scope: LocalizedValue("Wilaya de Béjaïa", "ولاية بجاية"),
-    pages: ["pcf", "reinforcements", "history"],
     duties: [
       LocalizedValue(
         "Conduire la phase d'activation et les modules concernés.",
@@ -347,11 +420,12 @@ export const PERSONAS: Persona[] = [
   },
   {
     id: "urgentiste",
+    accountRole: "emergency_doctor",
+    designations: [],
     name: LocalizedValue("Dr S. Kaci", "الدكتورة س. قاسي"),
     role: LocalizedValue("Médecin urgentiste (S7)", "طبيب استعجالات (S7)"),
     org: LocalizedValue("SAMU · CHU Béjaïa", "الإسعاف الطبي · المستشفى الجامعي ببجاية"),
     scope: LocalizedValue("Wilaya de Béjaïa", "ولاية بجاية"),
-    pages: ["missions", "victims"],
     duties: [
       LocalizedValue(
         "Enregistrer les victimes et leur état clinique.",
@@ -560,6 +634,9 @@ export type Mission = {
   priority: MissionPriority;
   status: MissionStatus;
   due: string;
+  consigne?: Localized;
+  incidentRef?: string;
+  position?: Coords;
   report?: Localized;
   reportPosition?: string;
   reportPhotos?: number;
@@ -580,6 +657,12 @@ export const MISSIONS: Mission[] = [
     priority: "high",
     status: "active",
     due: "30/10/2026 · 12:00",
+    consigne: LocalizedValue(
+      "Baliser les deux sens, interdire l'accès aux piétons et rendre compte toutes les 30 minutes.",
+      "وضع العلامات في الاتجاهين، منع مرور المشاة، ورفع تقرير كل 30 دقيقة.",
+    ),
+    incidentRef: "SIG-2026-1042",
+    position: [36.462, 4.543],
   },
   {
     id: "m2",
@@ -594,6 +677,12 @@ export const MISSIONS: Mission[] = [
     priority: "high",
     status: "active",
     due: "30/10/2026 · 13:30",
+    consigne: LocalizedValue(
+      "Priorité aux personnes vulnérables, recenser les familles et confirmer chaque départ.",
+      "الأولوية للأشخاص الضعفاء، إحصاء العائلات وتأكيد كل عملية مغادرة.",
+    ),
+    incidentRef: "SIG-2026-1042",
+    position: [36.7509, 5.0567],
   },
   {
     id: "m3",
@@ -608,6 +697,12 @@ export const MISSIONS: Mission[] = [
     priority: "medium",
     status: "todo",
     due: "30/10/2026 · 15:00",
+    consigne: LocalizedValue(
+      "Reconnaître les pistes d'accès, repérer les points d'eau et signaler toute fumée.",
+      "استطلاع مسارات الوصول، تحديد نقاط المياه والإبلاغ عن أي دخان.",
+    ),
+    incidentRef: "SIG-2026-1039",
+    position: [36.7756, 5.0845],
   },
   {
     id: "m4",
@@ -622,6 +717,12 @@ export const MISSIONS: Mission[] = [
     priority: "medium",
     status: "done",
     due: "30/10/2026 · 10:00",
+    consigne: LocalizedValue(
+      "Installer le poste médical avancé à proximité de la salle omnisports.",
+      "نصب المركز الطبي المتقدم قرب القاعة المتعددة الرياضات.",
+    ),
+    incidentRef: "SIG-2026-1042",
+    position: [36.4626, 4.5421],
     report: LocalizedValue(
       "Poste médical avancé opérationnel à 09:40. Deux médecins et six infirmiers engagés.",
       "المركز الطبي المتقدم جاهز عند 09:40. طبيبان وستة ممرضين مشاركون.",
@@ -640,6 +741,11 @@ export const MISSIONS: Mission[] = [
     priority: "low",
     status: "done",
     due: "29/10/2026 · 17:00",
+    consigne: LocalizedValue(
+      "Vérifier les niveaux et compléter le plein avant tout engagement.",
+      "التحقق من المستويات وإتمام التموين قبل أي مشاركة.",
+    ),
+    position: [36.7509, 5.0567],
     report: LocalizedValue(
       "Plein effectué, niveaux vérifiés. Engin disponible.",
       "تم التموين والتحقق من المستويات. العربة متاحة.",
@@ -652,7 +758,12 @@ export const MISSIONS: Mission[] = [
 /* Moyens                                                              */
 /* ------------------------------------------------------------------ */
 
-export type ResourceStatus = "available" | "engaged" | "maintenance";
+export type ResourceStatus =
+  | "available"
+  | "engaged"
+  | "reserve"
+  | "maintenance"
+  | "out_of_service";
 
 export type Team = {
   id: string;
@@ -722,10 +833,92 @@ export const TEAMS: Team[] = [
     id: "t5",
     name: LocalizedValue("Équipe logistique", "فريق اللوجستيك"),
     type: LocalizedValue("Logistique", "اللوجستيك"),
-    status: "available",
+    status: "reserve",
     members: 6,
     contact: "14 40",
     mission: null,
+  },
+];
+
+/* ------------------------------------------------------------------ */
+/* Agents de l'unité                                                   */
+/* ------------------------------------------------------------------ */
+
+export type AgentAvailability = "available" | "engaged" | "offline";
+
+export type OrgAgent = {
+  id: string;
+  name: Localized;
+  role: Localized;
+  unit: Localized;
+  phone: string;
+  status: AgentAvailability;
+};
+
+export const ORG_AGENTS: OrgAgent[] = [
+  {
+    id: "ag1",
+    name: LocalizedValue("Capitaine S. Haddad", "النقيب س. حداد"),
+    role: LocalizedValue("Chef d'unité", "قائد الوحدة"),
+    unit: LocalizedValue("Unité d'intervention n° 3", "وحدة التدخل رقم 3"),
+    phone: "14 21",
+    status: "available",
+  },
+  {
+    id: "ag2",
+    name: LocalizedValue("Agent Y. Meziane", "العون ي. مزيان"),
+    role: LocalizedValue("Agent de secours", "عون إنقاذ"),
+    unit: LocalizedValue("Unité d'intervention n° 3", "وحدة التدخل رقم 3"),
+    phone: "14 23",
+    status: "engaged",
+  },
+  {
+    id: "ag3",
+    name: LocalizedValue("Sgt B. Saidi", "الرقيب ب. سعيدي"),
+    role: LocalizedValue("Chef d'engin", "قائد العربة"),
+    unit: LocalizedValue("Unité d'intervention n° 3", "وحدة التدخل رقم 3"),
+    phone: "14 24",
+    status: "engaged",
+  },
+  {
+    id: "ag4",
+    name: LocalizedValue("Agente N. Aït Ali", "العونة ن. آيت علي"),
+    role: LocalizedValue("Secouriste", "مسعفة"),
+    unit: LocalizedValue("Unité d'intervention n° 3", "وحدة التدخل رقم 3"),
+    phone: "14 25",
+    status: "available",
+  },
+  {
+    id: "ag5",
+    name: LocalizedValue("Dr S. Kaci", "الدكتورة س. قاسي"),
+    role: LocalizedValue("Médecin urgentiste", "طبيب استعجالات"),
+    unit: LocalizedValue("Équipe médicale mobile", "الفريق الطبي المتنقل"),
+    phone: "14 15",
+    status: "engaged",
+  },
+  {
+    id: "ag6",
+    name: LocalizedValue("Cne N. Cherif", "النقيب ن. شريف"),
+    role: LocalizedValue("Responsable évacuation", "مسؤول الإخلاء"),
+    unit: LocalizedValue("Unité évacuation", "وحدة الإخلاء"),
+    phone: "14 22",
+    status: "available",
+  },
+  {
+    id: "ag7",
+    name: LocalizedValue("M. K. Zidane", "السيد ك. زيدان"),
+    role: LocalizedValue("Agent forestier", "عون غابي"),
+    unit: LocalizedValue("Unité forestière", "الوحدة الغابية"),
+    phone: "14 30",
+    status: "offline",
+  },
+  {
+    id: "ag8",
+    name: LocalizedValue("M. R. Bouzid", "السيد ر. بوزيد"),
+    role: LocalizedValue("Conducteur ambulance", "سائق إسعاف"),
+    unit: LocalizedValue("Équipe médicale mobile", "الفريق الطبي المتنقل"),
+    phone: "14 16",
+    status: "available",
   },
 ];
 
@@ -761,7 +954,7 @@ export const VEHICLES: Vehicle[] = [
     id: "v4",
     name: LocalizedValue("Camion-citerne CC-07", "صهريج CC-07"),
     type: LocalizedValue("Ravitaillement", "التموين"),
-    status: "maintenance",
+    status: "out_of_service",
     fuel: 34,
     position: LocalizedValue("Béjaïa · Parc engins", "بجاية · حظيرة العربات"),
     driver: "M. K. Aït Ali",
@@ -816,6 +1009,7 @@ export type Reinforcement = {
   id: string;
   ref: string;
   from: Localized;
+  requestedTo: Localized;
   type: Localized;
   quantity: number;
   urgency: "low" | "medium" | "high";
@@ -823,6 +1017,7 @@ export type Reinforcement = {
   status: ReinforcementStatus;
   at: string;
   note: Localized;
+  refusalReason?: Localized;
 };
 
 export const REINFORCEMENTS: Reinforcement[] = [
@@ -830,6 +1025,7 @@ export const REINFORCEMENTS: Reinforcement[] = [
     id: "ren1",
     ref: "REN-2026-088",
     from: LocalizedValue("Unité d'intervention n° 3", "وحدة التدخل رقم 3"),
+    requestedTo: LocalizedValue("Direction de la Protection civile · Béjaïa", "مديرية الحماية المدنية · بجاية"),
     type: LocalizedValue("Équipe de secours", "فريق إنقاذ"),
     quantity: 2,
     urgency: "high",
@@ -845,6 +1041,7 @@ export const REINFORCEMENTS: Reinforcement[] = [
     id: "ren2",
     ref: "REN-2026-086",
     from: LocalizedValue("SAMU · CHU Béjaïa", "الإسعاف الطبي · المستشفى الجامعي"),
+    requestedTo: LocalizedValue("PCF · Protection civile", "مركز القيادة الجهوي · الحماية المدنية"),
     type: LocalizedValue("Ambulance médicalisée", "إسعاف طبي"),
     quantity: 1,
     urgency: "medium",
@@ -860,6 +1057,7 @@ export const REINFORCEMENTS: Reinforcement[] = [
     id: "ren3",
     ref: "REN-2026-081",
     from: LocalizedValue("Unité forestière", "الوحدة الغابية"),
+    requestedTo: LocalizedValue("Conservation des forêts · Béjaïa", "محافظة الغابات · بجاية"),
     type: LocalizedValue("Camion-citerne", "صهريج"),
     quantity: 1,
     urgency: "medium",
@@ -875,6 +1073,7 @@ export const REINFORCEMENTS: Reinforcement[] = [
     id: "ren4",
     ref: "REN-2026-076",
     from: LocalizedValue("Unité évacuation", "وحدة الإخلاء"),
+    requestedTo: LocalizedValue("Direction des transports · Béjaïa", "مديرية النقل · بجاية"),
     type: LocalizedValue("Bus de transport", "حافلات نقل"),
     quantity: 3,
     urgency: "low",
@@ -908,6 +1107,8 @@ export type HydroStation = {
   history: number[];
   /** Zones inondables associées, affichées sur la carte. */
   floodZones?: Localized[];
+  /** Position du point de surveillance sur la carte. */
+  position?: Coords;
 };
 
 export const HYDRO_STATIONS: HydroStation[] = [
@@ -927,6 +1128,7 @@ export const HYDRO_STATIONS: HydroStation[] = [
       LocalizedValue("Vallée de la Soummam · Akbou", "وادي سومام · أقبو"),
       LocalizedValue("Basse plaine de Tichy", "سهل تيشي المنخفض"),
     ],
+    position: [36.436, 5.074],
   },
   {
     id: "h2",
@@ -944,6 +1146,7 @@ export const HYDRO_STATIONS: HydroStation[] = [
       LocalizedValue("Quartier Iheddaden", "حي إحدادن"),
       LocalizedValue("Berges de la RN26", "ضفاف الطريق الوطنية 26"),
     ],
+    position: [36.463, 4.54],
   },
   {
     id: "h3",
@@ -958,6 +1161,7 @@ export const HYDRO_STATIONS: HydroStation[] = [
     release: 0,
     history: [1.8, 1.9, 2.0, 2.2, 2.1, 2.3, 2.2, 2.1, 2.1],
     floodZones: [LocalizedValue("Plaine d'Amizour", "سهل أميزور")],
+    position: [36.633, 4.9],
   },
   {
     id: "h4",
@@ -972,6 +1176,7 @@ export const HYDRO_STATIONS: HydroStation[] = [
     release: 0,
     history: [2.2, 2.0, 1.9, 1.8, 1.9, 1.7, 1.6, 1.7, 1.6],
     floodZones: [LocalizedValue("Embouchure d'Aokas", "مصب أوقاس")],
+    position: [36.608, 5.198],
   },
 ];
 
@@ -1067,6 +1272,8 @@ export type ForestSignal = {
   area: string;
   detected: string;
   status: "watching" | "proposed" | "validated";
+  photos?: number;
+  supportRequested?: boolean;
 };
 
 export const FOREST_SIGNALS: ForestSignal[] = [
@@ -1078,6 +1285,7 @@ export const FOREST_SIGNALS: ForestSignal[] = [
     area: "12 ha",
     detected: "30/10/2026 · 07:55",
     status: "proposed",
+    photos: 2,
   },
   {
     id: "f2",
@@ -1087,6 +1295,7 @@ export const FOREST_SIGNALS: ForestSignal[] = [
     area: "340 ha",
     detected: "29/10/2026 · 16:20",
     status: "watching",
+    photos: 1,
   },
   {
     id: "f3",
@@ -1369,6 +1578,40 @@ export const MOVEMENTS: Movement[] = [
     eta: "09:20",
   },
 ];
+
+export type AccessPoint = {
+  id: string;
+  name: Localized;
+  kind: "checkpoint" | "road" | "bridge";
+  status: "secured" | "restricted" | "closed";
+  agent: string;
+};
+
+/** Points de sécurisation et d'accès tenus par la police ou la gendarmerie. */
+export const ACCESS_POINTS: AccessPoint[] = [
+  {
+    id: "ap1",
+    name: LocalizedValue("Barrage RN26 · entrée d'Akbou", "حاجز الطريق الوطنية 26 · مدخل أقبو"),
+    kind: "checkpoint",
+    status: "closed",
+    agent: "Gendarmerie · Akbou",
+  },
+  {
+    id: "ap2",
+    name: LocalizedValue("Accès quartier Iheddaden", "مدخل حي إحدادن"),
+    kind: "road",
+    status: "restricted",
+    agent: "Police · Béjaïa",
+  },
+  {
+    id: "ap3",
+    name: LocalizedValue("Pont de Tichy", "جسر تيشي"),
+    kind: "bridge",
+    status: "closed",
+    agent: "Police · Tichy",
+  },
+];
+
 
 /* ------------------------------------------------------------------ */
 /* PCO                                                                 */

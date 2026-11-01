@@ -1,8 +1,9 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "./authority.css";
 import { Link } from "react-router";
 import { AUTHORITY_DASHBOARD_PATH } from "../../config";
 import { useI18n } from "../../i18n";
+import { exportCsv, printDocument } from "../../lib/exportData";
 
 type Decision = {
   key: string;
@@ -61,7 +62,26 @@ function AuthorityDecisionsPage() {
           <p className="rc-hero__lead">{t("authority.decisions.lead")}</p>
         </div>
         <div className="rc-hero__aside">
-          <button type="button" className="rc-btn rc-btn--ghost">
+          <button type="button" className="rc-btn rc-btn--ghost" onClick={printDocument}>
+            {t("common.print")}
+          </button>
+          <button
+            type="button"
+            className="rc-btn rc-btn--ghost"
+            onClick={() =>
+              exportCsv(
+                "registre-decisions-cadm",
+                DECISIONS.map((decision) => ({
+                  reference: decision.key,
+                  heure: decision.time,
+                  type: t(decision.typeKey),
+                  intitule: t(`authority.decisions.${decision.key}`),
+                  auteur: t("authority.decisions.authorValue"),
+                  tracabilite: t("authority.decisions.trace"),
+                })),
+              )
+            }
+          >
             {t("authority.decisions.export")}
           </button>
         </div>

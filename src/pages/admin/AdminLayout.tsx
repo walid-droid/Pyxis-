@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import AppShell, { type ShellNavItem } from "../../components/AppShell";
 import {
+  ADMIN_ASSIGNMENTS_PATH,
   ADMIN_DASHBOARD_PATH,
   ADMIN_DOCUMENTS_PATH,
   ADMIN_JOURNAL_PATH,
@@ -15,6 +16,7 @@ import { getAdminSession, signOutAdmin } from "../../lib/session";
 const ADMIN_NAV: ShellNavItem[] = [
   { to: ADMIN_DASHBOARD_PATH, labelKey: "admin.nav.dashboard", end: true },
   { to: ADMIN_USERS_PATH, labelKey: "admin.nav.users" },
+  { to: ADMIN_ASSIGNMENTS_PATH, labelKey: "admin.nav.assignments" },
   { to: ADMIN_TERRITORIES_PATH, labelKey: "admin.nav.territories" },
   { to: ADMIN_ORGANISATIONS_PATH, labelKey: "admin.nav.organisations" },
   { to: ADMIN_SETTINGS_PATH, labelKey: "admin.nav.settings" },

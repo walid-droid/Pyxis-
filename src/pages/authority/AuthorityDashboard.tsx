@@ -1,4 +1,4 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "./authority.css";
 import type { ReactNode } from "react";
 import { Link } from "react-router";
@@ -12,7 +12,10 @@ import {
 } from "../../config";
 import { useI18n } from "../../i18n";
 import { useOrsecPlans } from "../shared/plan/PlanContext";
+import { useAuthorityLevel } from "../../auth/useAuthorityLevel";
+import { useAuth } from "../../auth/AuthContext";
 import { designatedCount, modulesForLevel } from "../shared/plan/orsecPlan";
+import { CommunalOverview, NationalOverview } from "./AuthorityScopeOverview";
 
 type QuickLink = {
   key: string;
@@ -145,8 +148,16 @@ const DECISIONS = [
 function AuthorityDashboard() {
   const { t } = useI18n();
   const { plans } = useOrsecPlans();
-  const designated = designatedCount(plans.wilaya);
-  const missing = modulesForLevel("wilaya").length - designated;
+  const level = useAuthorityLevel();
+  const { role } = useAuth();
+  const designated = designatedCount(plans[level]);
+  const missing = modulesForLevel(level).length - designated;
+  const scopeChipKey =
+    role === "minister"
+      ? "authority.dash.chipScopeNational"
+      : role === "apc_president"
+        ? "authority.dash.chipScopeCommune"
+        : "authority.dash.chipScope";
 
   return (
     <main className="rc-page rc-page--authority">
@@ -158,7 +169,7 @@ function AuthorityDashboard() {
           <div className="rc-hero__meta">
             <span className="rc-chip">
               <span className="rc-chip__dot rc-chip__dot--high" />
-              {t("authority.dash.chipScope")}
+              {t(scopeChipKey)}
             </span>
             <span className="rc-chip">
               <span className="rc-chip__dot rc-chip__dot--low" />
@@ -186,37 +197,37 @@ function AuthorityDashboard() {
             {t("authority.dash.openPlan")}
           </Link>
         </div>
-      </section>
 
-      <section className="stat-grid" aria-label={t("authority.dash.statsLabel")}>
-        <StatCard
-          value={t("authority.dash.statLevelValue")}
-          label={t("authority.dash.statLevel")}
-          badge={t("authority.dash.statLevelBadge")}
-          badgeTone="warning"
-        />
-        <StatCard
-          value={`${designated}/${modulesForLevel("wilaya").length}`}
-          label={t("authority.dash.statModules")}
-          badge={
-            missing > 0
-              ? t("orsec.modules.missingShort", { count: missing })
-              : t("orsec.modules.allDesignated")
-          }
-          badgeTone={missing > 0 ? "warning" : "success"}
-        />
-        <StatCard
-          value="12"
-          label={t("authority.dash.statDecisions")}
-          badge={t("authority.dash.statDecisionsBadge")}
-          badgeTone="success"
-        />
-        <StatCard
-          value="38"
-          label={t("authority.dash.statReports")}
-          badge={t("authority.dash.statReportsBadge")}
-          badgeTone="danger"
-        />
+        <section className="stat-grid" aria-label={t("authority.dash.statsLabel")}>
+          <StatCard
+            value={t("authority.dash.statLevelValue")}
+            label={t("authority.dash.statLevel")}
+            badge={t("authority.dash.statLevelBadge")}
+            badgeTone="warning"
+          />
+          <StatCard
+            value={`${designated}/${modulesForLevel(level).length}`}
+            label={t("authority.dash.statModules")}
+            badge={
+              missing > 0
+                ? t("orsec.modules.missingShort", { count: missing })
+                : t("orsec.modules.allDesignated")
+            }
+            badgeTone={missing > 0 ? "warning" : "success"}
+          />
+          <StatCard
+            value="12"
+            label={t("authority.dash.statDecisions")}
+            badge={t("authority.dash.statDecisionsBadge")}
+            badgeTone="success"
+          />
+          <StatCard
+            value="38"
+            label={t("authority.dash.statReports")}
+            badge={t("authority.dash.statReportsBadge")}
+            badgeTone="danger"
+          />
+        </section>
       </section>
 
       <section className="rc-quick" aria-labelledby="authority-quick-title">
@@ -246,6 +257,9 @@ function AuthorityDashboard() {
           ))}
         </div>
       </section>
+
+      {role === "minister" ? <NationalOverview /> : null}
+      {role === "apc_president" ? <CommunalOverview /> : null}
 
       <section className="rc-grid rc-grid--split">
         <article className="rc-card">

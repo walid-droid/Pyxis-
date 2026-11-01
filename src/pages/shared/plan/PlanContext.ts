@@ -5,6 +5,7 @@ import type {
   OrsecPlan,
   PlanLevel,
   PlanPhase,
+  SituationCode,
 } from "./orsecPlan";
 
 export type ActivationPayload = {
@@ -13,12 +14,29 @@ export type ActivationPayload = {
   moduleIds: ModuleId[];
 };
 
+export type SituationPayload = {
+  by: string;
+  role: string;
+  assignmentId: string;
+  justification: string;
+  signatureHash: string;
+  source?: string;
+  moduleIds?: ModuleId[];
+  emergency?: boolean;
+};
+
 export type PlanContextValue = {
   plans: Record<PlanLevel, OrsecPlan>;
   approve: (level: PlanLevel, by: string) => void;
   setAlert: (level: PlanLevel) => void;
   activate: (level: PlanLevel, payload: ActivationPayload, by: string) => void;
   setPhase: (level: PlanLevel, phase: PlanPhase) => void;
+  setSituation: (
+    level: PlanLevel,
+    to: SituationCode,
+    payload: SituationPayload,
+  ) => void;
+  closeRecovery: (level: PlanLevel, by: string) => void;
   lift: (level: PlanLevel) => void;
   designate: (
     level: PlanLevel,

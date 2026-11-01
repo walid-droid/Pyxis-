@@ -11,6 +11,9 @@ export type PlanStatus = "draft" | "pending" | "approved" | "alert" | "active";
 
 export type PlanPhase = "urgence" | "evaluation" | "rehabilitation";
 
+/** Situations opérationnelles A à E du guide ORSEC. */
+export type SituationCode = "A" | "B" | "C" | "D" | "E";
+
 export type Readiness = "ready" | "partial" | "missing";
 
 /** Les 13 modules d'intervention du décret (art. 43). */
@@ -156,6 +159,26 @@ export type PlanLog = {
   actionKey: string;
   subjectKey?: string;
   subject?: string;
+  /** Affectation scellée au moment de l'action (audit légal). */
+  assignmentId?: string;
+  /** Chaînage d'audit de la main courante. */
+  hash?: string;
+};
+
+/** Preuve juridique d'un changement de situation ORSEC. */
+export type SituationTransition = {
+  id: string;
+  from: SituationCode;
+  to: SituationCode;
+  at: string;
+  by: string;
+  assignmentId: string;
+  role: string;
+  justification: string;
+  signatureHash: string;
+  source?: string;
+  moduleIds: ModuleId[];
+  emergency?: boolean;
 };
 
 export type OrsecPlan = {
@@ -166,6 +189,9 @@ export type OrsecPlan = {
   version: string;
   status: PlanStatus;
   phase: PlanPhase | null;
+  /** Situation A-E : cycle opérationnel ORSEC. */
+  situation: SituationCode;
+  transitions: SituationTransition[];
   approvedBy: string | null;
   approvedAt: string | null;
   revisionDue: string;
@@ -176,6 +202,54 @@ export type OrsecPlan = {
   reports: PlanReport[];
   log: PlanLog[];
 };
+
+export const SITUATION_ORDER: SituationCode[] = ["A", "B", "C", "D", "E"];
+
+export const SITUATION_KEYS: Record<
+  SituationCode,
+  { nameKey: string; shortKey: string; tone: string }
+> = {
+  A: { nameKey: "ops.situation.A", shortKey: "ops.situation.short.A", tone: "normal" },
+  B: { nameKey: "ops.situation.B", shortKey: "ops.situation.short.B", tone: "alert" },
+  C: { nameKey: "ops.situation.C", shortKey: "ops.situation.short.C", tone: "emergency" },
+  D: { nameKey: "ops.situation.D", shortKey: "ops.situation.short.D", tone: "escalated" },
+  E: { nameKey: "ops.situation.E", shortKey: "ops.situation.short.E", tone: "recovery" },
+};
+
+/** Transitions autorisées par la doctrine (A→C reste une dérogation tracée). */
+export function allowedSituationTransitions(
+  from: SituationCode,
+): { to: SituationCode; emergency?: boolean }[] {
+  switch (from) {
+    case "A":
+      return [{ to: "B" }, { to: "C", emergency: true }];
+    case "B":
+      return [{ to: "A" }, { to: "C" }];
+    case "C":
+      return [{ to: "D" }, { to: "E" }];
+    case "D":
+      return [{ to: "C" }, { to: "E" }];
+    case "E":
+      return [{ to: "A" }];
+  }
+}
+
+export function isSituationTransitionAllowed(
+  from: SituationCode,
+  to: SituationCode,
+): boolean {
+  return allowedSituationTransitions(from).some((item) => item.to === to);
+}
+
+/** Un changement de situation engage l'autorité civile, sauf retour à C depuis D. */
+export function situationRequiresAuthority(to: SituationCode): boolean {
+  return to !== "C";
+}
+
+/** Situation initiale compatible avec les données de démonstration. */
+export function initialSituation(level: PlanLevel): SituationCode {
+  return level === "wilaya" ? "B" : "A";
+}
 
 /* ------------------------------------------------------------------ */
 /* Règles du domaine                                                   */
@@ -285,6 +359,8 @@ type PlanSeed = {
   designatedBy: string;
   designated: ModuleId[];
   log: PlanLog[];
+  situation?: SituationCode;
+  transitions?: SituationTransition[];
 };
 
 function buildPlan(level: PlanLevel, seed: PlanSeed): OrsecPlan {
@@ -309,6 +385,8 @@ function buildPlan(level: PlanLevel, seed: PlanSeed): OrsecPlan {
     version: seed.version,
     status: seed.status,
     phase: null,
+    situation: seed.situation ?? initialSituation(level),
+    transitions: seed.transitions ?? [],
     approvedBy: seed.approvedBy,
     approvedAt: seed.approvedAt,
     revisionDue: seed.revisionDue,
@@ -369,6 +447,23 @@ export function initialPlans(): Record<PlanLevel, OrsecPlan> {
         (id) =>
           id !== "materiaux" && id !== "telecom" && id !== "expertises",
       ),
+      situation: "B",
+      transitions: [
+        {
+          id: "sit-wilaya-1",
+          from: "A",
+          to: "B",
+          at: "30/10/2026 · 06:10",
+          by: "Cellule de veille · ONM",
+          assignmentId: "aff-wilaya-veille",
+          role: "forecaster",
+          justification:
+            "BMS ONM : pluies orageuses intenses attendues sur le littoral et la vallée de la Soummam.",
+          signatureHash: "b7e2a1f4",
+          source: "BMS ONM n° 2026-103",
+          moduleIds: ALL_MODULES,
+        },
+      ],
       log: [
         {
           id: "log-wilaya-2",

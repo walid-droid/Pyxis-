@@ -1,4 +1,4 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "./organisme.css";
 import { useState } from "react";
 import { Link } from "react-router";
@@ -9,18 +9,28 @@ import { useOrganisme } from "./orgContext";
 import OrgHero from "./OrgHero";
 import {
   EQUIPMENT,
+  ORG_AGENTS,
   TEAMS,
   VEHICLES,
   loc,
+  type AgentAvailability,
   type Equipment,
+  type OrgAgent,
   type ResourceStatus,
   type Team,
   type Vehicle,
 } from "./organismeData";
 
-type Tab = "teams" | "vehicles" | "equipment";
+type Tab = "agents" | "teams" | "vehicles" | "equipment";
 
 function tone(status: ResourceStatus): string {
+  if (status === "available") return "available";
+  if (status === "engaged") return "engaged";
+  if (status === "out_of_service") return "critical";
+  return "standby";
+}
+
+function agentTone(status: AgentAvailability): string {
   if (status === "available") return "available";
   if (status === "engaged") return "engaged";
   return "standby";
@@ -30,7 +40,8 @@ function tone(status: ResourceStatus): string {
 export default function ResourcesPage() {
   const { t, lang } = useI18n();
   const { persona } = useOrganisme();
-  const [tab, setTab] = useState<Tab>("teams");
+  const [tab, setTab] = useState<Tab>("agents");
+  const [agents, setAgents] = useState<OrgAgent[]>(ORG_AGENTS);
   const [teams, setTeams] = useState<Team[]>(TEAMS);
   const [vehicles, setVehicles] = useState<Vehicle[]>(VEHICLES);
   const [equipment, setEquipment] = useState<Equipment[]>(EQUIPMENT);
@@ -55,6 +66,13 @@ export default function ResourcesPage() {
   const updateEquipment = (id: string, status: ResourceStatus) => {
     setEquipment((current) =>
       current.map((item) => (item.id === id ? { ...item, status } : item)),
+    );
+    setToast(t("org.resources.updated"));
+  };
+
+  const updateAgent = (id: string, status: AgentAvailability) => {
+    setAgents((current) =>
+      current.map((agent) => (agent.id === id ? { ...agent, status } : agent)),
     );
     setToast(t("org.resources.updated"));
   };
@@ -91,7 +109,7 @@ export default function ResourcesPage() {
         <div className="rc-card__head">
           <h2 className="rc-card__title">{t("org.resources.title")}</h2>
           <div className="rc-tabs" role="group" aria-label={t("org.resources.title")}>
-            {(["teams", "vehicles", "equipment"] as const).map((value) => (
+            {(["agents", "teams", "vehicles", "equipment"] as const).map((value) => (
               <button
                 key={value}
                 type="button"
@@ -106,6 +124,49 @@ export default function ResourcesPage() {
         </div>
 
         <p className="rc-card__lead">{t("org.resources.lead")}</p>
+
+        {tab === "agents" ? (
+          <ul className="org-res-list">
+            {agents.map((agent) => (
+              <li key={agent.id} className="org-res">
+                <div className="org-res__main">
+                  <div className="org-res__head">
+                    <h3>{loc(lang, agent.name)}</h3>
+                    <span className={`rc-badge rc-badge--${agentTone(agent.status)}`}>
+                      {t(`org.resources.agentStatus.${agent.status}`)}
+                    </span>
+                  </div>
+                  <p className="org-res__meta">
+                    <span>{loc(lang, agent.role)}</span>
+                    <span>{loc(lang, agent.unit)}</span>
+                    <span>{t("org.resources.contact")} : {agent.phone}</span>
+                  </p>
+                </div>
+                <label className="org-res__action">
+                  <span>{t("org.common.status")}</span>
+                  <select
+                    className="org-select"
+                    value={agent.status}
+                    aria-label={t("org.common.status")}
+                    onChange={(event) =>
+                      updateAgent(agent.id, event.target.value as AgentAvailability)
+                    }
+                  >
+                    <option value="available">
+                      {t("org.resources.agentStatus.available")}
+                    </option>
+                    <option value="engaged">
+                      {t("org.resources.agentStatus.engaged")}
+                    </option>
+                    <option value="offline">
+                      {t("org.resources.agentStatus.offline")}
+                    </option>
+                  </select>
+                </label>
+              </li>
+            ))}
+          </ul>
+        ) : null}
 
         {tab === "teams" ? (
           <ul className="org-res-list">
@@ -144,8 +205,12 @@ export default function ResourcesPage() {
                   >
                     <option value="available">{t("org.resources.status.available")}</option>
                     <option value="engaged">{t("org.resources.status.engaged")}</option>
+                    <option value="reserve">{t("org.resources.status.reserve")}</option>
                     <option value="maintenance">
                       {t("org.resources.status.maintenance")}
+                    </option>
+                    <option value="out_of_service">
+                      {t("org.resources.status.out_of_service")}
                     </option>
                   </select>
                   {team.status === "engaged" ? (
@@ -209,8 +274,12 @@ export default function ResourcesPage() {
                     >
                       <option value="available">{t("org.resources.status.available")}</option>
                       <option value="engaged">{t("org.resources.status.engaged")}</option>
+                      <option value="reserve">{t("org.resources.status.reserve")}</option>
                       <option value="maintenance">
                         {t("org.resources.status.maintenance")}
+                      </option>
+                      <option value="out_of_service">
+                        {t("org.resources.status.out_of_service")}
                       </option>
                     </select>
                   </label>
@@ -259,8 +328,12 @@ export default function ResourcesPage() {
                       >
                         <option value="available">{t("org.resources.status.available")}</option>
                         <option value="engaged">{t("org.resources.status.engaged")}</option>
+                        <option value="reserve">{t("org.resources.status.reserve")}</option>
                         <option value="maintenance">
                           {t("org.resources.status.maintenance")}
+                        </option>
+                        <option value="out_of_service">
+                          {t("org.resources.status.out_of_service")}
                         </option>
                       </select>
                     </td>

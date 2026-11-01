@@ -967,3 +967,30 @@
     transition: none;
   }
 }
+
+/* Carte maritime et aperçus cartographiques dans une carte organisme. */
+.org-map-block {
+  margin-top: 14px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+
+.org-reopen-summary {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-button);
+  background: var(--color-surface-muted);
+}
+
+.org-reopen-summary strong {
+  font-size: 0.92rem;
+}
+
+.org-reopen-summary span {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+}

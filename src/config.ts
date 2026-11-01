@@ -14,10 +14,15 @@ export const FORGOT_PASSWORD_PATH = "/forgot-password";
 // Espace citoyen : assistant accessible depuis l'en-tête.
 export const ASSISTANT_PATH = "/assistant";
 
-// Espace responsable de crise : connexion et accueil dédiés.
-export const RESP_LOGIN_PATH = "/responsable/login";
-export const RESP_DASHBOARD_PATH = "/responsable";
-export const RESP_ASSISTANT_PATH = "/responsable/assistant";
+// Connexion unique du personnel (autorités, organismes, exploitants).
+// Les anciens chemins /responsable/* redirigent vers cette connexion.
+export const STAFF_LOGIN_PATH = "/personnel/login";
+export const LEGACY_RESP_PATH = "/responsable";
+
+// Mode démo : sélecteur de rôle et comptes de démonstration visibles.
+// Actif en développement, ou avec VITE_DEMO=1 pour un build de présentation.
+export const DEMO_MODE: boolean =
+  Boolean(import.meta.env?.DEV) || import.meta.env?.VITE_DEMO === "1";
 
 // Espace autorité (wali, président de l'APC, ministre de l'Intérieur).
 export const AUTHORITY_DASHBOARD_PATH = "/autorite";
@@ -26,6 +31,12 @@ export const AUTHORITY_SITUATION_PATH = "/autorite/situation";
 export const AUTHORITY_DECISIONS_PATH = "/autorite/decisions";
 export const AUTHORITY_ALERTS_PATH = "/autorite/alertes";
 export const AUTHORITY_CRISIS_PATH = "/autorite/crise";
+export const AUTHORITY_PCF_PATH = "/autorite/pcf";
+export const AUTHORITY_PCF_WALL_PATH = "/autorite/pcf/mur";
+export const AUTHORITY_REQUISITIONS_PATH = "/autorite/requisitions";
+export const AUTHORITY_COMMUNICATION_PATH = "/autorite/communication";
+export const AUTHORITY_RECOVERY_PATH = "/autorite/rehabilitation";
+export const AUTHORITY_COMPLIANCE_PATH = "/autorite/conformite";
 
 // Espace site sensible (exploitant).
 export const SITE_DASHBOARD_PATH = "/site";
@@ -42,10 +53,16 @@ export const ORG_REINFORCEMENTS_PATH = "/organisme/renforts";
 export const ORG_WATCH_PATH = "/organisme/veille";
 export const ORG_VICTIMS_PATH = "/organisme/victimes";
 export const ORG_EVACUATION_PATH = "/organisme/evacuations";
+export const ORG_ROADS_PATH = "/organisme/voirie";
+export const ORG_MARITIME_PATH = "/organisme/maritime";
 export const ORG_PCO_PATH = "/organisme/pco";
 export const ORG_PCF_PATH = "/organisme/pcf";
 export const ORG_VEHICLE_PATH = "/organisme/engin";
 export const ORG_HISTORY_PATH = "/organisme/historique";
+export const ORG_MODULES_PATH = "/organisme/modules";
+export const ORG_MODULE_PATH = "/organisme/modules/:moduleId";
+export const ORG_TERRAIN_PATH = "/organisme/terrain";
+export const ORG_PCF_WALL_PATH = "/organisme/pcf/mur";
 
 // Espace administrateur système (S1).
 export const ADMIN_LOGIN_PATH = "/admin/login";
@@ -57,3 +74,7 @@ export const ADMIN_ORGANISATIONS_PATH = "/admin/organisations";
 export const ADMIN_SETTINGS_PATH = "/admin/parametres";
 export const ADMIN_DOCUMENTS_PATH = "/admin/documents";
 export const ADMIN_JOURNAL_PATH = "/admin/journal";
+export const ADMIN_ASSIGNMENTS_PATH = "/admin/affectations";
+
+// Portail d'information du public (accessible sans compte).
+export const PUBLIC_INFO_PATH = "/information";

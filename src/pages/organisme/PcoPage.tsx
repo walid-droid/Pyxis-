@@ -1,12 +1,31 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "./organisme.css";
+import "../shared/ops/ops.css";
 import { useState } from "react";
 import Modal from "../../components/Modal";
 import { useI18n } from "../../i18n";
 import { useOrsecPlans } from "../shared/plan/PlanContext";
 import { ORSEC_MODULES, responsibleFor } from "../shared/plan/orsecPlan";
+import HandoverPanel from "../shared/ops/HandoverPanel";
+import MainCourantePanel from "../shared/ops/MainCourantePanel";
+import MapPanel from "../shared/ops/MapPanel";
+import MeansPanel from "../shared/ops/MeansPanel";
+import PmaPanel from "../shared/ops/PmaPanel";
+import SectorsPanel from "../shared/ops/SectorsPanel";
 import OrgHero from "./OrgHero";
-import { PCO_FEED, PCO_REQUESTS, loc, type PcoRequest } from "./organismeData";
+import { PCO_FEED, PCO_REQUESTS, loc, type Localized, type PcoRequest } from "./organismeData";
+
+type PcoTab = "overview" | "main" | "pma" | "means" | "sectors" | "handover" | "map";
+
+const PCO_TABS: { id: PcoTab; labelKey: string }[] = [
+  { id: "overview", labelKey: "ops.tabs.overview" },
+  { id: "main", labelKey: "ops.tabs.main" },
+  { id: "pma", labelKey: "ops.tabs.pma" },
+  { id: "means", labelKey: "ops.tabs.means" },
+  { id: "sectors", labelKey: "ops.tabs.sectors" },
+  { id: "handover", labelKey: "ops.tabs.handover" },
+  { id: "map", labelKey: "ops.tabs.map" },
+];
 
 /** Poste de commandement opérationnel (Protection civile). */
 export default function PcoPage() {
@@ -16,16 +35,39 @@ export default function PcoPage() {
   const [commission, setCommission] = useState(
     "1. Priorité secours et mise en sécurité des personnes.\n2. Coordination des modules santé, sécurité et travaux.\n3. Point de situation toutes les 30 minutes au PCF.",
   );
+  const [commissionLevel, setCommissionLevel] = useState<"wilaya" | "commune">(
+    "wilaya",
+  );
+  const [commissionEntity, setCommissionEntity] = useState<Localized>({
+    fr: "Wilaya de Béjaïa",
+    ar: "ولاية بجاية",
+  });
+  const [attachments, setAttachments] = useState<{ id: string; name: string }[]>([
+    { id: "att1", name: "Deliberation_commission_wilaya.pdf" },
+    { id: "att2", name: "Plan_intervention_Soummam.pdf" },
+  ]);
+  const [attachmentName, setAttachmentName] = useState("");
   const [requests, setRequests] = useState<PcoRequest[]>(PCO_REQUESTS);
   const [modal, setModal] = useState(false);
   const [reason, setReason] = useState("");
   const [toast, setToast] = useState<string | null>(null);
+  const [tab, setTab] = useState<PcoTab>("overview");
 
   const moduleIds = plan.activation?.moduleIds ?? ["secours", "sante", "securite"];
   const modules = ORSEC_MODULES.filter((module) => moduleIds.includes(module.id));
 
   const saveCommission = () => {
     setToast(t("org.pco.commissionSaved"));
+  };
+
+  const addAttachment = () => {
+    if (attachmentName.trim().length < 3) return;
+    setAttachments((current) => [
+      ...current,
+      { id: `att-${Date.now()}`, name: attachmentName.trim() },
+    ]);
+    setAttachmentName("");
+    setToast(t("org.pco.attachmentAdded"));
   };
 
   const sendTrigger = () => {
@@ -68,6 +110,9 @@ export default function PcoPage() {
               {t("org.pco.open")} · {t("org.pco.status")}
             </span>
             <span className="rc-chip">
+              {t(`ops.situation.short.${plan.situation}`)}
+            </span>
+            <span className="rc-chip">
               {t("orsec.statusShort." + plan.status)} · {plan.phase ? t(`orsec.phase.${plan.phase}`) : t("org.pco.status")}
             </span>
           </>
@@ -98,6 +143,22 @@ export default function PcoPage() {
         </p>
       ) : null}
 
+      <nav className="ops-tabs" aria-label={t("ops.pco.title")}>
+        {PCO_TABS.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            className={`ops-tab${tab === item.id ? " is-active" : ""}`}
+            aria-pressed={tab === item.id}
+            onClick={() => setTab(item.id)}
+          >
+            {t(item.labelKey)}
+          </button>
+        ))}
+      </nav>
+
+      {tab === "overview" ? (
+        <>
       <section className="rc-grid rc-grid--split">
         <article className="rc-card">
           <div className="rc-card__head">
@@ -105,6 +166,44 @@ export default function PcoPage() {
             <span className="rc-card__hint">{t("org.pco.lead")}</span>
           </div>
           <p className="rc-card__lead">{t("org.pco.commissionLead")}</p>
+          <div className="rc-form__row">
+            <div className="rc-field">
+              <label htmlFor="pco-commission-level">
+                {t("org.pco.commissionLevel")}
+              </label>
+              <select
+                id="pco-commission-level"
+                value={commissionLevel}
+                onChange={(event) => {
+                  const level = event.target.value as "wilaya" | "commune";
+                  setCommissionLevel(level);
+                  setCommissionEntity(
+                    level === "wilaya"
+                      ? { fr: "Wilaya de Béjaïa", ar: "ولاية بجاية" }
+                      : { fr: "Commune de Béjaïa", ar: "بلدية بجاية" },
+                  );
+                }}
+              >
+                <option value="wilaya">{t("org.common.wilaya")}</option>
+                <option value="commune">{t("org.common.commune")}</option>
+              </select>
+            </div>
+            <div className="rc-field">
+              <label htmlFor="pco-commission-entity">
+                {t("org.pco.commissionEntity")}
+              </label>
+              <input
+                id="pco-commission-entity"
+                value={loc(lang, commissionEntity)}
+                onChange={(event) =>
+                  setCommissionEntity({
+                    fr: event.target.value,
+                    ar: event.target.value,
+                  })
+                }
+              />
+            </div>
+          </div>
           <div className="rc-field">
             <label htmlFor="pco-commission">{t("org.pco.commissionPlan")}</label>
             <textarea
@@ -112,6 +211,32 @@ export default function PcoPage() {
               value={commission}
               onChange={(event) => setCommission(event.target.value)}
             />
+          </div>
+          <div className="rc-field">
+            <label htmlFor="pco-attachment">{t("org.pco.attachments")}</label>
+            <div className="org-actions">
+              <input
+                id="pco-attachment"
+                value={attachmentName}
+                placeholder={t("org.pco.attachmentPlaceholder")}
+                onChange={(event) => setAttachmentName(event.target.value)}
+              />
+              <button
+                type="button"
+                className="rc-btn rc-btn--soft rc-btn--small"
+                disabled={attachmentName.trim().length < 3}
+                onClick={addAttachment}
+              >
+                {t("org.common.add")}
+              </button>
+            </div>
+            <ul className="org-signal-list" style={{ marginTop: 8 }}>
+              {attachments.map((item) => (
+                <li key={item.id} className="org-signal">
+                  <p className="org-meta">📎 {item.name}</p>
+                </li>
+              ))}
+            </ul>
           </div>
           <div className="rc-card__foot">
             <button type="button" className="rc-btn rc-btn--primary rc-btn--small" onClick={saveCommission}>
@@ -218,6 +343,17 @@ export default function PcoPage() {
           </ul>
         </article>
       </section>
+        </>
+      ) : null}
+
+      {tab === "main" ? (
+        <MainCourantePanel scope="pco" showConflicts />
+      ) : null}
+      {tab === "pma" ? <PmaPanel /> : null}
+      {tab === "means" ? <MeansPanel /> : null}
+      {tab === "sectors" ? <SectorsPanel /> : null}
+      {tab === "handover" ? <HandoverPanel /> : null}
+      {tab === "map" ? <MapPanel /> : null}
 
       {modal ? (
         <Modal title={t("org.pco.requestTitle")} onClose={() => setModal(false)}>

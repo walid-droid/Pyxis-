@@ -1,8 +1,9 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "./organisme.css";
 import { useState } from "react";
 import Modal from "../../components/Modal";
 import { useI18n } from "../../i18n";
+import CrisisMap, { type MapPin } from "../shared/crisis/CrisisMap";
 import { useOrganisme } from "./orgContext";
 import OrgHero from "./OrgHero";
 import {
@@ -54,6 +55,14 @@ export default function WatchPage() {
   const [threshold, setThreshold] = useState(3.5);
   const [release, setRelease] = useState(0);
 
+  const tabs: Tab[] =
+    persona.id === "forestier"
+      ? ["forest"]
+      : persona.id === "previsionniste"
+        ? ["hydro", "roads", "weather"]
+        : ["hydro", "forest", "roads", "weather"];
+  const activeTab = tabs.includes(tab) ? tab : tabs[0];
+
   const [roadName, setRoadName] = useState("");
   const [roadKind, setRoadKind] = useState<RoadClosure["kind"]>("road");
   const [roadReason, setRoadReason] = useState("");
@@ -63,6 +72,7 @@ export default function WatchPage() {
   const [signalPlace, setSignalPlace] = useState("");
   const [signalRisk, setSignalRisk] = useState<ForestSignal["risk"]>("medium");
   const [signalArea, setSignalArea] = useState("");
+  const [signalPhotos, setSignalPhotos] = useState(0);
 
   const [meanName, setMeanName] = useState("");
   const [meanQty, setMeanQty] = useState(1);
@@ -158,11 +168,22 @@ export default function WatchPage() {
         area: signalArea || "—",
         detected: "30/10/2026 · maintenant",
         status: "watching",
+        photos: signalPhotos,
       },
       ...current,
     ]);
     setModal(null);
+    setSignalPhotos(0);
     setToast(t("org.watch.signalAdded"));
+  };
+
+  const requestSupport = (id: string) => {
+    setSignals((current) =>
+      current.map((signal) =>
+        signal.id === id ? { ...signal, supportRequested: true } : signal,
+      ),
+    );
+    setToast(t("org.watch.supportRequested"));
   };
 
   const addMean = () => {
@@ -219,7 +240,7 @@ export default function WatchPage() {
         }
         aside={
           <>
-            {tab === "hydro" ? (
+            {activeTab === "hydro" ? (
               <button
                 type="button"
                 className="rc-btn rc-btn--primary"
@@ -228,7 +249,7 @@ export default function WatchPage() {
                 + {t("org.watch.addStation")}
               </button>
             ) : null}
-            {tab === "forest" ? (
+            {activeTab === "forest" ? (
               <button
                 type="button"
                 className="rc-btn rc-btn--primary"
@@ -237,7 +258,7 @@ export default function WatchPage() {
                 + {t("org.watch.signal")}
               </button>
             ) : null}
-            {tab === "weather" ? (
+            {activeTab === "weather" ? (
               <button
                 type="button"
                 className="rc-btn rc-btn--primary"
@@ -246,7 +267,7 @@ export default function WatchPage() {
                 {t("org.watch.weatherPropose")}
               </button>
             ) : null}
-            {tab === "roads" ? (
+            {activeTab === "roads" ? (
               <button
                 type="button"
                 className="rc-btn rc-btn--primary"
@@ -269,12 +290,12 @@ export default function WatchPage() {
         <div className="rc-card__head">
           <h2 className="rc-card__title">{t("org.watch.title")}</h2>
           <div className="rc-tabs" role="group" aria-label={t("org.watch.title")}>
-            {(["hydro", "forest", "roads", "weather"] as const).map((value) => (
+            {tabs.map((value) => (
               <button
                 key={value}
                 type="button"
-                className={`rc-tab${tab === value ? " is-active" : ""}`}
-                aria-pressed={tab === value}
+                className={`rc-tab${activeTab === value ? " is-active" : ""}`}
+                aria-pressed={activeTab === value}
                 onClick={() => setTab(value)}
               >
                 {t(`org.watch.tab.${value}`)}
@@ -285,7 +306,7 @@ export default function WatchPage() {
 
         <p className="rc-card__lead">{t("org.watch.lead")}</p>
 
-        {tab === "hydro" ? (
+        {activeTab === "hydro" ? (
           <>
             <div className="rc-table-wrap">
               <table className="rc-table org-table">
@@ -373,6 +394,8 @@ export default function WatchPage() {
                 stations.find((item) => item.id === selectedStation) ??
                 stations[0];
               if (!station) return null;
+              const exceeded = station.level >= station.threshold;
+              const watching = station.level >= station.vigilance;
               const max = Math.max(...station.history, station.threshold);
               const min = Math.min(...station.history, station.vigilance);
               const span = max - min || 1;
@@ -383,6 +406,29 @@ export default function WatchPage() {
                   return `${x},${y}`;
                 })
                 .join(" ");
+              const mapPins: MapPin[] = [];
+              if (station.position) {
+                mapPins.push({
+                  id: `station-${station.id}`,
+                  position: station.position,
+                  title: loc(lang, station.name),
+                  subtitle: `${station.level.toFixed(1)} m · ${t("org.watch.threshold")} ${station.threshold.toFixed(1)} m`,
+                  tone: "incident",
+                  severity: exceeded ? "Critical" : watching ? "High" : "Low",
+                });
+                station.floodZones?.forEach((zone, index) => {
+                  mapPins.push({
+                    id: `zone-${station.id}-${index}`,
+                    position: [
+                      station.position![0] + 0.012 * (index + 1),
+                      station.position![1] + 0.012 * (index + 1),
+                    ],
+                    title: loc(lang, zone),
+                    subtitle: t("org.watch.floodZones"),
+                    tone: "shelter",
+                  });
+                });
+              }
               return (
                 <div className="org-split" style={{ marginTop: 16 }}>
                   <div>
@@ -437,6 +483,11 @@ export default function WatchPage() {
                       {t("org.watch.threshold")} · {station.threshold.toFixed(1)} m ·{" "}
                       {t("org.watch.vigilance")} · {station.vigilance.toFixed(1)} m
                     </p>
+                    {mapPins.length > 0 ? (
+                      <div style={{ marginTop: 12 }}>
+                        <CrisisMap pins={mapPins} variant="mini" interactive={false} />
+                      </div>
+                    ) : null}
                   </div>
 
                   <div>
@@ -470,7 +521,7 @@ export default function WatchPage() {
           </>
         ) : null}
 
-        {tab === "forest" ? (
+        {activeTab === "forest" ? (
           <div className="org-split">
             <div>
               <div className="org-subhead">
@@ -493,6 +544,11 @@ export default function WatchPage() {
                       <span>{loc(lang, signal.place)}</span>
                       <span>{signal.area}</span>
                       <span>{signal.detected}</span>
+                      {signal.photos ? (
+                        <span>
+                          {t("org.missions.reportPhotos")} : {signal.photos}
+                        </span>
+                      ) : null}
                     </p>
                     <div className="org-signal__foot">
                       <span className="org-muted">
@@ -518,6 +574,18 @@ export default function WatchPage() {
                           }}
                         >
                           {t("org.watch.proposeFlood")}
+                        </button>
+                      ) : null}
+                      {signal.risk === "high" || signal.risk === "critical" ? (
+                        <button
+                          type="button"
+                          className="rc-btn rc-btn--ghost-danger rc-btn--small"
+                          disabled={signal.supportRequested}
+                          onClick={() => requestSupport(signal.id)}
+                        >
+                          {signal.supportRequested
+                            ? t("org.watch.supportSent")
+                            : t("org.watch.supportSecours")}
                         </button>
                       ) : null}
                     </div>
@@ -556,8 +624,12 @@ export default function WatchPage() {
                     >
                       <option value="available">{t("org.resources.status.available")}</option>
                       <option value="engaged">{t("org.resources.status.engaged")}</option>
+                      <option value="reserve">{t("org.resources.status.reserve")}</option>
                       <option value="maintenance">
                         {t("org.resources.status.maintenance")}
+                      </option>
+                      <option value="out_of_service">
+                        {t("org.resources.status.out_of_service")}
                       </option>
                     </select>
                   </li>
@@ -567,7 +639,7 @@ export default function WatchPage() {
           </div>
         ) : null}
 
-        {tab === "roads" ? (
+        {activeTab === "roads" ? (
           <>
             <div className="org-subhead">
               <h3>{t("org.watch.roadsTitle")}</h3>
@@ -648,7 +720,7 @@ export default function WatchPage() {
           </>
         ) : null}
 
-        {tab === "weather" ? (
+        {activeTab === "weather" ? (
           <ul className="org-signal-list">
             {weather.map((alert) => (
               <li key={alert.id} className="org-signal">
@@ -827,6 +899,17 @@ export default function WatchPage() {
                 value={signalArea}
                 placeholder="12 ha"
                 onChange={(event) => setSignalArea(event.target.value)}
+              />
+            </div>
+            <div className="rc-field">
+              <label htmlFor="signal-photos">{t("org.missions.reportPhotos")}</label>
+              <input
+                id="signal-photos"
+                type="number"
+                min={0}
+                max={20}
+                value={signalPhotos}
+                onChange={(event) => setSignalPhotos(Number(event.target.value))}
               />
             </div>
             <div className="org-modal-actions">

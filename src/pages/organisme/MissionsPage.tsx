@@ -1,30 +1,26 @@
-import "../command/resp-crise.css";
+import "../shared/crisis/resp-crise.css";
 import "./organisme.css";
 import { useState } from "react";
+import { Link } from "react-router";
 import Modal from "../../components/Modal";
+import { ORG_RESOURCES_PATH, ORG_VEHICLE_PATH } from "../../config";
 import { useI18n } from "../../i18n";
+import CrisisMap from "../shared/crisis/CrisisMap";
 import { useOrganisme } from "./orgContext";
 import OrgHero from "./OrgHero";
 import {
   MISSIONS,
+  ORG_AGENTS,
   loc,
-  type Localized,
   type Mission,
   type MissionPriority,
   type MissionStatus,
 } from "./organismeData";
 
-const AGENTS: Localized[] = [
-  { fr: "Capitaine S. Haddad", ar: "النقيب س. حداد" },
-  { fr: "Agent Y. Meziane", ar: "العون ي. مزيان" },
-  { fr: "Sgt B. Saidi", ar: "الرقيب ب. سعيدي" },
-  { fr: "Dr S. Kaci", ar: "الدكتورة س. قاسي" },
-  { fr: "Cne N. Cherif", ar: "النقيب ن. شريف" },
-];
-
 type ModalState =
   | { kind: "create" }
   | { kind: "report"; id: string }
+  | { kind: "detail"; id: string }
   | null;
 
 function priorityTone(priority: MissionPriority): string {
@@ -58,7 +54,7 @@ export default function MissionsPage() {
   const [reportPhotos, setReportPhotos] = useState(0);
   const [offline, setOffline] = useState(false);
 
-  const active = modal?.kind === "report"
+  const active = modal?.kind === "report" || modal?.kind === "detail"
     ? missions.find((mission) => mission.id === modal.id)
     : null;
   const visible = missions.filter(
@@ -138,9 +134,20 @@ export default function MissionsPage() {
           </>
         }
         aside={
-          <button type="button" className="rc-btn rc-btn--primary" onClick={openCreate}>
-            + {t("org.missions.new")}
-          </button>
+          <>
+            {persona.id === "engin" ? (
+              <Link className="rc-btn rc-btn--soft" to={ORG_VEHICLE_PATH}>
+                {t("org.nav.vehicle")}
+              </Link>
+            ) : persona.id === "agent" || persona.id === "cotedan" ? (
+              <Link className="rc-btn rc-btn--soft" to={ORG_RESOURCES_PATH}>
+                {t("org.missions.myMeans")}
+              </Link>
+            ) : null}
+            <button type="button" className="rc-btn rc-btn--primary" onClick={openCreate}>
+              + {t("org.missions.new")}
+            </button>
+          </>
         }
       />
 
@@ -195,7 +202,16 @@ export default function MissionsPage() {
                     <span>{loc(lang, mission.place)}</span>
                     <span>{loc(lang, mission.unit)}</span>
                     <span>{t("org.missions.table.due")} · {mission.due}</span>
+                    {mission.incidentRef ? (
+                      <span>{t("org.missions.incident")} · {mission.incidentRef}</span>
+                    ) : null}
                   </p>
+                  {mission.consigne ? (
+                    <p className="org-mission__report">
+                      <strong>{t("org.missions.consigne")} :</strong>{" "}
+                      {loc(lang, mission.consigne)}
+                    </p>
+                  ) : null}
                   {mission.report ? (
                     <p className="org-mission__report">{loc(lang, mission.report)}</p>
                   ) : null}
@@ -222,6 +238,14 @@ export default function MissionsPage() {
                     {t(`org.missions.status.${mission.status}`)}
                   </span>
 
+                  <button
+                    type="button"
+                    className="rc-btn rc-btn--soft rc-btn--small"
+                    onClick={() => setModal({ kind: "detail", id: mission.id })}
+                  >
+                    {t("org.common.details")}
+                  </button>
+
                   {mission.status === "todo" ? (
                     <>
                       <select
@@ -238,9 +262,9 @@ export default function MissionsPage() {
                         }
                       >
                         <option value="">{t("org.missions.unassigned")}</option>
-                        {AGENTS.map((agent) => (
-                          <option key={agent.fr} value={loc(lang, agent)}>
-                            {loc(lang, agent)}
+                        {ORG_AGENTS.map((agent) => (
+                          <option key={agent.id} value={loc(lang, agent.name)}>
+                            {loc(lang, agent.name)}
                           </option>
                         ))}
                       </select>
@@ -348,9 +372,9 @@ export default function MissionsPage() {
                   onChange={(event) => setAssignee(event.target.value)}
                 >
                   <option value="">{t("org.missions.unassigned")}</option>
-                  {AGENTS.map((agent) => (
-                    <option key={agent.fr} value={loc(lang, agent)}>
-                      {loc(lang, agent)}
+                  {ORG_AGENTS.map((agent) => (
+                    <option key={agent.id} value={loc(lang, agent.name)}>
+                      {loc(lang, agent.name)}
                     </option>
                   ))}
                 </select>
@@ -365,6 +389,118 @@ export default function MissionsPage() {
               </button>
             </div>
           </form>
+        </Modal>
+      ) : null}
+
+      {modal?.kind === "detail" && active ? (
+        <Modal title={active.ref} onClose={() => setModal(null)}>
+          <div className="org-stack">
+            <div>
+              <p className="rc-eyebrow">{t("org.missions.detailTitle")}</p>
+              <h3>{loc(lang, active.title)}</h3>
+              <p className="org-muted">{loc(lang, active.place)}</p>
+            </div>
+
+            <dl className="org-facts">
+              <div>
+                <dt>{t("org.missions.table.unit")}</dt>
+                <dd>{loc(lang, active.unit)}</dd>
+              </div>
+              <div>
+                <dt>{t("org.missions.assigneeField")}</dt>
+                <dd>
+                  {active.assignee
+                    ? loc(lang, active.assignee)
+                    : t("org.missions.unassigned")}
+                </dd>
+              </div>
+              <div>
+                <dt>{t("org.common.priority")}</dt>
+                <dd>{t(`org.missions.priority.${active.priority}`)}</dd>
+              </div>
+              <div>
+                <dt>{t("org.missions.table.due")}</dt>
+                <dd>{active.due}</dd>
+              </div>
+              {active.incidentRef ? (
+                <div>
+                  <dt>{t("org.missions.incident")}</dt>
+                  <dd>{active.incidentRef}</dd>
+                </div>
+              ) : null}
+            </dl>
+
+            {active.consigne ? (
+              <p className="org-note">
+                <strong>{t("org.missions.consigne")} :</strong>{" "}
+                {loc(lang, active.consigne)}
+              </p>
+            ) : null}
+
+            {active.position ? (
+              <CrisisMap
+                pins={[
+                  {
+                    id: active.id,
+                    position: active.position,
+                    title: loc(lang, active.title),
+                    subtitle: loc(lang, active.place),
+                    tone: "incident",
+                    severity:
+                      active.priority === "high"
+                        ? "Critical"
+                        : active.priority === "medium"
+                          ? "High"
+                          : "Low",
+                  },
+                ]}
+                variant="mini"
+                interactive={false}
+              />
+            ) : null}
+
+            <div className="org-inline-field">
+              <label htmlFor="mission-detail-status">
+                {t("org.common.status")}
+              </label>
+              <select
+                id="mission-detail-status"
+                className="org-select"
+                value={active.status}
+                onChange={(event) => {
+                  updateMission(active.id, {
+                    status: event.target.value as MissionStatus,
+                  });
+                  setToast(t("org.common.saved"));
+                }}
+              >
+                <option value="todo">{t("org.missions.status.todo")}</option>
+                <option value="active">{t("org.missions.status.active")}</option>
+                <option value="done">{t("org.missions.status.done")}</option>
+              </select>
+            </div>
+
+            {active.report ? (
+              <p className="org-note">{loc(lang, active.report)}</p>
+            ) : null}
+
+            <div className="org-modal-actions">
+              <button
+                type="button"
+                className="rc-btn rc-btn--ghost"
+                onClick={() => setModal(null)}
+              >
+                {t("org.common.close")}
+              </button>
+              <button
+                type="button"
+                className="rc-btn rc-btn--primary"
+                onClick={() => openReport(active)}
+              >
+                {t("org.common.report")}
+              </button>
+            </div>
+          </div>
         </Modal>
       ) : null}
 
