@@ -1,5 +1,5 @@
 import {
-  useEffect,
+  useMemo,
   useRef,
   useState,
   type ChangeEvent,
@@ -8,74 +8,85 @@ import {
 import { useNavigate } from "react-router";
 import { useAuth } from "../../auth/AuthContext";
 import { useI18n } from "../../i18n";
+import type { TypeCode } from "../../data/types";
+import { suggestCatastrophe } from "../../services/ai";
+import { createSignalement } from "../../services/reports";
+import { useDb } from "../../services/useDb";
 import { useNotifications } from "../../lib/notificationsContext";
-import { createReport, saveReport } from "../../lib/reports";
-import type { ReportSeverity, ReportType } from "../../mockdata/report";
+import { SUBMIT_ALERT_PATH, MY_REPORTS_PATH } from "../../config";
+import type { Gravity } from "../../services/model";
 import "./SubmitAlertPage.css";
 
-const SEVERITIES = [
-  { value: "low", labelKey: "severity.low" },
-  { value: "medium", labelKey: "severity.medium" },
-  { value: "high", labelKey: "severity.high" },
-  { value: "critical", labelKey: "severity.critical" },
-] as const;
+type SubmitForm = {
+  title: string;
+  type: TypeCode;
+  description: string;
+  communeId: string;
+  latitude: string;
+  longitude: string;
+  photo: string;
+  photoName: string;
+  people: string;
+  severity: Gravity;
+};
+
+const GRAVITIES: Gravity[] = ["faible", "moyenne", "elevee", "critique"];
 
 export default function SubmitAlertPage() {
   const navigate = useNavigate();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const { session } = useAuth();
   const { push } = useNotifications();
-  const { role } = useAuth();
-  const farmer = role === "farmer";
-
-  const [form, setForm] = useState({
+  const db = useDb();
+  const [form, setForm] = useState<SubmitForm>({
     title: "",
-    type: "",
-    wilaya: "",
-    commune: "",
-    location: "",
+    type: "C2",
+    description: "",
+    communeId: "",
     latitude: "",
     longitude: "",
-    description: "",
-    severity: "medium",
-    crop: "",
-    area: "",
-    parcel: "",
+    photo: "",
+    photoName: "",
+    people: "1",
+    severity: "moyenne",
   });
-
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [imageName, setImageName] = useState("");
   const [locating, setLocating] = useState(false);
-
-  const previewUrlRef = useRef<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    return () => {
-      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
-    };
-  }, []);
+  const suggestion = useMemo(() => suggestCatastrophe(form.description), [
+    form.description,
+  ]);
+  const suggestionType = suggestion
+    ? db.reference.types.find((type) => type.code === suggestion.typeId)
+    : undefined;
+  const communeOptions = useMemo(
+    () =>
+      db.reference.territories.filter(
+        (territory) => territory.niveau === "commune",
+      ),
+    [db.reference.territories],
+  );
 
-  function update<K extends keyof typeof form>(key: K, value: string) {
-    setForm((prev) => ({ ...prev, [key]: value }));
+  function update<K extends keyof SubmitForm>(key: K, value: SubmitForm[K]) {
+    setForm((previous) => ({ ...previous, [key]: value }));
   }
 
-  function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
+  function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
     if (!file) return;
-
-    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
-
-    const url = URL.createObjectURL(file);
-    previewUrlRef.current = url;
-    setImagePreview(url);
-    setImageName(file.name);
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        update("photo", reader.result);
+        update("photoName", file.name);
+      }
+    };
+    reader.readAsDataURL(file);
   }
 
   function clearImage() {
-    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
-    previewUrlRef.current = null;
-    setImagePreview(null);
-    setImageName("");
+    update("photo", "");
+    update("photoName", "");
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
@@ -84,7 +95,6 @@ export default function SubmitAlertPage() {
       window.alert(t("submit.geoUnsupported"));
       return;
     }
-
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -100,45 +110,47 @@ export default function SubmitAlertPage() {
     );
   }
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!session) return;
 
-    const latitude = form.latitude.trim() === "" ? undefined : Number(form.latitude);
-    const longitude = form.longitude.trim() === "" ? undefined : Number(form.longitude);
-
-    const description = farmer
-      ? [
-          t("submit.farm.summary", {
-            crop: form.crop.trim() || "—",
-            area: form.area.trim() || "—",
-            parcel: form.parcel.trim() || "—",
-          }),
-          form.description.trim(),
-        ]
-          .filter(Boolean)
-          .join(" — ")
-      : form.description.trim();
-
-    const report = createReport({
-      title: form.title.trim(),
-      description,
-      type: (form.type || (farmer ? "agricultural" : "other")) as ReportType,
-      severity: form.severity as ReportSeverity,
-      wilaya: form.wilaya.trim(),
-      commune: form.commune.trim(),
-      place: form.location.trim() || undefined,
-      latitude: Number.isFinite(latitude) ? latitude : undefined,
-      longitude: Number.isFinite(longitude) ? longitude : undefined,
+    const signalement = createSignalement({
+      auteurId: session.userId,
+      typeId: form.type,
+      description: form.description.trim(),
+      communeId: form.communeId,
+      latitude: form.latitude.trim() === "" ? undefined : Number(form.latitude),
+      longitude: form.longitude.trim() === "" ? undefined : Number(form.longitude),
+      photo: form.photo || undefined,
+      personnesConcernees: Math.max(1, Number(form.people) || 1),
+      suggestion: suggestion
+        ? { typeId: suggestion.typeId, gravite: suggestion.gravite, confiance: suggestion.confiance }
+        : undefined,
     });
 
-    saveReport(report);
     push({
       kind: "mission",
       titleKey: "notif.report.title",
       detailKey: "notif.report.detail",
     });
-    // Le suivi du signalement se poursuit dans l'espace « Mes signalements ».
-    navigate("/my-reports", { state: { submitted: report.id } });
+
+    navigate(MY_REPORTS_PATH, { state: { submitted: signalement.id } });
+  }
+
+  if (!session) {
+    return (
+      <main className="submit-alert-page">
+        <section className="submit-alert-section">
+          <h2>{t("submit.loginRequired")}</h2>
+          <p>{t("submit.loginLead")}</p>
+          <div className="submit-alert-buttons">
+            <button type="button" className="submit-alert-cancel" onClick={() => navigate("/login")}>
+              {t("login.submit")}
+            </button>
+          </div>
+        </section>
+      </main>
+    );
   }
 
   return (
@@ -146,14 +158,21 @@ export default function SubmitAlertPage() {
       <header className="submit-alert-hero">
         <div className="submit-alert-hero-text">
           <span className="submit-alert-badge">
-            <i className="submit-alert-badge-dot" /> {t("submit.badge")}
+            <i className="submit-alert-badge-dot" aria-hidden="true" />
+            {t("submit.badge")}
           </span>
           <p className="submit-alert-eyebrow">{t("submit.eyebrow")}</p>
           <h1>{t("submit.title")}</h1>
           <p className="submit-alert-lead">{t("submit.lead")}</p>
         </div>
-
-        <span className="submit-alert-hero-icon" aria-hidden="true">!</span>
+        <span className="submit-alert-hero-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 3v18" />
+            <path d="M3 8h18" />
+            <path d="M5 8v4" />
+            <path d="M15 8v4" />
+          </svg>
+        </span>
       </header>
 
       <form className="submit-alert-form" onSubmit={handleSubmit}>
@@ -176,7 +195,7 @@ export default function SubmitAlertPage() {
               maxLength={120}
               placeholder={t("submit.titlePlaceholder")}
               value={form.title}
-              onChange={(e) => update("title", e.target.value)}
+              onChange={(event) => update("title", event.target.value)}
             />
           </div>
 
@@ -189,17 +208,14 @@ export default function SubmitAlertPage() {
                 id="alert-type"
                 required
                 value={form.type}
-                onChange={(e) => update("type", e.target.value)}
+                onChange={(event) => update("type", event.target.value as TypeCode)}
               >
                 <option value="">{t("submit.typePlaceholder")}</option>
-                <option value="flood">{t("submit.type.flood")}</option>
-                <option value="fire">{t("submit.type.fire")}</option>
-                <option value="earthquake">{t("submit.type.earthquake")}</option>
-                <option value="accident">{t("submit.type.accident")}</option>
-                <option value="storm">{t("submit.type.storm")}</option>
-                <option value="landslide">{t("submit.type.landslide")}</option>
-                <option value="agricultural">{t("submit.type.agricultural")}</option>
-                <option value="other">{t("submit.type.other")}</option>
+                {db.reference.types.map((type) => (
+                  <option key={type.code} value={type.code}>
+                    {type.code} — {type.libelle[lang]}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -208,64 +224,48 @@ export default function SubmitAlertPage() {
                 {t("submit.severity")} <span className="submit-alert-req">*</span>
               </span>
               <div className="submit-alert-severity">
-                {SEVERITIES.map((option) => (
-                  <label
-                    key={option.value}
-                    className={`severity-chip severity-chip--${option.value}`}
-                  >
+                {GRAVITIES.map((gravity) => (
+                  <label key={gravity} className={`severity-chip severity-chip--${gravity}`}>
                     <input
                       type="radio"
                       name="severity"
-                      value={option.value}
-                      required
-                      checked={form.severity === option.value}
-                      onChange={() => update("severity", option.value)}
+                      value={gravity}
+                      checked={form.severity === gravity}
+                      onChange={() => update("severity", gravity)}
                     />
-                    <span>{t(option.labelKey)}</span>
+                    <span>{t(`alerts.gravity.${gravity}`)}</span>
                   </label>
                 ))}
               </div>
             </div>
           </div>
 
-          {farmer ? (
-            <div className="submit-alert-farm">
-              <h3>{t("submit.farm.title")}</h3>
-              <p>{t("submit.farm.lead")}</p>
-              <div className="submit-alert-grid">
-                <div className="submit-alert-field">
-                  <label htmlFor="farm-crop">{t("submit.farm.crop")}</label>
-                  <input
-                    id="farm-crop"
-                    placeholder={t("submit.farm.cropPlaceholder")}
-                    value={form.crop}
-                    onChange={(e) => update("crop", e.target.value)}
-                  />
-                </div>
-                <div className="submit-alert-field">
-                  <label htmlFor="farm-area">{t("submit.farm.area")}</label>
-                  <input
-                    id="farm-area"
-                    type="number"
-                    min="0"
-                    step="0.1"
-                    placeholder="0.0"
-                    value={form.area}
-                    onChange={(e) => update("area", e.target.value)}
-                  />
-                </div>
-                <div className="submit-alert-field">
-                  <label htmlFor="farm-parcel">{t("submit.farm.parcel")}</label>
-                  <input
-                    id="farm-parcel"
-                    placeholder={t("submit.farm.parcelPlaceholder")}
-                    value={form.parcel}
-                    onChange={(e) => update("parcel", e.target.value)}
-                  />
-                </div>
-              </div>
+          {suggestion ? (
+            <div className="submit-alert-ai" role="note">
+              <span className="submit-alert-ai__badge">
+                <i aria-hidden="true" />
+                {t("submit.aiTitle")}
+              </span>
+              <p className="submit-alert-ai__text">
+                {t("submit.aiSuggestion", {
+                  type: `${suggestion.typeId} · ${suggestionType?.libelle[lang] ?? suggestion.typeId}`,
+                  gravity: t(`alerts.gravity.${suggestion.gravite}`),
+                })}
+              </p>
+              <p className="submit-alert-ai__meta">
+                {t("submit.aiConfidence", { value: Math.round(suggestion.confiance * 100) })}
+              </p>
+              <button
+                type="button"
+                className="submit-alert-ai__apply"
+                onClick={() => suggestion && update("type", suggestion.typeId)}
+              >
+                {t("submit.aiApply")}
+              </button>
             </div>
-          ) : null}
+          ) : (
+            <p className="submit-alert-ai__meta">{t("submit.aiNone")}</p>
+          )}
         </section>
 
         <section className="submit-alert-section">
@@ -282,46 +282,80 @@ export default function SubmitAlertPage() {
               <label htmlFor="alert-wilaya">
                 {t("submit.wilaya")} <span className="submit-alert-req">*</span>
               </label>
-              <input
+              <select
                 id="alert-wilaya"
                 required
-                placeholder={t("submit.wilayaPlaceholder")}
-                value={form.wilaya}
-                onChange={(e) => update("wilaya", e.target.value)}
-              />
+                value={db.reference.territories.find((territory) => territory.id === form.communeId)?.parentId ?? ""}
+                onChange={(event) =>
+                  setForm((previous) => ({
+                    ...previous,
+                    communeId: event.target.value,
+                  }))
+                }
+              >
+                <option value="">—</option>
+                {db.reference.territories
+                  .filter((territory) => territory.niveau === "wilaya")
+                  .map((territory) => (
+                    <option key={territory.id} value={territory.id}>
+                      {territory.nom[lang]}
+                    </option>
+                  ))}
+              </select>
             </div>
 
             <div className="submit-alert-field">
               <label htmlFor="alert-commune">
                 {t("submit.commune")} <span className="submit-alert-req">*</span>
               </label>
-              <input
+              <select
                 id="alert-commune"
                 required
-                placeholder={t("submit.communePlaceholder")}
-                value={form.commune}
-                onChange={(e) => update("commune", e.target.value)}
-              />
+                value={form.communeId}
+                onChange={(event) => update("communeId", event.target.value)}
+              >
+                <option value="">—</option>
+                {communeOptions.map((territory) => (
+                  <option key={territory.id} value={territory.id}>
+                    {territory.nom[lang]}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
-          <div className="submit-alert-field">
-            <label htmlFor="alert-location">{t("submit.location")}</label>
-            <input
-              id="alert-location"
-              placeholder={t("submit.locationPlaceholder")}
-              value={form.location}
-              onChange={(e) => update("location", e.target.value)}
-            />
+          <div className="submit-alert-grid">
+            <div className="submit-alert-field">
+              <label htmlFor="alert-latitude">{t("submit.latitude")}</label>
+              <input
+                id="alert-latitude"
+                type="number"
+                step="any"
+                inputMode="decimal"
+                placeholder={t("submit.latitudePlaceholder")}
+                value={form.latitude}
+                onChange={(event) => update("latitude", event.target.value)}
+              />
+            </div>
+            <div className="submit-alert-field">
+              <label htmlFor="alert-longitude">{t("submit.longitude")}</label>
+              <input
+                id="alert-longitude"
+                type="number"
+                step="any"
+                inputMode="decimal"
+                placeholder={t("submit.longitudePlaceholder")}
+                value={form.longitude}
+                onChange={(event) => update("longitude", event.target.value)}
+              />
+            </div>
           </div>
 
           <div className="submit-alert-position">
             <div className="submit-alert-position-head">
               <div>
                 <p className="submit-alert-sublabel">{t("submit.gps")}</p>
-                <p className="submit-alert-sublabel-hint">
-                  {t("submit.gpsHint")}
-                </p>
+                <p className="submit-alert-sublabel-hint">{t("submit.gpsHint")}</p>
               </div>
               <button
                 type="button"
@@ -332,34 +366,6 @@ export default function SubmitAlertPage() {
                 <span aria-hidden="true">◎</span>
                 {locating ? t("submit.locating") : t("submit.useLocation")}
               </button>
-            </div>
-
-            <div className="submit-alert-grid">
-              <div className="submit-alert-field">
-                <label htmlFor="alert-latitude">{t("submit.latitude")}</label>
-                <input
-                  id="alert-latitude"
-                  type="number"
-                  step="any"
-                  inputMode="decimal"
-                  placeholder={t("submit.latitudePlaceholder")}
-                  value={form.latitude}
-                  onChange={(e) => update("latitude", e.target.value)}
-                />
-              </div>
-
-              <div className="submit-alert-field">
-                <label htmlFor="alert-longitude">{t("submit.longitude")}</label>
-                <input
-                  id="alert-longitude"
-                  type="number"
-                  step="any"
-                  inputMode="decimal"
-                  placeholder={t("submit.longitudePlaceholder")}
-                  value={form.longitude}
-                  onChange={(e) => update("longitude", e.target.value)}
-                />
-              </div>
             </div>
           </div>
         </section>
@@ -384,23 +390,18 @@ export default function SubmitAlertPage() {
               maxLength={2000}
               placeholder={t("submit.descriptionPlaceholder")}
               value={form.description}
-              onChange={(e) => update("description", e.target.value)}
+              onChange={(event) => update("description", event.target.value)}
             />
           </div>
 
           <div className="submit-alert-field">
             <label htmlFor="alert-image">{t("submit.photo")}</label>
-
-            {imagePreview ? (
+            {form.photo ? (
               <div className="submit-alert-photo">
-                <img src={imagePreview} alt={t("submit.photoAlt")} />
+                <img src={form.photo} alt={t("submit.photoAlt")} />
                 <div className="submit-alert-photo-bar">
-                  <span className="submit-alert-photo-name">{imageName}</span>
-                  <button
-                    type="button"
-                    className="submit-alert-photo-remove"
-                    onClick={clearImage}
-                  >
+                  <span className="submit-alert-photo-name">{form.photoName}</span>
+                  <button type="button" className="submit-alert-photo-remove" onClick={clearImage}>
                     {t("submit.remove")}
                   </button>
                 </div>
@@ -408,12 +409,8 @@ export default function SubmitAlertPage() {
             ) : (
               <label className="submit-alert-upload" htmlFor="alert-image">
                 <span className="submit-alert-upload-icon" aria-hidden="true">⬆</span>
-                <span className="submit-alert-upload-title">
-                  {t("submit.upload")}
-                </span>
-                <span className="submit-alert-upload-hint">
-                  {t("submit.uploadHint")}
-                </span>
+                <span className="submit-alert-upload-title">{t("submit.upload")}</span>
+                <span className="submit-alert-upload-hint">{t("submit.uploadHint")}</span>
                 <input
                   ref={fileInputRef}
                   id="alert-image"
@@ -431,13 +428,8 @@ export default function SubmitAlertPage() {
           <p className="submit-alert-note">
             <span className="submit-alert-req">*</span> {t("submit.required")}
           </p>
-
           <div className="submit-alert-buttons">
-            <button
-              type="button"
-              className="submit-alert-cancel"
-              onClick={() => navigate("/alerts")}
-            >
+            <button type="button" className="submit-alert-cancel" onClick={() => navigate(SUBMIT_ALERT_PATH)}>
               {t("submit.cancel")}
             </button>
             <button type="submit" className="submit-alert-primary">

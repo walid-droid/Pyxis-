@@ -1,32 +1,20 @@
 /**
- * Contrôle d'accès, dans l'ordre du document « Rôles et permissions » :
- * 1. compte connecté et actif ; 2. permission accordée par le rôle ou par une
- * fonction en cours ; 3. objet dans son territoire / son organisme ;
- * 4. niveau du plan correspondant au rôle (RG-O01).
+ * Contrôle d'accès v3.0, dans l'ordre du guide master (§6.4) :
+ * 1. session active ; 2. permission du rôle ; 3. module du compte ;
+ * 4. territoire du compte ; 5. niveau du plan correspondant au rôle.
  */
 
-import {
-  DESIGNATION_PERMISSIONS,
-  IMPLICIT_DESIGNATIONS,
-  ROLE_PERMISSIONS,
-  type DesignationFn,
-  type Permission,
-} from "./permissions";
+import { territoryById } from "../data/territories";
 import { ROLE_DEFS, type Role } from "./roles";
-import {
-  activeDesignations,
-  isAssignmentActive,
-  type AuthSession,
-} from "./session";
+import { ROLE_PERMISSIONS, type Permission } from "./permissions";
+import { isAssignmentActive, type AuthSession, type TerritoryRef } from "./session";
 
-/** Niveaux de plan, identiques à PlanLevel (pages/shared/plan/orsecPlan.ts). */
-export type PlanLevel = "commune" | "wilaya" | "national" | "site";
+export type PlanLevel = "commune" | "wilaya" | "national";
 
 export type AccessContext = {
   wilayaId?: string;
   communeId?: string;
-  siteId?: string;
-  organismId?: string;
+  moduleId?: string;
   planLevel?: PlanLevel;
 };
 
@@ -39,49 +27,39 @@ export function planLevelForRole(role: Role): PlanLevel | null {
       return "commune";
     case "minister":
       return "national";
-    case "site_operator":
-      return "site";
     default:
       return null;
   }
 }
 
 const PLAN_ACTIONS: readonly Permission[] = [
-  "APPROUVER_PLAN",
-  "METTRE_EN_ALERTE_PLAN",
+  "TRAITER_DEMANDE_DECLENCHEMENT",
   "DECLENCHER_PLAN",
+  "CHANGER_PHASE",
   "LEVER_PLAN",
+  "DECLENCHER_PLAN_NATIONAL",
 ];
 
-export function designationsOf(session: AuthSession): DesignationFn[] {
-  const explicit = activeDesignations(session).map((item) => item.fn);
-  const implicit = IMPLICIT_DESIGNATIONS[session.role] ?? [];
-  return Array.from(new Set([...explicit, ...implicit]));
-}
-
 export function grantedPermissions(session: AuthSession): Set<Permission> {
-  const granted = new Set<Permission>(ROLE_PERMISSIONS[session.role]);
-  for (const fn of designationsOf(session)) {
-    DESIGNATION_PERMISSIONS[fn].forEach((permission) => granted.add(permission));
-  }
-  return granted;
+  return new Set<Permission>(ROLE_PERMISSIONS[session.role]);
 }
 
-function inTerritory(session: AuthSession, context: AccessContext): boolean {
-  if (session.role === "minister") return true;
-  const territory = session.territory;
-  if (territory?.level === "wilaya") {
-    if (context.wilayaId !== undefined) return context.wilayaId === territory.id;
-    return context.communeId === undefined && context.siteId === undefined;
+function territoryMatches(scope: TerritoryRef | undefined, context: AccessContext): boolean {
+  if (!scope) return true;
+  const targetCommune = context.communeId;
+  const targetWilaya = context.wilayaId;
+  if (!targetCommune && !targetWilaya) return true;
+  if (scope.level === "national") return true;
+  if (scope.level === "wilaya") {
+    if (targetWilaya !== undefined) return targetWilaya === scope.id;
+    if (targetCommune !== undefined) {
+      return territoryById(targetCommune)?.parentId === scope.id;
+    }
   }
-  if (territory?.level === "commune") {
-    if (context.communeId !== undefined) return context.communeId === territory.id;
-    return context.wilayaId === undefined && context.siteId === undefined;
+  if (scope.level === "commune") {
+    return targetCommune === undefined ? targetWilaya === undefined : targetCommune === scope.id;
   }
-  if (ROLE_DEFS[session.role].territoryScope === "site") {
-    return context.siteId === undefined || context.siteId === session.siteId;
-  }
-  return true;
+  return false;
 }
 
 export function canAccess(
@@ -91,14 +69,10 @@ export function canAccess(
 ): boolean {
   if (!session || !isAssignmentActive(session.assignment)) return false;
   if (!grantedPermissions(session).has(permission)) return false;
-  if (!inTerritory(session, context)) return false;
-  if (
-    context.organismId !== undefined &&
-    ROLE_DEFS[session.role].needsOrganism &&
-    session.organismId !== context.organismId
-  ) {
-    return false;
+  if (context.moduleId !== undefined && ROLE_DEFS[session.role].needsModule) {
+    if (session.moduleId !== context.moduleId) return false;
   }
+  if (!territoryMatches(session.territory, context)) return false;
   if (context.planLevel !== undefined && PLAN_ACTIONS.includes(permission)) {
     if (planLevelForRole(session.role) !== context.planLevel) return false;
   }
@@ -111,4 +85,8 @@ export function canAccessAny(
   context: AccessContext = {},
 ): boolean {
   return permissions.some((permission) => canAccess(session, permission, context));
+}
+
+export function hasRole(session: AuthSession | null, ...roles: Role[]): boolean {
+  return session !== null && roles.includes(session.role);
 }

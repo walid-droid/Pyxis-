@@ -14,6 +14,9 @@ export const CRISIS_FR: Record<string, string> = {
   "resp.login.notice": "Toute connexion est enregistrée et rattachée à votre matricule.",
   "resp.login.switch": "Vous êtes un citoyen ?",
   "resp.login.citizenLink": "Espace citoyen",
+  "resp.login.demo": "Compte de démonstration (rôle)",
+  "resp.login.scope": "Module et rattachement",
+  "resp.login.role": "Rôle",
   "resp.map.open": "Ouvrir la fiche",
 };
 
@@ -31,5 +34,8 @@ export const CRISIS_AR: Record<string, string> = {
   "resp.login.notice": "يُسجَّل كل دخول ويُربط برقمك التعريفي.",
   "resp.login.switch": "هل أنت مواطن؟",
   "resp.login.citizenLink": "فضاء المواطن",
+  "resp.login.demo": "حساب تجريبي (الدور)",
+  "resp.login.scope": "الوحدة والإلحاق",
+  "resp.login.role": "الدور",
   "resp.map.open": "عرض البطاقة",
 };

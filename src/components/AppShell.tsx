@@ -7,7 +7,6 @@ import LanguageToggle from "./LanguageToggle";
 import NotificationCenter from "./NotificationCenter";
 import OfflineBanner from "./OfflineBanner";
 import ThemeToggle from "./ThemeToggle";
-import OpsBanners from "../pages/shared/ops/OpsBanners";
 import { useI18n } from "../i18n";
 
 export type ShellNavItem = {
@@ -24,13 +23,15 @@ type AppShellProps = {
   navItems: ShellNavItem[];
   /** Titre affiché au-dessus des liens (espaces dédiés). */
   navGroupKey?: string;
-  variant?: "citizen" | "crisis" | "authority" | "site" | "admin" | "organisme";
+  variant?: "citizen" | "crisis" | "authority" | "module" | "admin";
   authenticated: boolean;
   onSignOut: () => void;
   /** Ouvre la connexion pour un visiteur non authentifié. */
   onSignIn?: () => void;
   /** Contrôle additionnel affiché dans la barre supérieure (ex. sélecteur de rôle). */
   topbarExtra?: ReactNode;
+  /** Bandeau de situation affiché au-dessus du contenu (espaces de commandement). */
+  banner?: ReactNode;
 };
 
 /**
@@ -48,6 +49,7 @@ function AppShell({
   onSignOut,
   onSignIn,
   topbarExtra,
+  banner,
 }: AppShellProps) {
   const navRef = useRef<HTMLElement>(null);
   const assistantTriggerRef = useRef<HTMLButtonElement>(null);
@@ -182,13 +184,11 @@ function AppShell({
           ? " app-layout--resp"
           : variant === "authority"
             ? " app-layout--authority"
-            : variant === "site"
-              ? " app-layout--site"
+            : variant === "module"
+              ? " app-layout--module"
               : variant === "admin"
                 ? " app-layout--admin"
-                : variant === "organisme"
-                  ? " app-layout--org"
-                  : ""
+                : ""
       }`}
     >
       <header className={`app-topbar${scrolled ? " is-scrolled" : ""}`}>
@@ -205,11 +205,9 @@ function AppShell({
                   ? "admin.topbarRole"
                   : variant === "authority"
                     ? "authority.topbarRole"
-                    : variant === "site"
-                      ? "site.topbarRole"
-                      : variant === "organisme"
-                        ? "org.topbarRole"
-                        : "resp.topbarRole"
+                    : variant === "module"
+                      ? "module.topbarRole"
+                      : "resp.topbarRole"
               )}
             </span>
           )}
@@ -355,7 +353,7 @@ function AppShell({
 
       <div className="app-main">
         <OfflineBanner />
-        <OpsBanners />
+        {banner}
         <Outlet />
       </div>
 

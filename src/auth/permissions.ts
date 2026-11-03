@@ -1,437 +1,165 @@
 /**
- * Permissions opérationnelles CADM et façon de les accorder :
- *  - par le rôle du compte (ROLE_PERMISSIONS) ;
- *  - par une désignation en cours (DESIGNATION_PERMISSIONS).
- * Source : documents « Organisation des acteurs ORSEC » (tableaux 14 à 16)
- * et « Diagrammes UML : rôles et ORSEC » (tableau 14).
+ * Permissions v3.0 (guide master ORSEC, §6.4).
+ * Elles remplacent les 42 codes de la version 22 rôles. Aucune désignation :
+ * le rôle, le module et le territoire suffisent, complétés par l'état du plan.
  */
 
-import type { Localized, Role } from "./roles";
+import type { Localized } from "../data/locale";
+import type { Role } from "./roles";
 
 export const PERMISSIONS = [
-  // Administration (S1-S3)
-  "CREER_COMPTE",
-  "ATTRIBUER_ROLE",
-  "GERER_TERRITOIRES",
-  "GERER_ORGANISMES",
-  "RATTACHER_COMPTE",
-  "PARAMETRER_MODULES",
-  "GERER_PERMISSIONS",
-  // Signalements et incidents (S1-S2)
+  // Citoyen
   "CREER_SIGNALEMENT",
-  "CONSULTER_SIGNALEMENT",
-  "VALIDER_SIGNALEMENT",
-  "MODIFIER_GRAVITE",
-  "CONSULTER_INCIDENTS_TERRITOIRE",
-  // Veille
-  "SURVEILLER_RISQUES",
-  "SAISIR_NIVEAUX_EAU",
-  // Organisme, moyens et missions (S3-S5)
-  "GERER_EQUIPES",
-  "RECENSER_MOYENS",
-  "CREER_MISSION",
-  "EXECUTER_MISSION",
-  "SUIVRE_VEHICULE",
-  "SECURISER_ZONES",
-  "CONFIRMER_REOUVERTURE_ROUTE",
-  "SURVEILLER_MARITIME",
-  // Santé et évacuations (S5-S7)
-  "SUIVRE_VICTIMES",
-  "GERER_EVACUATIONS",
-  // Alertes (S7)
-  "VALIDER_ALERTE",
-  // Plan ORSEC (S8)
-  "SAISIR_PLAN",
-  "APPROUVER_PLAN",
-  "METTRE_EN_ALERTE_PLAN",
+  "SUIVRE_MON_SIGNALEMENT",
+  // Module
+  "RECEVOIR_ALERTE_MODULE",
+  "CONFIRMER_SIGNALEMENT",
+  "FIXER_GRAVITE",
+  "LANCER_INTERVENTION",
+  "AFFECTER_AGENTS",
+  "DEMANDER_APPUI_MODULE",
+  "CLOTURER_INTERVENTION",
+  "DECLARER_HORS_CONTROLE",
+  "CONSULTER_MODULE",
+  "INDIQUER_DISPONIBILITE",
+  "SUIVRE_TACHE",
+  "ENVOYER_COMPTE_RENDU",
+  "CONFIRMER_PARTICIPATION",
+  // Autorités
+  "TRAITER_DEMANDE_DECLENCHEMENT",
   "DECLENCHER_PLAN",
-  "LEVER_PLAN",
-  "DEMANDER_DECLENCHEMENT",
-  "DEMANDER_APPUI_LIMITROPHE",
-  "DESIGNER_FONCTION",
-  "HABILITER_PERSONNE",
-  "PROGRAMMER_SIMULATION",
-  "ETABLIR_RAPPORT",
-  // Commandement (S8)
-  "VOIR_PCF",
-  "CONSOLE_PCO",
   "CHANGER_PHASE",
-  "DEMANDER_RENFORT",
-  "TRANSMETTRE_RENFORT",
-  "TRAITER_RENFORT",
-  // Opérations ORSEC (situations A-E, main courante, réquisitions)
-  "PILOTER_SITUATION",
-  "TENIR_MAIN_COURANTE",
-  "GERER_REQUISITIONS",
-  "DIFFUSER_INFO_PUBLIC",
-  "GERER_REHABILITATION",
-  "SUIVRE_CONFORMITE",
-  "CONSOLE_MODULE",
-  "MODE_TERRAIN",
-  "TRAITER_HAZMAT",
-  "GERER_AFFECTATIONS",
-  // Transversal
-  "CONSULTER_HISTORIQUE",
+  "LEVER_PLAN",
+  "PROPOSER_ESCALADE",
+  "DEMANDER_PLAN_SUPERIEUR",
+  "LANCER_EXERCICE",
+  "CONSULTER_PLANS_ALERTES_EFFECTIFS",
+  "DECLENCHER_PLAN_NATIONAL",
+  // Administration
+  "GERER_COMPTES",
+  "ATTRIBUER_ROLE",
+  "GERER_REFERENTIELS",
+  "CONSULTER_JOURNAL",
 ] as const;
 
 export type Permission = (typeof PERMISSIONS)[number];
 
+/** Désignation opérationnelle historique (affectation titulaire / suppléant). */
+export type DesignationFn = string;
+
 export const PERMISSION_LABELS: Record<Permission, Localized> = {
-  CREER_COMPTE: { fr: "Créer un compte", ar: "إنشاء حساب" },
-  ATTRIBUER_ROLE: { fr: "Attribuer un rôle", ar: "إسناد دور" },
-  GERER_TERRITOIRES: { fr: "Gérer la wilaya et les communes", ar: "تسيير الولاية والبلديات" },
-  GERER_ORGANISMES: { fr: "Gérer les organismes", ar: "تسيير الهيئات" },
-  RATTACHER_COMPTE: { fr: "Rattacher un compte", ar: "إلحاق حساب" },
-  PARAMETRER_MODULES: { fr: "Paramétrer les modules d'intervention", ar: "ضبط وحدات التدخل" },
-  GERER_PERMISSIONS: { fr: "Gérer les permissions des rôles", ar: "تسيير صلاحيات الأدوار" },
   CREER_SIGNALEMENT: { fr: "Créer un signalement", ar: "إنشاء تبليغ" },
-  CONSULTER_SIGNALEMENT: { fr: "Consulter les signalements de son organisme", ar: "الاطلاع على تبليغات هيئته" },
-  VALIDER_SIGNALEMENT: { fr: "Confirmer ou rejeter un signalement", ar: "تأكيد تبليغ أو رفضه" },
-  MODIFIER_GRAVITE: { fr: "Modifier la gravité (avec justification)", ar: "تعديل الخطورة (مع التبرير)" },
-  CONSULTER_INCIDENTS_TERRITOIRE: { fr: "Consulter les incidents du territoire", ar: "الاطلاع على حوادث الإقليم" },
-  SURVEILLER_RISQUES: { fr: "Surveiller les risques (hydro, forêts)", ar: "مراقبة المخاطر (المياه، الغابات)" },
-  SAISIR_NIVEAUX_EAU: { fr: "Saisir les niveaux d'eau", ar: "إدخال مستويات المياه" },
-  GERER_EQUIPES: { fr: "Gérer les équipes", ar: "تسيير الفرق" },
-  RECENSER_MOYENS: { fr: "Recenser les moyens", ar: "إحصاء الوسائل" },
-  CREER_MISSION: { fr: "Créer et affecter une mission", ar: "إنشاء مهمة وإسنادها" },
-  EXECUTER_MISSION: { fr: "Exécuter une mission et rendre compte", ar: "تنفيذ مهمة ورفع تقرير" },
-  SUIVRE_VEHICULE: { fr: "Suivre son véhicule", ar: "متابعة مركبته" },
-  SECURISER_ZONES: { fr: "Sécuriser les zones et les accès", ar: "تأمين المناطق والمداخل" },
-  CONFIRMER_REOUVERTURE_ROUTE: { fr: "Confirmer la réouverture d'une route", ar: "تأكيد إعادة فتح طريق" },
-  SURVEILLER_MARITIME: { fr: "Surveiller le littoral et les opérations en mer", ar: "مراقبة الساحل والعمليات البحرية" },
-  SUIVRE_VICTIMES: { fr: "Suivre les victimes (données médicales)", ar: "متابعة الضحايا (معطيات طبية)" },
-  GERER_EVACUATIONS: { fr: "Gérer les évacuations", ar: "تسيير عمليات الإخلاء" },
-  VALIDER_ALERTE: { fr: "Valider et diffuser une alerte", ar: "المصادقة على تنبيه وبثه" },
-  SAISIR_PLAN: { fr: "Saisir un plan ORSEC", ar: "إدخال مخطط ORSEC" },
-  APPROUVER_PLAN: { fr: "Approuver un plan", ar: "المصادقة على مخطط" },
-  METTRE_EN_ALERTE_PLAN: { fr: "Mettre un plan en état d'alerte", ar: "وضع مخطط في حالة تأهب" },
+  SUIVRE_MON_SIGNALEMENT: { fr: "Suivre mes signalements", ar: "متابعة تبليغاتي" },
+  RECEVOIR_ALERTE_MODULE: { fr: "Recevoir les alertes de son module", ar: "تلقي تنبيهات وحدته" },
+  CONFIRMER_SIGNALEMENT: { fr: "Confirmer ou rejeter un signalement", ar: "تأكيد تبليغ أو رفضه" },
+  FIXER_GRAVITE: { fr: "Fixer la gravité à la confirmation", ar: "تحديد الخطورة عند التأكيد" },
+  LANCER_INTERVENTION: { fr: "Lancer une intervention", ar: "إطلاق تدخل" },
+  AFFECTER_AGENTS: { fr: "Affecter des agents", ar: "تكليف أعوان" },
+  DEMANDER_APPUI_MODULE: { fr: "Demander l'appui d'un autre module", ar: "طلب دعم وحدة أخرى" },
+  CLOTURER_INTERVENTION: { fr: "Clôturer une intervention", ar: "إغلاق تدخل" },
+  DECLARER_HORS_CONTROLE: { fr: "Déclarer la situation hors de contrôle", ar: "الإعلان عن الخروج عن السيطرة" },
+  CONSULTER_MODULE: { fr: "Consulter les données du module", ar: "الاطلاع على بيانات الوحدة" },
+  INDIQUER_DISPONIBILITE: { fr: "Indiquer sa disponibilité", ar: "الإعلان عن الجاهزية" },
+  SUIVRE_TACHE: { fr: "Suivre ses tâches", ar: "متابعة المهام" },
+  ENVOYER_COMPTE_RENDU: { fr: "Envoyer un compte rendu", ar: "إرسال تقرير" },
+  CONFIRMER_PARTICIPATION: { fr: "Confirmer sa participation", ar: "تأكيد المشاركة" },
+  TRAITER_DEMANDE_DECLENCHEMENT: { fr: "Traiter une demande de déclenchement", ar: "معالجة طلب إطلاق" },
   DECLENCHER_PLAN: { fr: "Déclencher un plan", ar: "إطلاق مخطط" },
+  CHANGER_PHASE: { fr: "Changer la phase d'un plan", ar: "تغيير مرحلة المخطط" },
   LEVER_PLAN: { fr: "Lever un plan", ar: "رفع مخطط" },
-  DEMANDER_DECLENCHEMENT: { fr: "Demander le déclenchement du plan", ar: "طلب إطلاق المخطط" },
-  DEMANDER_APPUI_LIMITROPHE: { fr: "Demander l'appui d'une wilaya limitrophe", ar: "طلب دعم ولاية مجاورة" },
-  DESIGNER_FONCTION: { fr: "Désigner une fonction (modules, représentants)", ar: "تعيين وظيفة (وحدات، ممثلون)" },
-  HABILITER_PERSONNE: { fr: "Habiliter une personne à valider les alertes", ar: "تأهيل شخص للمصادقة على التنبيهات" },
-  PROGRAMMER_SIMULATION: { fr: "Programmer les simulations", ar: "برمجة المحاكاة" },
-  ETABLIR_RAPPORT: { fr: "Établir le rapport détaillé", ar: "إعداد التقرير المفصّل" },
-  VOIR_PCF: { fr: "Consulter le PCF", ar: "الاطلاع على مركز القيادة الثابت" },
-  CONSOLE_PCO: { fr: "Utiliser la console du PCO", ar: "استعمال وحدة تحكم مركز القيادة العملياتي" },
-  CHANGER_PHASE: { fr: "Changer la phase de l'activation", ar: "تغيير مرحلة التفعيل" },
-  DEMANDER_RENFORT: { fr: "Demander un renfort", ar: "طلب تعزيز" },
-  TRANSMETTRE_RENFORT: { fr: "Transmettre une demande de renfort", ar: "إحالة طلب تعزيز" },
-  TRAITER_RENFORT: { fr: "Accepter ou refuser un renfort", ar: "قبول تعزيز أو رفضه" },
-  PILOTER_SITUATION: { fr: "Faire évoluer la situation ORSEC (A-E)", ar: "تطوير وضعية ORSEC (أ-هـ)" },
-  TENIR_MAIN_COURANTE: { fr: "Tenir la main courante", ar: "مسك السجل اليومي" },
-  GERER_REQUISITIONS: { fr: "Établir et suivre les réquisitions", ar: "إعداد ومتابعة التكاليف" },
-  DIFFUSER_INFO_PUBLIC: { fr: "Diffuser l'information du public", ar: "نشر معلومات الجمهور" },
-  GERER_REHABILITATION: { fr: "Piloter la réhabilitation", ar: "قيادة إعادة التأهيل" },
-  SUIVRE_CONFORMITE: { fr: "Suivre la conformité et les exercices", ar: "متابعة المطابقة والتمارين" },
-  CONSOLE_MODULE: { fr: "Utiliser la console d'un module", ar: "استعمال وحدة تحكم وحدة تدخل" },
-  MODE_TERRAIN: { fr: "Utiliser le mode terrain", ar: "استعمال الوضع الميداني" },
-  TRAITER_HAZMAT: { fr: "Traiter un risque NRBC / HAZMAT", ar: "معالجة خطر كيميائي / خطير" },
-  GERER_AFFECTATIONS: { fr: "Gérer les affectations et intérims", ar: "تسيير التعيينات والنيابات" },
-  CONSULTER_HISTORIQUE: { fr: "Consulter l'historique", ar: "الاطلاع على السجل" },
+  PROPOSER_ESCALADE: { fr: "Proposer une escalade", ar: "اقتراح تصعيد" },
+  DEMANDER_PLAN_SUPERIEUR: { fr: "Demander le plan du niveau supérieur", ar: "طلب مخطط المستوى الأعلى" },
+  LANCER_EXERCICE: { fr: "Lancer un exercice", ar: "إطلاق تمرين" },
+  CONSULTER_PLANS_ALERTES_EFFECTIFS: { fr: "Consulter plans, alertes et effectifs", ar: "الاطلاع على المخططات والتنبيهات والعديد" },
+  DECLENCHER_PLAN_NATIONAL: { fr: "Déclencher le plan national", ar: "إطلاق المخطط الوطني" },
+  GERER_COMPTES: { fr: "Gérer les comptes", ar: "تسيير الحسابات" },
+  ATTRIBUER_ROLE: { fr: "Attribuer un rôle", ar: "إسناد دور" },
+  GERER_REFERENTIELS: { fr: "Gérer les référentiels", ar: "تسيير المراجع" },
+  CONSULTER_JOURNAL: { fr: "Consulter le journal", ar: "الاطلاع على السجل" },
 };
 
-/* ------------------------------------------------------------------ */
-/* Permissions accordées par le rôle                                   */
-/* ------------------------------------------------------------------ */
-
-const SIGNALEMENT_ORGANISME: Permission[] = [
-  "CONSULTER_SIGNALEMENT",
-  "VALIDER_SIGNALEMENT",
-  "MODIFIER_GRAVITE",
+const MODULE_RESPONSIBLE: Permission[] = [
+  "RECEVOIR_ALERTE_MODULE",
+  "CONFIRMER_SIGNALEMENT",
+  "FIXER_GRAVITE",
+  "LANCER_INTERVENTION",
+  "AFFECTER_AGENTS",
+  "DEMANDER_APPUI_MODULE",
+  "CLOTURER_INTERVENTION",
+  "DECLARER_HORS_CONTROLE",
+  "CONSULTER_MODULE",
 ];
 
-const AUTORITE_COMMUNE_WILAYA: Permission[] = [
-  "CONSULTER_INCIDENTS_TERRITOIRE",
-  "APPROUVER_PLAN",
-  "METTRE_EN_ALERTE_PLAN",
+const MODULE_DIRECTOR: Permission[] = [
+  "RECEVOIR_ALERTE_MODULE",
+  "DECLARER_HORS_CONTROLE",
+  "CONSULTER_MODULE",
+];
+
+const MODULE_AGENT: Permission[] = [
+  "RECEVOIR_ALERTE_MODULE",
+  "INDIQUER_DISPONIBILITE",
+  "SUIVRE_TACHE",
+  "ENVOYER_COMPTE_RENDU",
+  "CONFIRMER_PARTICIPATION",
+];
+
+const AUTHORITY: Permission[] = [
+  "TRAITER_DEMANDE_DECLENCHEMENT",
   "DECLENCHER_PLAN",
+  "CHANGER_PHASE",
   "LEVER_PLAN",
-  "VALIDER_ALERTE",
-  "DESIGNER_FONCTION",
-  "HABILITER_PERSONNE",
-  "PROGRAMMER_SIMULATION",
-  "ETABLIR_RAPPORT",
-  "PILOTER_SITUATION",
-  "GERER_REQUISITIONS",
-  "DIFFUSER_INFO_PUBLIC",
-  "GERER_REHABILITATION",
-  "SUIVRE_CONFORMITE",
-  "CONSULTER_HISTORIQUE",
+  "PROPOSER_ESCALADE",
+  "DEMANDER_PLAN_SUPERIEUR",
+  "LANCER_EXERCICE",
+  "CONSULTER_PLANS_ALERTES_EFFECTIFS",
 ];
 
 export const ROLE_PERMISSIONS: Record<Role, readonly Permission[]> = {
-  citizen: ["CREER_SIGNALEMENT"],
-  farmer: ["CREER_SIGNALEMENT"],
-  organism: [
-    ...SIGNALEMENT_ORGANISME,
-    "CREER_MISSION",
-    "RECENSER_MOYENS",
-    "TENIR_MAIN_COURANTE",
-  ],
-  admin: [
-    "CREER_COMPTE",
-    "ATTRIBUER_ROLE",
-    "GERER_TERRITOIRES",
-    "GERER_ORGANISMES",
-    "RATTACHER_COMPTE",
-    "PARAMETRER_MODULES",
-    "GERER_PERMISSIONS",
-    "GERER_AFFECTATIONS",
-  ],
-  wali: [...AUTORITE_COMMUNE_WILAYA, "DEMANDER_APPUI_LIMITROPHE"],
-  apc_president: AUTORITE_COMMUNE_WILAYA,
-  minister: [
-    "CONSULTER_INCIDENTS_TERRITOIRE",
-    "METTRE_EN_ALERTE_PLAN",
-    "DECLENCHER_PLAN",
-    "LEVER_PLAN",
-    "DESIGNER_FONCTION",
-    "DEMANDER_APPUI_LIMITROPHE",
-    "ETABLIR_RAPPORT",
-    "PILOTER_SITUATION",
-    "DIFFUSER_INFO_PUBLIC",
-    "SUIVRE_CONFORMITE",
-    "CONSULTER_HISTORIQUE",
-  ],
-  site_operator: [
-    "CREER_SIGNALEMENT",
-    "SAISIR_PLAN",
-    "DECLENCHER_PLAN",
-    "LEVER_PLAN",
-    "PROGRAMMER_SIMULATION",
-    "ETABLIR_RAPPORT",
-    "RECENSER_MOYENS",
-    "TENIR_MAIN_COURANTE",
-    "MODE_TERRAIN",
-    "SUIVRE_CONFORMITE",
-  ],
-  forecaster: [
-    "SURVEILLER_RISQUES",
-    "SAISIR_NIVEAUX_EAU",
-    "TENIR_MAIN_COURANTE",
-    "MODE_TERRAIN",
-  ],
-  forestry_agent: [
-    "CREER_SIGNALEMENT",
-    // L'agent doit pouvoir suivre les signalements qu'il transmet.
-    "CONSULTER_SIGNALEMENT",
-    "SURVEILLER_RISQUES",
-    "RECENSER_MOYENS",
-    "TENIR_MAIN_COURANTE",
-    "MODE_TERRAIN",
-  ],
-  org_director: [
-    ...SIGNALEMENT_ORGANISME,
-    "CREER_SIGNALEMENT",
-    "GERER_EQUIPES",
-    "RECENSER_MOYENS",
-    "CREER_MISSION",
-    "TRANSMETTRE_RENFORT",
-    "TRAITER_RENFORT",
-    "VOIR_PCF",
-    "TENIR_MAIN_COURANTE",
-    "GERER_REQUISITIONS",
-    "CONSOLE_MODULE",
-    "TRAITER_HAZMAT",
-    "SUIVRE_CONFORMITE",
-    "MODE_TERRAIN",
-    "CONSULTER_HISTORIQUE",
-  ],
-  unit_lead: [
-    ...SIGNALEMENT_ORGANISME,
-    "CREER_SIGNALEMENT",
-    "GERER_EQUIPES",
-    "RECENSER_MOYENS",
-    "CREER_MISSION",
-    "DEMANDER_RENFORT",
-    "TENIR_MAIN_COURANTE",
-    "GERER_REQUISITIONS",
-    "CONSOLE_MODULE",
-    "MODE_TERRAIN",
-    "TRAITER_HAZMAT",
-  ],
-  pc_lead: [
-    ...SIGNALEMENT_ORGANISME,
-    "CREER_SIGNALEMENT",
-    "RECENSER_MOYENS",
-    "CREER_MISSION",
-    "SUIVRE_VICTIMES",
-    "GERER_EVACUATIONS",
-    "SAISIR_PLAN",
-    "DEMANDER_DECLENCHEMENT",
-    "TRANSMETTRE_RENFORT",
-    "TRAITER_RENFORT",
-    "TENIR_MAIN_COURANTE",
-    "GERER_REQUISITIONS",
-    "CONSOLE_MODULE",
-    "MODE_TERRAIN",
-    "TRAITER_HAZMAT",
-    "DIFFUSER_INFO_PUBLIC",
-    "CONSULTER_HISTORIQUE",
-  ],
-  medical_lead: [
-    "CREER_SIGNALEMENT",
-    "EXECUTER_MISSION",
-    "RECENSER_MOYENS",
-    "SUIVRE_VICTIMES",
-    "DEMANDER_RENFORT",
-    "TENIR_MAIN_COURANTE",
-    "MODE_TERRAIN",
-    "TRAITER_HAZMAT",
-  ],
-  evac_lead: [
-    "CREER_SIGNALEMENT",
-    "EXECUTER_MISSION",
-    "RECENSER_MOYENS",
-    "GERER_EVACUATIONS",
-    "DEMANDER_RENFORT",
-    "TENIR_MAIN_COURANTE",
-    "MODE_TERRAIN",
-  ],
-  pc_agent: [
-    "CREER_SIGNALEMENT",
-    "EXECUTER_MISSION",
-    "RECENSER_MOYENS",
-    "TENIR_MAIN_COURANTE",
-    "MODE_TERRAIN",
-  ],
-  engine_chief: [
-    "CREER_SIGNALEMENT",
-    "EXECUTER_MISSION",
-    "RECENSER_MOYENS",
-    "SUIVRE_VEHICULE",
-    "TENIR_MAIN_COURANTE",
-    "MODE_TERRAIN",
-  ],
-  police: [
-    "CREER_SIGNALEMENT",
-    "EXECUTER_MISSION",
-    "RECENSER_MOYENS",
-    "SECURISER_ZONES",
-    "CONFIRMER_REOUVERTURE_ROUTE",
-    "TENIR_MAIN_COURANTE",
-    "MODE_TERRAIN",
-    "TRAITER_HAZMAT",
-  ],
-  gendarmerie: [
-    "CREER_SIGNALEMENT",
-    "EXECUTER_MISSION",
-    "RECENSER_MOYENS",
-    "SECURISER_ZONES",
-    "CONFIRMER_REOUVERTURE_ROUTE",
-    "TENIR_MAIN_COURANTE",
-    "MODE_TERRAIN",
-    "TRAITER_HAZMAT",
-  ],
-  coast_guard: [
-    "CREER_SIGNALEMENT",
-    "EXECUTER_MISSION",
-    "RECENSER_MOYENS",
-    "SURVEILLER_MARITIME",
-    "TENIR_MAIN_COURANTE",
-    "MODE_TERRAIN",
-  ],
-  emergency_doctor: [
-    "CREER_SIGNALEMENT",
-    "EXECUTER_MISSION",
-    "SUIVRE_VICTIMES",
-    "DEMANDER_RENFORT",
-    "TENIR_MAIN_COURANTE",
-    "MODE_TERRAIN",
-    "TRAITER_HAZMAT",
-  ],
-  org_agent: [
-    "CREER_SIGNALEMENT",
-    "EXECUTER_MISSION",
-    "RECENSER_MOYENS",
-    "CONFIRMER_REOUVERTURE_ROUTE",
-    "TENIR_MAIN_COURANTE",
-    "MODE_TERRAIN",
-  ],
+  citizen: ["CREER_SIGNALEMENT", "SUIVRE_MON_SIGNALEMENT"],
+  admin: ["GERER_COMPTES", "ATTRIBUER_ROLE", "GERER_REFERENTIELS", "CONSULTER_JOURNAL"],
+  wali: AUTHORITY,
+  apc_president: AUTHORITY,
+  minister: [...AUTHORITY, "DECLENCHER_PLAN_NATIONAL"],
+  module_agent: MODULE_AGENT,
+  module_manager: MODULE_RESPONSIBLE,
+  module_director: MODULE_DIRECTOR,
 };
 
-/* ------------------------------------------------------------------ */
-/* Désignations ORSEC (fonctions confiées pendant un plan)             */
-/* ------------------------------------------------------------------ */
-
-export const DESIGNATION_FNS = [
-  "AUTHORITY_REPRESENTATIVE",
-  "PCF_DIRECTOR",
-  "PCO_DIRECTOR",
-  "MODULE_MANAGER",
-  "MODULE_REPRESENTATIVE",
-  "ALERT_VALIDATOR",
-  "INFORMATION_OFFICER",
-  "SAFETY_OFFICER",
-  "REHABILITATION_OFFICER",
-  "LIAISON_OFFICER",
-] as const;
-
-export type DesignationFn = (typeof DESIGNATION_FNS)[number];
-
-export const DESIGNATION_LABELS: Record<DesignationFn, Localized> = {
-  AUTHORITY_REPRESENTATIVE: { fr: "Représentant de l'autorité", ar: "ممثل السلطة" },
-  PCF_DIRECTOR: { fr: "Directeur du PCF", ar: "مدير مركز القيادة الثابت" },
-  PCO_DIRECTOR: { fr: "Directeur du PCO", ar: "مدير مركز القيادة العملياتي" },
-  MODULE_MANAGER: { fr: "Responsable de module", ar: "مسؤول وحدة" },
-  MODULE_REPRESENTATIVE: { fr: "Représentant de module au PCO", ar: "ممثل وحدة في مركز القيادة العملياتي" },
-  ALERT_VALIDATOR: { fr: "Personne habilitée à valider les alertes", ar: "شخص مؤهل للمصادقة على التنبيهات" },
-  INFORMATION_OFFICER: { fr: "Chargé de l'information du public", ar: "مكلف بإعلام الجمهور" },
-  SAFETY_OFFICER: { fr: "Officier de sécurité / NRBC", ar: "ضابط الأمن / النووي والكيميائي" },
-  REHABILITATION_OFFICER: { fr: "Chargé de la réhabilitation", ar: "مكلف بإعادة التأهيل" },
-  LIAISON_OFFICER: { fr: "Officier de liaison", ar: "ضابط الاتصال" },
-};
-
-export const DESIGNATION_PERMISSIONS: Record<DesignationFn, readonly Permission[]> = {
-  AUTHORITY_REPRESENTATIVE: [
-    "CONSULTER_INCIDENTS_TERRITOIRE",
-    "PILOTER_SITUATION",
-  ],
-  PCF_DIRECTOR: [
-    "VOIR_PCF",
-    "CHANGER_PHASE",
-    "HABILITER_PERSONNE",
-    "PILOTER_SITUATION",
-    "GERER_REQUISITIONS",
-    "DIFFUSER_INFO_PUBLIC",
-    "GERER_REHABILITATION",
-    "SUIVRE_CONFORMITE",
-    "CONSULTER_HISTORIQUE",
-  ],
-  PCO_DIRECTOR: [
-    "CONSOLE_PCO",
-    "DEMANDER_RENFORT",
-    "TENIR_MAIN_COURANTE",
-    "GERER_REQUISITIONS",
-    "CONSOLE_MODULE",
-    "MODE_TERRAIN",
-    "TRAITER_HAZMAT",
-    "CONSULTER_HISTORIQUE",
-  ],
-  MODULE_MANAGER: [
-    "RECENSER_MOYENS",
-    "TRANSMETTRE_RENFORT",
-    "TRAITER_RENFORT",
-    "ETABLIR_RAPPORT",
-    "CONSOLE_MODULE",
-    "TENIR_MAIN_COURANTE",
-    "GERER_REQUISITIONS",
-    "SUIVRE_CONFORMITE",
-  ],
-  MODULE_REPRESENTATIVE: ["TENIR_MAIN_COURANTE", "CONSOLE_MODULE"],
-  ALERT_VALIDATOR: ["VALIDER_ALERTE"],
-  INFORMATION_OFFICER: ["DIFFUSER_INFO_PUBLIC", "CONSULTER_INCIDENTS_TERRITOIRE"],
-  SAFETY_OFFICER: ["TRAITER_HAZMAT", "SECURISER_ZONES", "CONSOLE_MODULE"],
-  REHABILITATION_OFFICER: ["GERER_REHABILITATION", "GERER_EVACUATIONS", "SUIVRE_CONFORMITE"],
-  LIAISON_OFFICER: ["CONSULTER_INCIDENTS_TERRITOIRE", "TENIR_MAIN_COURANTE"],
-};
-
-/**
- * Désignation accordée « de droit » par le rôle (décret 19-59, art. 31 et 38) :
- * le responsable de la Protection civile du territoire dirige le PCO.
- */
-export const IMPLICIT_DESIGNATIONS: Partial<Record<Role, DesignationFn[]>> = {
-  pc_lead: ["PCO_DIRECTOR"],
-};
+/** Groupes affichés en lecture seule dans l'écran « Rôles ». */
+export const PERMISSION_GROUPS: { key: string; permissions: Permission[] }[] = [
+  {
+    key: "citizen",
+    permissions: ["CREER_SIGNALEMENT", "SUIVRE_MON_SIGNALEMENT"],
+  },
+  {
+    key: "module",
+    permissions: [
+      "RECEVOIR_ALERTE_MODULE",
+      "CONFIRMER_SIGNALEMENT",
+      "FIXER_GRAVITE",
+      "LANCER_INTERVENTION",
+      "AFFECTER_AGENTS",
+      "DEMANDER_APPUI_MODULE",
+      "CLOTURER_INTERVENTION",
+      "DECLARER_HORS_CONTROLE",
+      "CONSULTER_MODULE",
+      "INDIQUER_DISPONIBILITE",
+      "SUIVRE_TACHE",
+      "ENVOYER_COMPTE_RENDU",
+      "CONFIRMER_PARTICIPATION",
+    ],
+  },
+  {
+    key: "authority",
+    permissions: AUTHORITY,
+  },
+  {
+    key: "national",
+    permissions: ["DECLENCHER_PLAN_NATIONAL"],
+  },
+  {
+    key: "admin",
+    permissions: ["GERER_COMPTES", "ATTRIBUER_ROLE", "GERER_REFERENTIELS", "CONSULTER_JOURNAL"],
+  },
+];

@@ -1,39 +1,21 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-import { AUTHORITY_DEMO_ACCOUNTS, type DemoAccount } from "../../auth/demoAccounts";
+import { STAFF_DEMO_ACCOUNTS, type DemoAccount } from "../../auth/demoAccounts";
 import { homeForRole } from "../../auth/roles";
 import { DEMO_MODE } from "../../config";
 import { useI18n } from "../../i18n";
 import { signInResp } from "../../lib/session";
-import { PERSONAS } from "../organisme/organismeData";
-import { DEMO_ORGANISM, DEMO_COMMUNE } from "../../auth/demoAccounts";
 import AuthLayout from "./AuthLayout";
 
-/** Comptes de démonstration du personnel : autorités, puis organismes. */
-function buildAccounts(): DemoAccount[] {
-  const staff: DemoAccount[] = PERSONAS.map((persona) => ({
-    id: persona.id,
-    label: {
-      fr: `${persona.role.fr} — ${persona.name.fr}`,
-      ar: `${persona.role.ar} — ${persona.name.ar}`,
-    },
-    role: persona.accountRole,
-    designations: persona.designations,
-    organismId: DEMO_ORGANISM,
-    territory: DEMO_COMMUNE,
-  }));
-  return [...AUTHORITY_DEMO_ACCOUNTS, ...staff];
-}
-
 /**
- * Connexion unique du personnel (autorités, organismes, exploitants).
+ * Connexion unique du personnel (autorités et rôles de module).
  * Le rôle vient du compte : en démo, on choisit un compte de démonstration.
  */
 function StaffLoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t, lang } = useI18n();
-  const accounts = useMemo(buildAccounts, []);
+  const accounts = useMemo(() => STAFF_DEMO_ACCOUNTS, []);
   const [accountId, setAccountId] = useState(accounts[0].id);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,19 +24,15 @@ function StaffLoginPage() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (leaving) return;
-    // Connect this to your authentication backend.
-    const account = accounts.find((item) => item.id === accountId) ?? accounts[0];
+    const account = accounts.find((item: DemoAccount) => item.id === accountId) ?? accounts[0];
     signInResp(email, account);
     const from = (location.state as { from?: string } | null)?.from;
     setLeaving(true);
-    window.setTimeout(() => navigate(from ?? homeForRole(account.role)), 220);
+    window.setTimeout(() => navigate(from ?? homeForRole(account.role), { replace: true }), 220);
   }
 
   return (
-    <AuthLayout
-      variant="crisis"
-      leaving={leaving}
-    >
+    <AuthLayout variant="crisis" leaving={leaving}>
       <header className="auth-card-head auth-card-head--resp">
         <span className="auth-kicker">{t("resp.login.kicker")}</span>
         <h1>{t("resp.login.title")}</h1>
@@ -64,9 +42,7 @@ function StaffLoginPage() {
       <form className="auth-form" onSubmit={handleSubmit}>
         {DEMO_MODE ? (
           <div className="auth-field">
-            <label htmlFor="resp-account">
-              {lang === "ar" ? "حساب تجريبي (الدور)" : "Compte de démonstration (rôle)"}
-            </label>
+            <label htmlFor="resp-account">{t("resp.login.demo")}</label>
             <select
               id="resp-account"
               value={accountId}

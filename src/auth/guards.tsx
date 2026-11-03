@@ -11,7 +11,7 @@ import { useAuth } from "./AuthContext";
 import type { Permission } from "./permissions";
 import { homeForRole, ROLE_DEFS, type Space } from "./roles";
 
-export function loginPathFor(space: Space): string {
+function loginPathFor(space: Space): string {
   if (space === "citizen") return LOGIN_PATH;
   if (space === "admin") return ADMIN_LOGIN_PATH;
   return STAFF_LOGIN_PATH;

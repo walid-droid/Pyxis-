@@ -1,182 +1,188 @@
 import { useState } from "react";
 import { useI18n } from "../../i18n";
-import { useOrsecOps } from "../../lib/orsecOps";
-import { useOrsecPlans } from "../shared/plan/PlanContext";
-import "../shared/ops/ops.css";
+import { useDb } from "../../services/useDb";
+import { territoryLabel } from "../shared/v3/helpers";
+import type { Plan } from "../../services/model";
+import "../shared/v3/v3.css";
 
-const EMERGENCY = [
-  { label: { fr: "Protection civile", ar: "الحماية المدنية" }, number: "14" },
-  { label: { fr: "Police", ar: "الشرطة" }, number: "17" },
-  { label: { fr: "Gendarmerie", ar: "الدرك" }, number: "1055" },
-  { label: { fr: "SAMU", ar: "الإسعاف الطبي" }, number: "115" },
-];
-
-const CONSIGNES = [
-  {
-    fr: "Écoutez la radio et suivez les consignes officielles.",
-    ar: "استمعوا إلى الإذاعة واتبعوا الإرشادات الرسمية.",
-  },
-  {
-    fr: "Ne traversez jamais une route inondée, même en véhicule.",
-    ar: "لا تعبروا أبداً طريقاً مغموراً بالمياه، حتى بالسيارة.",
-  },
-  {
-    fr: "Rejoignez le centre d'accueil le plus proche si votre logement est menacé.",
-    ar: "توجهوا إلى أقرب مركز استقبال إذا كان مسكنكم مهدداً.",
-  },
-  {
-    fr: "N'encombrez pas les lignes d'urgence : un seul appel suffit.",
-    ar: "لا تشغلوا خطوط الطوارئ: مكالمة واحدة تكفي.",
-  },
-];
+const EMERGENCY_KEYS = [
+  { key: "publicInfo.emergency.protectiveCivil", number: "1021" },
+  { key: "publicInfo.emergency.police", number: "17" },
+  { key: "publicInfo.emergency.gendarmerie", number: "1055" },
+  { key: "publicInfo.emergency.samu", number: "115" },
+] as const;
 
 export default function PublicInformationPage() {
   const { lang, t } = useI18n();
-  const { messages, shelters, victims } = useOrsecOps();
-  const { plans } = useOrsecPlans();
-  const [showAlert, setShowAlert] = useState(true);
-  const published = messages.filter((message) => message.status === "published");
-  const situation = plans.wilaya.situation;
-  const alerting = situation === "B" || situation === "C" || situation === "D";
+  const db = useDb();
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const plans = db.plans.filter((plan) => !plan.exercice && plan.etat !== "leve");
+  const alerts = db.misesEnAlerte.filter((alert) => !alert.levee);
+  const types = db.reference.types;
+  const selected = types.find((type) => type.code === selectedType) ?? null;
 
-  const tx = (value: { fr: string; ar: string }) => value[lang];
+  const PLAN_LEVEL_KEYS: Record<Plan["niveau"], string> = {
+    commune: "authority.plans.level.commune",
+    wilaya: "authority.plans.level.wilaya",
+    national: "authority.plans.level.national",
+  };
+  const PLAN_PHASE_KEYS: Record<Plan["phase"], string> = {
+    urgence: "authority.plans.phase.urgence",
+    evaluation_controle: "authority.plans.phase.evaluation_controle",
+    rehabilitation: "authority.plans.phase.rehabilitation",
+  };
+  const PLAN_STATE_KEYS: Record<Plan["etat"], string> = {
+    en_alerte: "authority.plans.state.en_alerte",
+    declenche: "authority.plans.state.declenche",
+    leve: "authority.plans.state.leve",
+  };
+  const ALERT_REASON_KEYS: Record<string, string> = {
+    limitrophe: "authority.alerts.reason.limitrophe",
+    niveau_superieur: "authority.alerts.reason.niveau_superieur",
+  };
 
   return (
-    <main className="ops-public">
-      {alerting && showAlert ? (
-        <div className="ops-public__alert" role="alert">
-          <span>
-            {lang === "ar" ? "الوضعية" : "Situation"} {situation} —{" "}
-            {t("ops.public.alertBanner")}
-          </span>
-          <button
-            type="button"
-            className="ops-banner__action"
-            onClick={() => setShowAlert(false)}
-          >
-            {lang === "ar" ? "إخفاء" : "Masquer"}
-          </button>
+    <main className="v3-page">
+      <header className="v3-header">
+        <div className="v3-header__text">
+          <p className="v3-eyebrow">{t("publicInfo.eyebrow")}</p>
+          <h1 className="v3-title">{t("publicInfo.title")}</h1>
+          <p className="v3-lead">{t("publicInfo.lead")}</p>
         </div>
-      ) : null}
-
-      <header className="ops-public__hero">
-        <p className="ops-hero__eyebrow">ORSEC · Wilaya de Béjaïa</p>
-        <h1 className="ops-hero__title">
-          {lang === "ar" ? "إعلام الجمهور" : "Information du public"}
-        </h1>
-        <p className="ops-hero__lead">
-          {lang === "ar"
-            ? "الإرشادات الرسمية والتنبيهات ومراكز الاستقبال بولاية بجاية."
-            : "Consignes officielles, alertes et lieux d'accueil de la wilaya de Béjaïa."}
-        </p>
-        <p className="ops-hero__lead">
-          {lang === "ar"
-            ? "متوفر بالفرنسية والعربية · المصدر: خلية إعلام ORSEC"
-            : "Disponible en français et en arabe · Source : cellule d'information ORSEC"}
-        </p>
+        <div className="v3-actions">
+          <span className="v3-badge">{t("publicInfo.official")}</span>
+        </div>
       </header>
 
-      <section className="ops-grid">
-        <div className="ops-public__msg">
-          <h2 style={{ margin: 0, fontSize: "1.05rem" }}>
-            {lang === "ar" ? "الحصيلة" : "Point de situation"}
-          </h2>
-          <div className="ops-kpis">
-            <div className="ops-kpi ops-kpi--danger">
-              <span className="ops-kpi__value">{shelters.open}</span>
-              <span className="ops-kpi__label">
-                {lang === "ar" ? "مراكز مفتوحة" : "Centres ouverts"}
-              </span>
-            </div>
-            <div className="ops-kpi ops-kpi--ok">
-              <span className="ops-kpi__value">
-                {shelters.capacity - shelters.occupied}
-              </span>
-              <span className="ops-kpi__label">
-                {lang === "ar" ? "أماكن متاحة" : "Places disponibles"}
-              </span>
-            </div>
-            <div className="ops-kpi ops-kpi--warn">
-              <span className="ops-kpi__value">{victims.injured}</span>
-              <span className="ops-kpi__label">
-                {lang === "ar" ? "جرحى" : "Blessés"}
-              </span>
-            </div>
-            <div className="ops-kpi">
-              <span className="ops-kpi__value">{situation}</span>
-              <span className="ops-kpi__label">
-                {lang === "ar" ? "الوضعية" : "Situation"}
-              </span>
-            </div>
-          </div>
+      <section className="v3-stats">
+        <div className="v3-stat">
+          <span className="v3-stat__label">{t("publicInfo.plans")}</span>
+          <span className="v3-stat__value">{plans.length}</span>
         </div>
-
-        <div className="ops-public__msg">
-          <h2 style={{ margin: 0, fontSize: "1.05rem" }}>
-            {lang === "ar" ? "أرقام الطوارئ" : "Numéros d'urgence"}
-          </h2>
-          <div className="ops-public__contacts">
-            {EMERGENCY.map((item) => (
-              <a
-                key={item.number}
-                className="ops-public__contact"
-                href={`tel:${item.number}`}
-              >
-                <span>{tx(item.label)}</span>
-                <strong>{item.number}</strong>
-              </a>
-            ))}
-          </div>
+        <div className="v3-stat">
+          <span className="v3-stat__label">{t("publicInfo.alerts")}</span>
+          <span className="v3-stat__value">{alerts.length}</span>
+        </div>
+        <div className="v3-stat">
+          <span className="v3-stat__label">{t("publicInfo.consignes")}</span>
+          <span className="v3-stat__value">{types.length}</span>
         </div>
       </section>
 
-      <section>
-        <h2 style={{ fontSize: "1.1rem", marginBottom: 10 }}>
-          {lang === "ar" ? "الرسائل الرسمية" : "Messages officiels"}
-        </h2>
-        {published.length === 0 ? (
-          <p className="ops-empty">
-            {lang === "ar"
-              ? "لا توجد رسائل منشورة حالياً."
-              : "Aucun message publié pour le moment."}
-          </p>
-        ) : (
-          <div className="ops-grid">
-            {published.map((message) => (
-              <article key={message.id} className="ops-public__msg">
-                <h3>{tx(message.title)}</h3>
-                <p>{tx(message.body)}</p>
-                <div className="ops-public__meta">
-                  <span>
-                    {lang === "ar" ? "المنطقة" : "Zone"} · {tx(message.zone)}
+      <section className="v3-grid v3-grid--2">
+        <article className="v3-card">
+          <header className="v3-card__head">
+            <h2 className="v3-card__title">{t("publicInfo.plans")}</h2>
+            <span className="v3-badge">{plans.length}</span>
+          </header>
+          {plans.length === 0 ? (
+            <p className="v3-empty">{t("publicInfo.noPlans")}</p>
+          ) : (
+            <ul className="v3-list">
+              {plans.map((plan: Plan) => (
+                <li key={plan.id} className="v3-list__item">
+                  <div className="v3-list__main">
+                    <p className="v3-list__title">
+                      {t(PLAN_LEVEL_KEYS[plan.niveau])} ·{" "}
+                      {territoryLabel(db, plan.territoireId, lang)}
+                    </p>
+                    <p className="v3-list__meta">
+                      {t(PLAN_PHASE_KEYS[plan.phase])} · {t(PLAN_STATE_KEYS[plan.etat])}
+                    </p>
+                    <p className="v3-list__meta">
+                      {t("publicInfo.updated")} : {new Date(plan.majLe).toLocaleDateString(lang === "ar" ? "ar-DZ" : "fr-DZ")}
+                    </p>
+                  </div>
+                  <span
+                    className={
+                      plan.etat === "declenche"
+                        ? "v3-badge v3-badge--red"
+                        : "v3-badge v3-badge--amber"
+                    }
+                  >
+                    {t(PLAN_STATE_KEYS[plan.etat])}
                   </span>
-                  {message.publishedAt ? (
-                    <span>
-                      {lang === "ar" ? "نُشر في" : "Publié le"} ·{" "}
-                      {message.publishedAt}
-                    </span>
-                  ) : null}
-                  <span className="ops-badge ops-badge--ok">
-                    {t(`ops.comm.channel.${message.channel}`)}
-                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </article>
+
+        <article className="v3-card">
+          <header className="v3-card__head">
+            <h2 className="v3-card__title">{t("publicInfo.alerts")}</h2>
+            <span className="v3-badge">{alerts.length}</span>
+          </header>
+          {alerts.length === 0 ? (
+            <p className="v3-empty">{t("publicInfo.noAlerts")}</p>
+          ) : (
+            <ul className="v3-list">
+              {alerts.map((alert) => (
+                <li key={alert.id} className="v3-list__item">
+                  <div className="v3-list__main">
+                    <p className="v3-list__title">
+                      {territoryLabel(db, alert.territoireId, lang)}
+                    </p>
+                    <p className="v3-list__meta">
+                      {t(ALERT_REASON_KEYS[alert.raison] ?? "authority.alerts.reason.limitrophe")} ·{" "}
+                      {t("publicInfo.state")} : {t("publicInfo.active")}
+                    </p>
+                    <p className="v3-list__meta">
+                      {t("publicInfo.updated")} : {new Date(alert.debut).toLocaleDateString(lang === "ar" ? "ar-DZ" : "fr-DZ")}
+                    </p>
+                  </div>
+                  <span className="v3-badge v3-badge--red">{t("publicInfo.active")}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </article>
+      </section>
+
+      <section className="v3-grid">
+        <article className="v3-card">
+          <header className="v3-card__head">
+            <h2 className="v3-card__title">{t("publicInfo.consignes")}</h2>
+            <span className="v3-badge">{types.length}</span>
+          </header>
+          <div className="v3-inline">
+            <select
+              aria-label={t("publicInfo.consignesLead")}
+              value={selectedType ?? ""}
+              onChange={(event) => setSelectedType(event.target.value)}
+            >
+              <option value="">—</option>
+              {types.map((type) => (
+                <option key={type.code} value={type.code}>
+                  {type.code} — {type.libelle[lang]}
+                </option>
+              ))}
+            </select>
+            {selected ? (
+              <p className="v3-note">{selected.consignes[lang]}</p>
+            ) : null}
+          </div>
+        </article>
+
+        <article className="v3-card">
+          <header className="v3-card__head">
+            <h2 className="v3-card__title">{t("publicInfo.emergency")}</h2>
+          </header>
+          <p className="v3-list__meta">{t("publicInfo.emergencyLead")}</p>
+          <ul className="v3-list">
+            {EMERGENCY_KEYS.map((item) => (
+              <li key={item.key} className="v3-list__item">
+                <div className="v3-list__main">
+                  <p className="v3-list__title">{t(item.key)}</p>
                 </div>
-              </article>
+                <span className="v3-badge">{item.number}</span>
+              </li>
             ))}
-          </div>
-        )}
-      </section>
-
-      <section>
-        <h2 style={{ fontSize: "1.1rem", marginBottom: 10 }}>
-          {lang === "ar" ? "إرشادات السلامة" : "Consignes de sécurité"}
-        </h2>
-        <ul className="ops-list">
-          {CONSIGNES.map((item, index) => (
-            <li key={index} className="ops-list__item">
-              <p className="ops-list__body">{tx(item)}</p>
-            </li>
-          ))}
-        </ul>
+          </ul>
+          <p className="v3-list__meta">
+            {t("dashboard.emergency.call")} {t("publicInfo.emergency.protectiveCivil")}
+          </p>
+        </article>
       </section>
     </main>
   );

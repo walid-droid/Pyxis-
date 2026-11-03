@@ -3,11 +3,8 @@ import { ADMIN_AR, ADMIN_FR } from "./admin";
 import { AUTHORITY_AR, AUTHORITY_FR } from "./authority";
 import { CITIZEN_AR, CITIZEN_FR } from "./citizen";
 import { CRISIS_AR, CRISIS_FR } from "./crisis";
+import { MODULE_AR, MODULE_FR } from "./module";
 import { NOTIF_AR, NOTIF_FR } from "./notifications";
-import { OPS_AR, OPS_FR } from "./ops";
-import { ORGANISME_AR, ORGANISME_FR } from "./organisme";
-import { ORSEC_AR, ORSEC_FR } from "./orsec";
-import { SITE_AR, SITE_FR } from "./site";
 
 export type Lang = "fr" | "ar";
 
@@ -40,6 +37,16 @@ const fr: Record<string, string> = {
   "common.exportCsv": "Exporter en CSV",
   "common.print": "Imprimer / PDF",
   "common.closePanel": "Fermer le panneau",
+  "common.none": "Aucun",
+  "common.all": "Tous",
+  "common.unknown": "Inconnu",
+  "common.required": "Champ obligatoire.",
+  "common.confirm": "Confirmer",
+  "common.delete": "Supprimer",
+  "common.edit": "Modifier",
+  "common.add": "Ajouter",
+  "common.search": "Rechercher",
+  "common.loading": "Chargement…",
 
   "nav.dashboard": "Tableau de bord",
   "nav.alerts": "Alertes",
@@ -59,21 +66,12 @@ const fr: Record<string, string> = {
   "nav.notFound": "Page introuvable",
   "nav.logout": "Se déconnecter",
   "nav.login": "Se connecter",
-  "nav.respDashboard": "Commandement",
-  "nav.respIncident": "Gestion d'incident",
-  "nav.respChain": "Chaîne de commandement",
-  "nav.respReports": "Signalements",
-  "nav.respBroadcast": "Diffusion",
-  "nav.respResources": "Ressources",
-  "nav.respJournal": "Journal",
-  "nav.authorityDashboard": "Vue d'ensemble",
-  "nav.authoritySituation": "Situation",
-  "nav.authorityPlan": "Plan ORSEC",
-  "nav.authorityDecisions": "Décisions",
-  "nav.siteDashboard": "Vue d'ensemble",
-  "nav.sitePlan": "Plan du site",
-  "nav.siteSimulations": "Simulations",
-  "nav.siteConsignes": "Consignes",
+
+  "notFound.kicker": "Erreur 404",
+  "notFound.lead": "La page demandée n'existe pas, a été déplacée ou l'adresse est incorrecte.",
+  "notFound.home": "Retour à l'accueil",
+  "notFound.citizen": "Connexion citoyen",
+  "notFound.staff": "Connexion du personnel",
 
   "theme.toDark": "Activer le mode sombre",
   "theme.toLight": "Activer le mode clair",
@@ -111,6 +109,16 @@ const ar: Record<string, string> = {
   "common.exportCsv": "تصدير بصيغة CSV",
   "common.print": "طباعة / PDF",
   "common.closePanel": "إغلاق اللوحة",
+  "common.none": "لا شيء",
+  "common.all": "الكل",
+  "common.unknown": "غير معروف",
+  "common.required": "حقل إلزامي.",
+  "common.confirm": "تأكيد",
+  "common.delete": "حذف",
+  "common.edit": "تعديل",
+  "common.add": "إضافة",
+  "common.search": "بحث",
+  "common.loading": "جارٍ التحميل…",
 
   "nav.dashboard": "لوحة التحكم",
   "nav.alerts": "التنبيهات",
@@ -130,21 +138,12 @@ const ar: Record<string, string> = {
   "nav.notFound": "الصفحة غير موجودة",
   "nav.logout": "تسجيل الخروج",
   "nav.login": "تسجيل الدخول",
-  "nav.respDashboard": "القيادة",
-  "nav.respIncident": "إدارة الحادث",
-  "nav.respChain": "سلسلة القيادة",
-  "nav.respReports": "التبليغات",
-  "nav.respBroadcast": "البثّ",
-  "nav.respResources": "الموارد",
-  "nav.respJournal": "السجل",
-  "nav.authorityDashboard": "نظرة عامة",
-  "nav.authoritySituation": "الوضعية",
-  "nav.authorityPlan": "مخطط ORSEC",
-  "nav.authorityDecisions": "القرارات",
-  "nav.siteDashboard": "نظرة عامة",
-  "nav.sitePlan": "مخطط الموقع",
-  "nav.siteSimulations": "المحاكاة",
-  "nav.siteConsignes": "التعليمات",
+
+  "notFound.kicker": "خطأ 404",
+  "notFound.lead": "الصفحة المطلوبة غير موجودة أو تم نقلها أو أن العنوان غير صحيح.",
+  "notFound.home": "العودة إلى الرئيسية",
+  "notFound.citizen": "دخول المواطن",
+  "notFound.staff": "دخول الموظفين",
 
   "theme.toDark": "تفعيل الوضع الداكن",
   "theme.toLight": "تفعيل الوضع الفاتح",
@@ -163,24 +162,18 @@ const dictionaries: Record<Lang, Record<string, string>> = {
     ...CITIZEN_FR,
     ...CRISIS_FR,
     ...AUTHORITY_FR,
-    ...ORSEC_FR,
-    ...SITE_FR,
+    ...MODULE_FR,
     ...ADMIN_FR,
-    ...ORGANISME_FR,
     ...NOTIF_FR,
-    ...OPS_FR,
   },
   ar: {
     ...ar,
     ...CITIZEN_AR,
     ...CRISIS_AR,
     ...AUTHORITY_AR,
-    ...ORSEC_AR,
-    ...SITE_AR,
+    ...MODULE_AR,
     ...ADMIN_AR,
-    ...ORGANISME_AR,
     ...NOTIF_AR,
-    ...OPS_AR,
   },
 };
 
@@ -214,6 +207,10 @@ export function applyLanguage(lang: Lang): void {
 export function translate(lang: Lang, key: string, vars?: Vars): string {
   const text = dictionaries[lang][key] ?? dictionaries.fr[key] ?? key;
   return interpolate(text, vars);
+}
+
+export function hasTranslation(lang: Lang, key: string): boolean {
+  return key in dictionaries[lang];
 }
 
 export type I18nContextValue = {

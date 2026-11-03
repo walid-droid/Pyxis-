@@ -1,10 +1,15 @@
 import { useEffect, useRef, useState } from "react";
+import { useAuth } from "../auth/AuthContext";
 import { useI18n } from "../i18n";
-import { useNotifications } from "../lib/notificationsContext";
-import type { NotificationKind } from "../lib/notificationsContext";
+import { markAllNotificationsRead, markNotificationRead } from "../services/notifications";
+import { notificationsFor } from "../services/selectors";
+import { useDb } from "../services/useDb";
+import type { NotificationEvent } from "../services/model";
 import "./NotificationCenter.css";
 
-const KIND_LABEL_KEY: Record<NotificationKind, string> = {
+type Kind = "alert" | "mission" | "reinforcement" | "plan" | "system";
+
+const KIND_LABEL_KEY: Record<Kind, string> = {
   alert: "notif.kind.alert",
   mission: "notif.kind.mission",
   reinforcement: "notif.kind.reinforcement",
@@ -12,15 +17,42 @@ const KIND_LABEL_KEY: Record<NotificationKind, string> = {
   system: "notif.kind.system",
 };
 
+function kindOf(event: NotificationEvent): Kind {
+  if (event === "alerte_module" || event === "demande_declenchement" || event === "relance") {
+    return "alert";
+  }
+  if (event === "participation") return "mission";
+  if (event === "appui") return "reinforcement";
+  if (event === "plan_declenche" || event === "plan_en_alerte" || event === "mise_en_alerte" || event === "levee") {
+    return "plan";
+  }
+  return "system";
+}
+
+function formatTime(iso: string, lang: "fr" | "ar"): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleString(lang === "ar" ? "ar-DZ" : "fr-DZ", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 /**
  * Cloche de notifications avec panneau déroulant.
- * Socle commun : présent dans la barre supérieure de tous les espaces.
+ * Les notifications sont stockées dans la base locale, par destinataire.
  */
 export default function NotificationCenter() {
-  const { t } = useI18n();
-  const { items, unreadCount, isRead, markRead, markAllRead } = useNotifications();
+  const { t, lang } = useI18n();
+  const { session } = useAuth();
+  const db = useDb();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+
+  const items = session ? notificationsFor(db, session.userId) : [];
+  const unreadCount = items.filter((item) => !item.lueLe).length;
 
   useEffect(() => {
     if (!open) return;
@@ -92,31 +124,23 @@ export default function NotificationCenter() {
           ) : (
             <ul className="notif__list">
               {items.map((item) => {
-                const read = isRead(item.id);
+                const read = Boolean(item.lueLe);
+                const kind = kindOf(item.typeEvenement);
                 return (
                   <li key={item.id}>
                     <button
                       type="button"
                       className={`notif__item${read ? " is-read" : ""}`}
-                      onClick={() => markRead(item.id)}
+                      onClick={() => markNotificationRead(item.id)}
                     >
-                      <span
-                        className={`notif__dot notif__dot--${item.kind}`}
-                        aria-hidden="true"
-                      />
+                      <span className={`notif__dot notif__dot--${kind}`} aria-hidden="true" />
                       <span className="notif__body">
-                        <span className="notif__item-title">
-                          {t(item.titleKey)}
-                        </span>
-                        <span className="notif__item-detail">
-                          {t(item.detailKey)}
-                        </span>
+                        <span className="notif__item-title">{item.objet[lang]}</span>
+                        <span className="notif__item-detail">{item.message[lang]}</span>
                         <span className="notif__meta">
-                          <span className="notif__kind">
-                            {t(KIND_LABEL_KEY[item.kind])}
-                          </span>
+                          <span className="notif__kind">{t(KIND_LABEL_KEY[kind])}</span>
                           <span aria-hidden="true">·</span>
-                          <span>{item.time}</span>
+                          <span>{formatTime(item.creeLe, lang)}</span>
                         </span>
                       </span>
                     </button>
@@ -126,16 +150,15 @@ export default function NotificationCenter() {
             </ul>
           )}
 
-          <footer className="notif__foot">
+          {unreadCount > 0 && session ? (
             <button
               type="button"
-              className="notif__mark"
-              onClick={markAllRead}
-              disabled={unreadCount === 0}
+              className="notif__mark-all"
+              onClick={() => markAllNotificationsRead(session.userId)}
             >
               {t("notif.markAll")}
             </button>
-          </footer>
+          ) : null}
         </div>
       ) : null}
     </div>

@@ -650,3 +650,26 @@
     transition: none;
   }
 }
+
+/* ---------- V3.0 signal states (non vérifié / confirmé / rejeté) ---------- */
+
+.report-status--non_verifie {
+  color: var(--color-warning);
+  background: var(--color-warning-bg);
+}
+
+.report-status--confirme {
+  color: var(--color-success);
+  background: var(--color-success-bg);
+}
+
+.report-status--rejete {
+  color: var(--color-danger);
+  background: var(--color-danger-bg);
+}
+
+/* Gravity labels use the v3.0 French values, mapped onto the legacy classes. */
+.report-sev--faible { color: var(--color-success); }
+.report-sev--moyenne { color: var(--color-warning); }
+.report-sev--elevee { color: var(--color-primary); }
+.report-sev--critique { color: var(--color-danger); }

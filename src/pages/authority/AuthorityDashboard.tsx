@@ -1,335 +1,403 @@
-import "../shared/crisis/resp-crise.css";
-import "./authority.css";
-import type { ReactNode } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router";
-import StatCard from "../../components/StatCard";
+import { planLevelForRole } from "../../auth/access";
+import { useAuth } from "../../auth/AuthContext";
+import Modal from "../../components/Modal";
 import {
-  AUTHORITY_ALERTS_PATH,
-  AUTHORITY_CRISIS_PATH,
-  AUTHORITY_DECISIONS_PATH,
-  AUTHORITY_PLAN_PATH,
-  AUTHORITY_SITUATION_PATH,
+  AUTHORITY_COMMUNICATION_PATH,
+  AUTHORITY_MAIN_COURANTE_PATH,
+  AUTHORITY_PLANS_PATH,
+  AUTHORITY_REQUESTS_PATH,
+  AUTHORITY_REQUISITIONS_PATH,
 } from "../../config";
 import { useI18n } from "../../i18n";
-import { useOrsecPlans } from "../shared/plan/PlanContext";
-import { useAuthorityLevel } from "../../auth/useAuthorityLevel";
-import { useAuth } from "../../auth/AuthContext";
-import { designatedCount, modulesForLevel } from "../shared/plan/orsecPlan";
-import { CommunalOverview, NationalOverview } from "./AuthorityScopeOverview";
+import {
+  alertsForSession,
+  demandesForSession,
+  plansForSession,
+} from "../../services/authority";
+import { mainCouranteForScope } from "../../services/mainCourante";
+import {
+  communiquesForScope,
+  moduleStatusRows,
+  orsecStats,
+  pendingRequisitions,
+} from "../../services/orsec";
+import { signalementsForPlan } from "../../services/plans";
+import { currentSituation, allowedSituationTargets, transitionSituation } from "../../services/situation";
+import type { SituationCode } from "../../services/model";
+import { useDb } from "../../services/useDb";
+import { useSessionScope } from "../../services/useSessionScope";
+import CrisisMap, { type MapPin } from "../shared/crisis/CrisisMap";
+import MainCouranteFeed from "../shared/orsec/MainCouranteFeed";
+import ModuleStatusGrid from "../shared/orsec/ModuleStatusGrid";
+import { formatDateTime, territoryLabel, typeLabel, userName } from "../shared/v3/helpers";
 
-type QuickLink = {
-  key: string;
-  labelKey: string;
-  descKey: string;
-  to: string;
-  icon: ReactNode;
+const GRAVITY_SEVERITY: Record<string, MapPin["severity"]> = {
+  faible: "Low",
+  moyenne: "Medium",
+  elevee: "High",
+  critique: "Critical",
 };
 
-const QUICK_LINKS: QuickLink[] = [
-  {
-    key: "plan",
-    labelKey: "authority.dash.quick.plan",
-    descKey: "authority.dash.quick.planDesc",
-    to: AUTHORITY_PLAN_PATH,
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M9 3h6l1 3h3a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3l1-3Z" />
-        <path d="M9 13l2 2 4-4" />
-      </svg>
-    ),
-  },
-  {
-    key: "situation",
-    labelKey: "authority.dash.quick.situation",
-    descKey: "authority.dash.quick.situationDesc",
-    to: AUTHORITY_SITUATION_PATH,
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z" />
-        <circle cx="12" cy="10" r="2.5" />
-      </svg>
-    ),
-  },
-  {
-    key: "decisions",
-    labelKey: "authority.dash.quick.decisions",
-    descKey: "authority.dash.quick.decisionsDesc",
-    to: AUTHORITY_DECISIONS_PATH,
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
-        <path d="M9 7h7" />
-        <path d="M9 11h7" />
-      </svg>
-    ),
-  },
-  {
-    key: "alerts",
-    labelKey: "authority.dash.quick.alerts",
-    descKey: "authority.dash.quick.alertsDesc",
-    to: AUTHORITY_ALERTS_PATH,
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8" />
-        <path d="M10.3 21a2 2 0 0 0 3.4 0" />
-      </svg>
-    ),
-  },
-  {
-    key: "crisis",
-    labelKey: "authority.dash.quick.crisis",
-    descKey: "authority.dash.quick.crisisDesc",
-    to: AUTHORITY_CRISIS_PATH,
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
-        <path d="M12 9v4" />
-        <path d="M12 17h.01" />
-      </svg>
-    ),
-  },
-];
+export default function AuthorityDashboard() {
+  const { session } = useAuth();
+  const { lang, t } = useI18n();
+  const db = useDb();
+  const scope = useSessionScope();
+  const [target, setTarget] = useState<SituationCode | null>(null);
+  const [justification, setJustification] = useState("");
+  const [notice, setNotice] = useState<string | null>(null);
 
-const WILAYAS = [
-  { key: "alger", levelKey: "authority.level.high", level: "high" },
-  { key: "blida", levelKey: "authority.level.medium", level: "medium" },
-  { key: "tipaza", levelKey: "authority.level.low", level: "low" },
-  { key: "boumerdes", levelKey: "authority.level.low", level: "low" },
-];
+  if (!session || !scope) return null;
 
-const DECISIONS = [
-  { key: "d1", typeKey: "authority.decisions.type.diffusion", tone: "high" },
-  { key: "d2", typeKey: "authority.decisions.type.requisition", tone: "critical" },
-  { key: "d3", typeKey: "authority.decisions.type.activation", tone: "medium" },
-];
+  const situation = currentSituation(db, scope);
+  const level = planLevelForRole(session.role);
+  const ownTerritoryId = level === "national" ? "dz" : session.territory?.id;
+  const targets = allowedSituationTargets(situation.code, session.role);
+  const demandes = demandesForSession(db, scope);
+  const pendingDemandes = demandes.filter((demande) => demande.etat === "en_attente");
+  const plans = plansForSession(db, scope);
+  const focusPlan =
+    plans.find((plan) => plan.etat === "declenche") ?? plans.find((plan) => plan.etat === "en_alerte");
+  const alerts = alertsForSession(db, scope).filter((alert) => !alert.levee);
+  const stats = orsecStats(db, scope);
+  const moduleRows = moduleStatusRows(db, focusPlan?.id);
+  const requisitions = pendingRequisitions(db, scope);
+  const communiques = communiquesForScope(db, scope);
+  const latestPublished = communiques.find((communique) => communique.etat === "publie");
+  const mainCourante = mainCouranteForScope(db, scope);
 
-/** Accueil de l'autorité compétente : situation, plan et décisions. */
-function AuthorityDashboard() {
-  const { t } = useI18n();
-  const { plans } = useOrsecPlans();
-  const level = useAuthorityLevel();
-  const { role } = useAuth();
-  const designated = designatedCount(plans[level]);
-  const missing = modulesForLevel(level).length - designated;
-  const scopeChipKey =
-    role === "minister"
-      ? "authority.dash.chipScopeNational"
-      : role === "apc_president"
-        ? "authority.dash.chipScopeCommune"
-        : "authority.dash.chipScope";
+  const mapSignalements = useMemo(() => {
+    if (!focusPlan) {
+      return db.signalements.filter(
+        (signalement) => signalement.etat !== "rejete" && signalement.latitude !== undefined,
+      );
+    }
+    return signalementsForPlan(db, focusPlan.niveau, focusPlan.territoireId);
+  }, [db, focusPlan]);
+
+  const pins: MapPin[] = mapSignalements
+    .filter(
+      (signalement) =>
+        signalement.latitude !== undefined && signalement.longitude !== undefined,
+    )
+    .map((signalement) => ({
+      id: signalement.id,
+      position: [signalement.latitude!, signalement.longitude!],
+      title: typeLabel(db, signalement.typeId, lang),
+      subtitle: `${territoryLabel(db, signalement.communeId, lang)} · ${signalement.id}`,
+      tone: "incident",
+      severity: signalement.gravite ? GRAVITY_SEVERITY[signalement.gravite] : "Medium",
+    }));
+
+  const shelterRate =
+    stats.shelterCapacity > 0
+      ? Math.round((stats.shelterOccupancy / stats.shelterCapacity) * 100)
+      : 0;
+
+  function submitTransition() {
+    if (!target) return;
+    const text = justification.trim();
+    if (!text) return;
+    const result = transitionSituation({
+      planId: situation.plan?.id,
+      level: level ?? undefined,
+      territoryId: ownTerritoryId,
+      from: situation.code,
+      to: target,
+      actorId: session!.userId,
+      role: session!.role,
+      justification: { fr: text, ar: text },
+    });
+    setTarget(null);
+    setJustification("");
+    setNotice(
+      result
+        ? t("situation.transitionDone", {
+            from: situation.code,
+            to: result.to,
+          })
+        : t("situation.transitionFailed"),
+    );
+  }
 
   return (
-    <main className="rc-page rc-page--authority">
-      <section className="rc-hero">
-        <div className="rc-hero__text">
-          <p className="rc-eyebrow">{t("authority.dash.eyebrow")}</p>
-          <h1>{t("authority.dash.title")}</h1>
-          <p className="rc-hero__lead">{t("authority.dash.lead")}</p>
-          <div className="rc-hero__meta">
-            <span className="rc-chip">
-              <span className="rc-chip__dot rc-chip__dot--high" />
-              {t(scopeChipKey)}
-            </span>
-            <span className="rc-chip">
-              <span className="rc-chip__dot rc-chip__dot--low" />
-              {t("authority.dash.chipPlan")}
-            </span>
-          </div>
+    <main className="v3-page">
+      <header className="v3-header">
+        <div className="v3-header__text">
+          <p className="v3-eyebrow">{t("authority.pcf.eyebrow")}</p>
+          <h1 className="v3-title">{t("authority.pcf.title")}</h1>
+          <p className="v3-lead">{t("authority.pcf.lead")}</p>
         </div>
-
-        <div className="rc-hero__aside">
-          <Link className="rc-btn rc-btn--primary" to={AUTHORITY_PLAN_PATH}>
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-              width="18"
-              height="18"
-            >
-              <path d="M9 3h6l1 3h3a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3l1-3Z" />
-              <path d="M9 13l2 2 4-4" />
-            </svg>
-            {t("authority.dash.openPlan")}
+        <div className="v3-actions">
+          <Link className="v3-btn" to={AUTHORITY_REQUESTS_PATH}>
+            {t("authority.dashboard.statRequests")} ({pendingDemandes.length})
+          </Link>
+          <Link className="v3-btn" to={AUTHORITY_REQUISITIONS_PATH}>
+            {t("authority.nav.requisitions")} ({requisitions.length})
+          </Link>
+          <Link className="v3-btn" to={AUTHORITY_COMMUNICATION_PATH}>
+            {t("authority.nav.communication")}
+          </Link>
+          <Link className="v3-btn v3-btn--primary" to={AUTHORITY_PLANS_PATH}>
+            {t("authority.nav.plans")}
           </Link>
         </div>
+      </header>
 
-        <section className="stat-grid" aria-label={t("authority.dash.statsLabel")}>
-          <StatCard
-            value={t("authority.dash.statLevelValue")}
-            label={t("authority.dash.statLevel")}
-            badge={t("authority.dash.statLevelBadge")}
-            badgeTone="warning"
-          />
-          <StatCard
-            value={`${designated}/${modulesForLevel(level).length}`}
-            label={t("authority.dash.statModules")}
-            badge={
-              missing > 0
-                ? t("orsec.modules.missingShort", { count: missing })
-                : t("orsec.modules.allDesignated")
-            }
-            badgeTone={missing > 0 ? "warning" : "success"}
-          />
-          <StatCard
-            value="12"
-            label={t("authority.dash.statDecisions")}
-            badge={t("authority.dash.statDecisionsBadge")}
-            badgeTone="success"
-          />
-          <StatCard
-            value="38"
-            label={t("authority.dash.statReports")}
-            badge={t("authority.dash.statReportsBadge")}
-            badgeTone="danger"
-          />
-        </section>
-      </section>
+      {notice ? (
+        <div className="v3-banner" role="status">
+          <span>{notice}</span>
+          <button type="button" className="v3-btn v3-btn--small" onClick={() => setNotice(null)}>
+            {t("common.close")}
+          </button>
+        </div>
+      ) : null}
 
-      <section className="rc-quick" aria-labelledby="authority-quick-title">
-        <div className="rc-quick__head">
-          <h2 id="authority-quick-title" className="rc-quick__title">
-            {t("authority.dash.quickTitle")}
+      <section
+        className={`v3-situation-command v3-situation-command--${situation.code.toLowerCase()}`}
+        aria-label={t("situation.current")}
+      >
+        <div className="v3-situation-command__badge" aria-hidden="true">
+          {situation.code}
+        </div>
+        <div className="v3-situation-command__body">
+          <p className="v3-situation-command__eyebrow">{t("situation.current")}</p>
+          <h2 className="v3-situation-command__title">
+            {t(`situation.${situation.code}.label`)}
           </h2>
-          <p className="rc-quick__lead">{t("authority.dash.quickLead")}</p>
+          <p className="v3-situation-command__meta">
+            {situation.plan
+              ? [
+                  t(`authority.plans.level.${situation.plan.niveau}`),
+                  territoryLabel(db, situation.plan.territoireId, lang),
+                  t(`authority.plans.phase.${situation.plan.phase}`),
+                  situation.since
+                    ? `${t("situation.since")} ${formatDateTime(situation.since, lang)}`
+                    : null,
+                ]
+                  .filter(Boolean)
+                  .join(" · ")
+              : t("situation.none")}
+          </p>
+          {situation.transition ? (
+            <p className="v3-situation-command__proof">
+              {t("situation.sealed")} #{situation.transition.signatureHash.slice(0, 8)} ·{" "}
+              {userName(db, situation.transition.byId, lang)} ·{" "}
+              {formatDateTime(situation.transition.at, lang)}
+            </p>
+          ) : null}
         </div>
-
-        <div className="rc-quick__grid">
-          {QUICK_LINKS.map((link) => (
-            <Link
-              key={link.key}
-              to={link.to}
-              className={`rc-quick-card rc-quick-card--${link.key}`}
-            >
-              <span className="rc-quick-card__icon" aria-hidden="true">
-                {link.icon}
-              </span>
-              <span className="rc-quick-card__label">{t(link.labelKey)}</span>
-              <span className="rc-quick-card__desc">{t(link.descKey)}</span>
-              <span className="rc-quick-card__arrow" aria-hidden="true">
-                →
-              </span>
-            </Link>
-          ))}
+        <div className="v3-situation-command__actions">
+          {targets.length === 0 ? (
+            <p className="v3-note">{t("situation.noTransition")}</p>
+          ) : (
+            targets.map((code) => (
+              <button
+                key={code}
+                type="button"
+                className="v3-btn v3-btn--primary"
+                onClick={() => setTarget(code)}
+              >
+                {t("situation.transitionTo", { code })}
+              </button>
+            ))
+          )}
         </div>
       </section>
 
-      {role === "minister" ? <NationalOverview /> : null}
-      {role === "apc_president" ? <CommunalOverview /> : null}
+      <section className="v3-stats" aria-label={t("authority.pcf.statsLabel")}>
+        <div className="v3-stat v3-stat--brand">
+          <span className="v3-stat__label">{t("authority.pcf.statVictims")}</span>
+          <span className="v3-stat__value">
+            {stats.victimsDead}
+            <span className="v3-stat__unit"> / {stats.victimsInjured}</span>
+          </span>
+          <span className="v3-stat__hint">
+            {t("authority.pcf.victimsDetail", {
+              dead: stats.victimsDead,
+              injured: stats.victimsInjured,
+              missing: stats.victimsMissing,
+            })}
+          </span>
+        </div>
+        <div className="v3-stat">
+          <span className="v3-stat__label">{t("authority.pcf.statShelters")}</span>
+          <span className="v3-stat__value">{stats.sheltersOpen}</span>
+          <span className="v3-stat__hint">
+            {t("authority.pcf.shelterDetail", {
+              occupancy: stats.shelterOccupancy,
+              capacity: stats.shelterCapacity,
+              rate: shelterRate,
+            })}
+          </span>
+        </div>
+        <div className="v3-stat">
+          <span className="v3-stat__label">{t("authority.pcf.statModules")}</span>
+          <span className="v3-stat__value">{stats.modulesEngaged}/13</span>
+          <span className="v3-stat__hint">
+            {t("authority.pcf.modulesSaturated", { count: stats.modulesSaturated })}
+          </span>
+        </div>
+        <div className="v3-stat">
+          <span className="v3-stat__label">{t("authority.pcf.statPeople")}</span>
+          <span className="v3-stat__value">{stats.personnesConcernees}</span>
+          <span className="v3-stat__hint">
+            {t("authority.pcf.peopleDetail", { count: stats.signalements })}
+          </span>
+        </div>
+        <div className="v3-stat">
+          <span className="v3-stat__label">{t("authority.pcf.statAlerts")}</span>
+          <span className="v3-stat__value">{alerts.length}</span>
+          <span className="v3-stat__hint">{t("authority.pcf.alertsDetail")}</span>
+        </div>
+        <div className="v3-stat">
+          <span className="v3-stat__label">{t("authority.pcf.statRequisitions")}</span>
+          <span className="v3-stat__value">{requisitions.length}</span>
+          <span className="v3-stat__hint">{t("authority.pcf.requisitionsDetail")}</span>
+        </div>
+      </section>
 
-      <section className="rc-grid rc-grid--split">
-        <article className="rc-card">
-          <div className="rc-card__head">
-            <h2 className="rc-card__title">
-              {t("authority.dash.situationTitle")}
-            </h2>
-            <Link className="rc-link" to={AUTHORITY_SITUATION_PATH}>
-              {t("authority.dash.viewAll")}
-            </Link>
-          </div>
-          <p className="rc-card__lead">{t("authority.dash.situationLead")}</p>
-          <ul className="rc-list">
-            {WILAYAS.map((wilaya) => (
-              <li key={wilaya.key}>
-                <div className="rc-item rc-item--static">
-                  <div className="rc-item__body">
-                    <p className="rc-item__title">
-                      {t(`authority.situation.${wilaya.key}`)}
-                    </p>
-                    <p className="rc-item__meta">
-                      <span>
-                        {t("authority.situation.incidents", { count: 3 })}
-                      </span>
-                      <span>{t("authority.situation.updated")}</span>
-                    </p>
-                  </div>
-                  <span className={`rc-badge rc-badge--${wilaya.level}`}>
-                    {t(wilaya.levelKey)}
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
+      <section className="v3-grid v3-grid--2">
+        <article className="v3-card">
+          <header className="v3-card__head">
+            <h2 className="v3-card__title">{t("authority.pcf.mapTitle")}</h2>
+            <span className="v3-badge">{pins.length}</span>
+          </header>
+          {pins.length > 0 ? (
+            <div className="v3-map">
+              <CrisisMap pins={pins} variant="mini" interactive={false} />
+            </div>
+          ) : (
+            <p className="v3-empty">{t("authority.pcf.noMap")}</p>
+          )}
         </article>
 
-        <article className="rc-card">
-          <div className="rc-card__head">
-            <h2 className="rc-card__title">
-              {t("authority.dash.decisionsTitle")}
-            </h2>
-            <Link className="rc-link" to={AUTHORITY_DECISIONS_PATH}>
-              {t("authority.dash.viewAll")}
-            </Link>
-          </div>
-          <p className="rc-card__lead">{t("authority.dash.decisionsLead")}</p>
-          <ul className="rc-list">
-            {DECISIONS.map((decision) => (
-              <li key={decision.key}>
-                <div className="rc-item rc-item--static">
-                  <div className="rc-item__body">
-                    <p className="rc-item__title">
-                      {t(`authority.decisions.${decision.key}`)}
+        <article className="v3-card">
+          <header className="v3-card__head">
+            <h2 className="v3-card__title">{t("authority.pcf.queueTitle")}</h2>
+            <span className="v3-badge v3-badge--amber">{requisitions.length}</span>
+          </header>
+          {requisitions.length === 0 ? (
+            <p className="v3-empty">{t("authority.pcf.noRequisition")}</p>
+          ) : (
+            <ul className="v3-list">
+              {requisitions.slice(0, 4).map((requisition) => (
+                <li key={requisition.id} className="v3-list__item">
+                  <div className="v3-list__main">
+                    <p className="v3-list__title">{requisition.nature[lang]}</p>
+                    <p className="v3-list__meta">
+                      {requisition.moyen} · {requisition.proprietaire}
                     </p>
-                    <p className="rc-item__meta">
-                      <span>{t("authority.decisions.today")}</span>
-                      <span>{t("authority.decisions.authorValue")}</span>
+                    <p className="v3-list__meta">
+                      {requisition.lieu[lang]} · {requisition.identifiant}
                     </p>
                   </div>
-                  <span className={`rc-badge rc-badge--${decision.tone}`}>
-                    {t(decision.typeKey)}
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
+                  <div className="v3-list__side">
+                    <span className={`v3-badge v3-badge--${requisition.urgence === "critique" ? "red" : "amber"}`}>
+                      {t(`orsec.requisition.urgency.${requisition.urgence}`)}
+                    </span>
+                    <Link className="v3-btn v3-btn--small" to={AUTHORITY_REQUISITIONS_PATH}>
+                      {t("authority.pcf.openQueue")}
+                    </Link>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </article>
       </section>
+
+      <section className="v3-card">
+        <header className="v3-card__head">
+          <h2 className="v3-card__title">{t("orsec.modules.title")}</h2>
+          <span className="v3-badge">{t("orsec.modules.engaged", { count: stats.modulesEngaged })}</span>
+        </header>
+        <ModuleStatusGrid rows={moduleRows} />
+      </section>
+
+      <section className="v3-grid v3-grid--2">
+        <article className="v3-card">
+          <header className="v3-card__head">
+            <h2 className="v3-card__title">{t("authority.pcf.communicationTitle")}</h2>
+            <Link className="v3-btn v3-btn--small" to={AUTHORITY_COMMUNICATION_PATH}>
+              {t("authority.nav.communication")}
+            </Link>
+          </header>
+          {latestPublished ? (
+            <div className="v3-communique">
+              <span className="v3-badge v3-badge--green">
+                {t("orsec.communique.state.publie")}
+              </span>
+              <h3 className="v3-communique__title">{latestPublished.titre[lang]}</h3>
+              <p className="v3-communique__message">{latestPublished.message[lang]}</p>
+              <p className="v3-list__meta">
+                {t("orsec.communique.coverage", { rate: latestPublished.couverture })} ·{" "}
+                {formatDateTime(latestPublished.publieLe, lang)}
+              </p>
+            </div>
+          ) : (
+            <p className="v3-empty">{t("authority.pcf.noCommunique")}</p>
+          )}
+          <p className="v3-note">
+            {t("authority.pcf.drafts", { count: stats.draftCommuniques })}
+          </p>
+        </article>
+
+        <article className="v3-card">
+          <header className="v3-card__head">
+            <h2 className="v3-card__title">{t("authority.pcf.mainCouranteTitle")}</h2>
+            <Link className="v3-btn v3-btn--small" to={AUTHORITY_MAIN_COURANTE_PATH}>
+              {t("authority.nav.mainCourante")}
+            </Link>
+          </header>
+          <MainCouranteFeed entries={mainCourante} limit={5} />
+        </article>
+      </section>
+
+      {target ? (
+        <Modal
+          title={t("situation.transitionTitle", { from: situation.code, to: target })}
+          onClose={() => {
+            setTarget(null);
+            setJustification("");
+          }}
+        >
+          <div className="v3-form">
+            <p className="v3-note v3-note--warn">{t("situation.justificationHelp")}</p>
+            <label className="v3-field">
+              <span>{t("situation.justification")}</span>
+              <textarea
+                value={justification}
+                onChange={(event) => setJustification(event.target.value)}
+                placeholder={t("situation.justificationPlaceholder")}
+                required
+              />
+            </label>
+            <div className="v3-form__actions">
+              <button
+                type="button"
+                className="v3-btn"
+                onClick={() => {
+                  setTarget(null);
+                  setJustification("");
+                }}
+              >
+                {t("common.cancel")}
+              </button>
+              <button
+                type="button"
+                className="v3-btn v3-btn--primary"
+                disabled={justification.trim().length === 0}
+                onClick={submitTransition}
+              >
+                {t("situation.confirm", { code: target })}
+              </button>
+            </div>
+          </div>
+        </Modal>
+      ) : null}
     </main>
   );
 }
-
-export default AuthorityDashboard;

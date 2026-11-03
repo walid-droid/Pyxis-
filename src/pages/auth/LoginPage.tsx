@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-import { DASHBOARD_PATH, FORGOT_PASSWORD_PATH } from "../../config";
+import { DASHBOARD_PATH, FORGOT_PASSWORD_PATH, STAFF_LOGIN_PATH } from "../../config";
 import { useI18n } from "../../i18n";
 import { signIn } from "../../lib/session";
 import AuthLayout from "./AuthLayout";
@@ -76,6 +76,10 @@ function LoginPage() {
 
       <p className="auth-switch">
         {t("login.switch")} <Link to="/register">{t("login.create")}</Link>
+      </p>
+
+      <p className="auth-switch">
+        <Link to={STAFF_LOGIN_PATH}>{t("resp.login.title")}</Link>
       </p>
     </AuthLayout>
   );

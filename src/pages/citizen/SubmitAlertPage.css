@@ -593,3 +593,65 @@
   font-size: 0.82rem;
   line-height: 1.5;
 }
+
+/* ---------- Local AI suggestion (never decisive) ---------- */
+
+.submit-alert-ai {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  background: var(--color-brand-soft);
+  border: 1px solid color-mix(in srgb, var(--color-brand) 30%, var(--color-border));
+  border-radius: var(--radius-card);
+}
+
+.submit-alert-ai__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-brand);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.submit-alert-ai__badge i {
+  width: 8px;
+  height: 8px;
+  background: var(--color-brand);
+  border-radius: 50%;
+}
+
+.submit-alert-ai__text {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.submit-alert-ai__meta {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+}
+
+.submit-alert-ai__apply {
+  justify-self: start;
+  min-height: 38px;
+  padding: 9px 16px;
+  border: 1px solid var(--color-brand);
+  border-radius: var(--radius-button);
+  background: transparent;
+  color: var(--color-brand);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.submit-alert-ai__apply:hover {
+  background: var(--color-brand);
+  color: #fff;
+}

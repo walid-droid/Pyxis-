@@ -425,6 +425,13 @@
   transform: translateY(-1px);
 }
 
+.auth-submit--link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
 .auth-switch {
   margin: 12px 0 0;
   color: rgba(255, 255, 255, 0.72);

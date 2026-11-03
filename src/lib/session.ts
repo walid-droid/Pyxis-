@@ -7,7 +7,7 @@ import {
   sessionFromAccount,
   type DemoAccount,
 } from "../auth/demoAccounts";
-import { ROLE_DEFS } from "../auth/roles";
+import { ROLE_DEFS, type Role } from "../auth/roles";
 import { endSession, getAuthSession, startSession } from "../auth/session";
 
 /* ------------------------------ Citoyen ------------------------------ */
@@ -28,11 +28,11 @@ export function isAuthenticated(): boolean {
   return getAuthSession() !== null;
 }
 
-/** Connexion ou inscription d'un citoyen (ou d'un agriculteur). */
+/** Connexion ou inscription d'un citoyen. */
 export function signIn(
   email: string,
   phone?: string,
-  role: "citizen" | "farmer" = "citizen",
+  role: Role = "citizen",
 ): void {
   startSession({ email, phone, role });
 }

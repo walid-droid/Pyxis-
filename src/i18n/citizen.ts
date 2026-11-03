@@ -174,6 +174,15 @@ export const CITIZEN_FR: Record<string, string> = {
   "submit.geoFailed": "Impossible d'obtenir votre position. Saisissez-la manuellement.",
   "submit.done": "Formulaire validé. Connectez le backend pour enregistrer l'alerte.",
 
+  "submit.aiBadge": "Suggestion IA",
+  "submit.loginRequired": "Connexion requise",
+  "submit.loginLead": "Connectez-vous pour signaler une catastrophe.",
+
+  "gravity.low": "Faible",
+  "gravity.moyenne": "Moyenne",
+  "gravity.elevee": "Élevée",
+  "gravity.critique": "Critique",
+
   "reports.eyebrow": "CADM · SUIVI CITOYEN",
   "reports.title": "Mes signalements",
   "reports.lead":
@@ -353,6 +362,78 @@ export const CITIZEN_FR: Record<string, string> = {
   "map.legendPosts": "Postes de secours",
   "map.note": "Dispositif de démonstration généré autour du point sélectionné.",
 
+  // ---------- Signalement v3.0 (C1 à C10) ----------
+  "submit.catLabel": "Type de catastrophe",
+  "submit.catPlaceholder": "Sélectionnez un type (C1 à C10)",
+  "submit.peopleLabel": "Personnes concernées",
+  "submit.peopleHint": "Estimation du nombre de personnes touchées ou en danger.",
+  "submit.placeLabel": "Lieu précis",
+  "submit.placePlaceholder": "Rue, quartier, point de repère…",
+  "submit.communeLabel": "Commune",
+  "submit.aiTitle": "Suggestion automatique",
+  "submit.aiLead":
+    "Une proposition locale est calculée à partir de votre description. Elle ne décide jamais : seule la vérification humaine fixe la gravité.",
+  "submit.aiAnalyzing": "Analyse de la description…",
+  "submit.aiSuggestion": "Type proposé : {type} · gravité proposée : {gravity}",
+  "submit.aiConfidence": "Confiance {value} %",
+  "submit.aiNone": "Aucune suggestion pour l'instant. Décrivez la situation avec des mots simples.",
+  "submit.aiApply": "Utiliser la suggestion",
+  "submit.requiredNote": "Les champs marqués * sont obligatoires.",
+  "submit.sending": "Envoi…",
+  "submit.error": "Le signalement n'a pas pu être enregistré. Réessayez.",
+  "submit.photoHint": "Facultatif — une image aide les équipes à évaluer la situation.",
+
+  // ---------- Suivi des signalements v3.0 ----------
+  "reports.status.non_verifie": "Non vérifié",
+  "reports.status.confirme": "Confirmé",
+  "reports.status.rejete": "Rejeté",
+  "reports.modules": "Modules destinataires",
+  "reports.noModules": "Aucun module destinataire.",
+  "reports.description": "Description",
+  "reports.confirmedAt": "Confirmé le",
+  "reports.rejectedAt": "Rejeté le",
+  "reports.notVerifiedYet": "En attente de vérification par un module.",
+  "reports.intervention": "Intervention",
+  "reports.noIntervention": "Aucune intervention lancée.",
+  "reports.detailTitle": "Détail du signalement",
+  "reports.people": "{count} personne(s) concernée(s)",
+  "reports.gravityNotSet": "Gravité non fixée",
+  "reports.filterAll": "Tous les états",
+  "reports.loggedAs": "Compte",
+
+  // ---------- Consignes v3.0 ----------
+  "consignes.view": "Voir les consignes",
+  "consignes.official": "Consignes officielles",
+  "consignes.intro":
+    "Consignes de sécurité associées aux dix types de catastrophe du guide ORSEC v3.0.",
+  "consignes.noTypes": "Aucune consigne disponible.",
+
+  // ---------- Information du public ----------
+  "publicInfo.eyebrow": "Information du public",
+  "publicInfo.title": "Situation et consignes officielles",
+  "publicInfo.lead":
+    "Plans déclenchés, alertes en cascade et consignes de sécurité de la wilaya de Béjaïa.",
+  "publicInfo.official": "Source : autorité compétente · CADM",
+  "publicInfo.plans": "Plans en cours",
+  "publicInfo.noPlans": "Aucun plan déclenché pour le moment.",
+  "publicInfo.phase": "Phase",
+  "publicInfo.territory": "Territoire",
+  "publicInfo.alerts": "Territoires en alerte",
+  "publicInfo.noAlerts": "Aucune alerte en cours.",
+  "publicInfo.consignes": "Consignes par type de catastrophe",
+  "publicInfo.consignesLead":
+    "Sélectionnez un type de catastrophe pour lire les consignes officielles.",
+  "publicInfo.emergency": "Numéros d'urgence",
+  "publicInfo.emergencyLead": "En cas de danger immédiat, appelez d'abord les secours.",
+  "publicInfo.emergency.protectiveCivil": "Protection civile",
+  "publicInfo.emergency.police": "Police",
+  "publicInfo.emergency.gendarmerie": "Gendarmerie",
+  "publicInfo.emergency.samu": "SAMU",
+
+  "publicInfo.updated": "Dernière mise à jour",
+  "publicInfo.state": "État",
+  "publicInfo.active": "Actif",
+
   // ---------- Responsable de crise ----------
 };
 
@@ -401,6 +482,11 @@ export const CITIZEN_AR: Record<string, string> = {
   "alerts.mapBadge": "الخطورة {level}",
   "alerts.showMap": "عرض الخريطة",
   "alerts.sourceLabel": "مصدر البلاغ",
+  "gravity.low": "منخفضة",
+  "gravity.moyenne": "متوسطة",
+  "gravity.elevee": "مرتفعة",
+  "gravity.critique": "حرجة",
+
   "alerts.gravity.low": "خطورة منخفضة",
   "alerts.gravity.medium": "خطورة متوسطة",
   "alerts.gravity.high": "خطورة مرتفعة",
@@ -705,6 +791,80 @@ export const CITIZEN_AR: Record<string, string> = {
   "map.legendShelters": "المآوي",
   "map.legendPosts": "مراكز الإغاثة",
   "map.note": "منظومة تجريبية مولّدة حول النقطة المحددة.",
+
+  // ---------- التبليغ 3.0 (C1 إلى C10) ----------
+  "submit.catLabel": "نوع الكارثة",
+  "submit.catPlaceholder": "اختر نوعاً (C1 إلى C10)",
+  "submit.peopleLabel": "الأشخاص المعنيون",
+  "submit.peopleHint": "تقدير عدد الأشخاص المتضررين أو المعرضين للخطر.",
+  "submit.placeLabel": "المكان الدقيق",
+  "submit.placePlaceholder": "الشارع أو الحي أو نقطة استدلال…",
+  "submit.communeLabel": "البلدية",
+  "submit.aiTitle": "اقتراح تلقائي",
+  "submit.aiBadge": "اقتراح آلي",
+  "submit.loginRequired": "تسجيل الدخول مطلوب",
+  "submit.loginLead": "سجّل الدخول للإبلاغ عن كارثة.",
+  "submit.aiLead":
+    "يُحسب اقتراح محلي من وصفكم. لا يقرر أبداً: التحقق البشري وحده يحدد الخطورة.",
+  "submit.aiAnalyzing": "تحليل الوصف…",
+  "submit.aiSuggestion": "النوع المقترح: {type} · الخطورة المقترحة: {gravity}",
+  "submit.aiConfidence": "الثقة {value} %",
+  "submit.aiNone": "لا اقتراح حالياً. صِفوا الوضع بكلمات بسيطة.",
+  "submit.aiApply": "استعمال الاقتراح",
+  "submit.requiredNote": "الحقول المعلّمة بـ * إلزامية.",
+  "submit.sending": "جارٍ الإرسال…",
+  "submit.error": "تعذّر تسجيل التبليغ. حاولوا مرة أخرى.",
+  "submit.photoHint": "اختياري — الصورة تساعد الفرق على تقييم الوضع.",
+
+  // ---------- متابعة التبليغات 3.0 ----------
+  "reports.status.non_verifie": "غير مؤكد",
+  "reports.status.confirme": "مؤكد",
+  "reports.status.rejete": "مرفوض",
+  "reports.modules": "الوحدات المعنية",
+  "reports.noModules": "لا توجد وحدة معنية.",
+  "reports.description": "الوصف",
+  "reports.confirmedAt": "تاريخ التأكيد",
+  "reports.rejectedAt": "تاريخ الرفض",
+  "reports.notVerifiedYet": "في انتظار تحقق الوحدة المختصة.",
+  "reports.intervention": "التدخل",
+  "reports.noIntervention": "لم يُطلق أي تدخل.",
+  "reports.detailTitle": "تفاصيل التبليغ",
+  "reports.people": "{count} شخصاً معنياً",
+  "reports.gravityNotSet": "الخطورة غير محددة",
+  "reports.filterAll": "كل الحالات",
+  "reports.loggedAs": "الحساب",
+
+  // ---------- الإرشادات 3.0 ----------
+  "consignes.view": "عرض الإرشادات",
+  "consignes.official": "إرشادات رسمية",
+  "consignes.intro":
+    "إرشادات السلامة المرتبطة بأنواع الكوارث العشرة في دليل ORSEC 3.0.",
+  "consignes.noTypes": "لا توجد إرشادات متاحة.",
+
+  // ---------- إعلام الجمهور ----------
+  "publicInfo.eyebrow": "إعلام الجمهور",
+  "publicInfo.title": "الوضعية والإرشادات الرسمية",
+  "publicInfo.lead":
+    "المخططات المُطلقة والتنبيهات المتسلسلة وإرشادات السلامة لولاية بجاية.",
+  "publicInfo.official": "المصدر: السلطة المختصة · CADM",
+  "publicInfo.plans": "المخططات الجارية",
+  "publicInfo.noPlans": "لا يوجد مخطط مُطلق حالياً.",
+  "publicInfo.phase": "المرحلة",
+  "publicInfo.territory": "الإقليم",
+  "publicInfo.alerts": "أقاليم في حالة تأهب",
+  "publicInfo.noAlerts": "لا يوجد تنبيه جارٍ.",
+  "publicInfo.consignes": "الإرشادات حسب نوع الكارثة",
+  "publicInfo.consignesLead": "اختاروا نوع الكارثة لقراءة الإرشادات الرسمية.",
+  "publicInfo.emergency": "أرقام الطوارئ",
+  "publicInfo.emergencyLead": "في حالة خطر فوري اتصلوا أولاً بالإغاثة.",
+  "publicInfo.emergency.protectiveCivil": "الحماية المدنية",
+  "publicInfo.emergency.police": "الشرطة",
+  "publicInfo.emergency.gendarmerie": "الدرك",
+  "publicInfo.emergency.samu": "الإسعاف الطبي",
+
+  "publicInfo.updated": "آخر تحديث",
+  "publicInfo.state": "الحالة",
+  "publicInfo.active": "نشط",
 
   // ---------- مسؤول الأزمة ----------
 };
